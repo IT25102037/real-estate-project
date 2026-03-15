@@ -8,6 +8,9 @@ public class RealEstateProjectApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(RealEstateProjectApplication.class, args);
+		/// launches the server
 	}
+
+	/// main = starts the application
 
 }
