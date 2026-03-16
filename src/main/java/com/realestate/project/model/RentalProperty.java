@@ -15,7 +15,7 @@ public class RentalProperty extends Property {
 
     private double monthlyRent;
 
-    public RentalProperty(String title, String location, double price, String description,double MonthlyRent){
+    public RentalProperty(String title, String location, double price, String description,double monthlyRent){
         super(title,location,price,description);
         this.monthlyRent = monthlyRent;
 
