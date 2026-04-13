@@ -3,108 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register Customer - Real Estate</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
+    <title>Register - LuxeEstate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-gradient: linear-gradient(45deg, #a855f7, #06b6d4, #a855f7);
+            --vibrant-purple: #a855f7;
+            --vibrant-cyan: #06b6d4;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
             margin: 0;
+            padding: 0;
+            /* Using a beautiful luxury interior background */
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)),
+                        url('https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1600');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
         }
 
         .form-container {
-            background: #1e1e2f;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 50px;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
             text-align: center;
-            border-top: 5px solid #bb86fc;
+        }
+
+        .logo-text {
+            font-size: 32px;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            display: block;
         }
 
         h2 {
-            color: #bb86fc;
-            letter-spacing: 1.5px;
+            color: #ffffff;
+            font-weight: 500;
             margin-bottom: 30px;
-            margin-top: 0;
-            font-size: 28px;
+            font-size: 24px;
         }
 
         input, textarea, select {
             width: 100%;
-            padding: 15px;
+            padding: 14px 20px;
             margin-bottom: 20px;
-            border: 1px solid #4a4a6a;
-            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
             box-sizing: border-box;
-            background-color: #2a2a40;
+            background: rgba(255, 255, 255, 0.05);
             color: #ffffff;
             font-family: 'Poppins', sans-serif;
             font-size: 15px;
-            transition: 0.3s;
+            transition: all 0.3s ease;
         }
 
-        input::placeholder, textarea::placeholder { color: #888; }
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
 
         input:focus, textarea:focus, select:focus {
             outline: none;
-            border-color: #bb86fc;
-            box-shadow: 0 0 12px rgba(187, 134, 252, 0.4);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--vibrant-cyan);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 100px;
+        /* Fix for select dropdown visibility */
+        select option {
+            background: #1e1e2f;
+            color: white;
         }
 
         button {
             width: 100%;
-            padding: 15px;
-            background-color: #03dac6;
-            color: #121212;
+            padding: 16px;
+            background: var(--primary-gradient);
+            color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            font-family: 'Poppins', sans-serif;
             font-weight: 600;
-            font-size: 16px;
-            letter-spacing: 1px;
+            font-size: 18px;
             transition: all 0.3s ease;
-            margin-top: 10px;
+            box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3);
         }
+
         button:hover {
-            background-color: #00e6d2;
-            box-shadow: 0 0 15px #03dac6;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(168, 85, 247, 0.5);
+        }
+
+        .footer-links {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .nav-link {
-            display: inline-block;
-            margin-top: 25px;
-            color: #bb86fc;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--vibrant-cyan);
+        }
+
+        .home-btn {
+            color: #ffffff;
             text-decoration: none;
             font-weight: 600;
-            font-size: 15px;
-            transition: 0.3s ease;
-        }
-        .nav-link:hover {
-            color: #ffffff;
-            text-shadow: 0 0 10px #bb86fc;
+            margin-top: 15px;
+            display: inline-block;
         }
     </style>
 </head>
 <body>
 
 <div class="form-container">
-    <h2>📝 Register Customer</h2>
+    <span class="logo-text">LuxeEstate</span>
+    <h2>Register</h2>
 
     <form id="customerForm">
         <input type="text" id="name" placeholder="Full Name" required>
@@ -114,17 +151,20 @@
         <textarea id="address" placeholder="Home Address" required></textarea>
 
         <select id="propertyType" required>
-            <option value="" disabled selected>Select Property Type</option>
+            <option value="" disabled selected>Preferred Property Type</option>
             <option value="House">House</option>
             <option value="Apartment">Apartment</option>
             <option value="Land">Land</option>
             <option value="Commercial">Commercial</option>
         </select>
 
-        <button type="submit">Save Customer</button>
+        <button type="submit">Save Profile</button>
     </form>
 
-    <a href="admin-login.html" class="nav-link">View Registered Customers (Admin)</a>
+    <div class="footer-links">
+        <a href="index.html" class="home-btn">← Back to Main Gallery</a>
+        <a href="admin-login.html" class="nav-link">Staff Login (Admin)</a>
+    </div>
 </div>
 
 <script src="js/customer.js"></script>

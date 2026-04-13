@@ -1,91 +1,138 @@
-// Run this function as soon as the admin dashboard loads
-document.addEventListener("DOMContentLoaded", function () {
-    fetchCustomers();
-});
+// Automatically load customers when the page opens
+window.onload = function() {
+    loadCustomers();
+};
 
-// Function to get customers from Spring Boot
-function fetchCustomers() {
-    fetch("http://localhost:8081/api/customers")
-        .then(response => {
-            if (!response.ok) throw new Error("Failed to fetch customers");
-            return response.json();
-        })
-        .then(customers => {
-            const tableBody = document.getElementById("customerTableBody");
-            tableBody.innerHTML = ""; // Clear the table
+// --- READ FUNCTION (Loads table data from API) ---
+function loadCustomers() {
+    fetch('http://localhost:8081/api/customers')
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('customerTableBody');
+            tableBody.innerHTML = ''; // Clear existing data
 
-            customers.forEach(customer => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${customer.id}</td>
-                    <td>${customer.name}</td>
-                    <td>${customer.email}</td>
-                    <td>${customer.phone}</td>
-                    <td>${customer.propertyType}</td>
-                    <td>${customer.address}</td>
+            data.forEach(customer => {
+                const row = `<tr>
+                    <td>#${customer.id}</td>
+                    <td><strong style="color: #1e293b;">${customer.name}</strong></td>
                     <td>
-                        <button class="action-btn edit-btn" onclick="editCustomer(${customer.id})">Edit</button>
-                        <button class="action-btn delete-btn" onclick="deleteCustomer(${customer.id})">Delete</button>
+                        <div style="font-size: 13px;">📧 ${customer.email}</div>
+                        <div style="font-size: 13px; color: #64748b;">📞 ${customer.phone}</div>
                     </td>
-                `;
-                tableBody.appendChild(row);
+                    <td><span class="property-badge">${customer.propertyType}</span></td>
+                    <td style="font-size: 13px;">📍 ${customer.address}</td>
+                    <td>
+                        <button onclick="deleteCustomer(${customer.id})" class="btn btn-delete">Remove</button>
+                    </td>
+                </tr>`;
+                tableBody.innerHTML += row;
             });
+
+            // Re-apply filter in case something is already in the search box
+            filterCustomers();
         })
-        .catch(error => console.error("Error:", error));
+        .catch(error => console.error('Error loading customers:', error));
 }
 
-// Function to DELETE a customer
+// --- DELETE FUNCTION ---
 function deleteCustomer(id) {
-    if (confirm("Are you sure you want to completely delete this customer?")) {
+    if(confirm('Are you sure you want to delete Customer ID: ' + id + '?')) {
         fetch(`http://localhost:8081/api/customers/${id}`, {
-            method: "DELETE"
+            method: 'DELETE'
         })
-        .then(response => {
-            if (response.ok) {
-                alert("Customer deleted successfully!");
-                fetchCustomers(); // Refresh the table
-            } else {
-                alert("Failed to delete customer.");
-            }
+        .then(() => {
+            // alert('Customer deleted successfully!');
+            loadCustomers(); // Reload the table automatically
         })
-        .catch(error => console.error("Error:", error));
+        .catch(error => console.error('Error deleting customer:', error));
     }
 }
 
-// Temporary placeholder for our next task!
-function editCustomer(id) {
-    alert("We will build the Edit feature next! You clicked ID: " + id);
+// --- UPDATE FUNCTION (Edit Property Type) ---
+function submitUpdate() {
+    const customerId = document.getElementById('editCustomerId').value;
+    const newProperty = document.getElementById('newPropertyType').value;
+
+    if (!customerId || !newProperty) {
+        alert("Please enter both the Customer ID and the New Property Type.");
+        return;
+    }
+
+    const updatedData = {
+        propertyType: newProperty
+    };
+
+    fetch(`http://localhost:8081/api/customers/${customerId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to update.");
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert("Success! Customer ID " + customerId + " property type changed to: " + data.propertyType);
+
+        // Clear the form boxes
+        document.getElementById('editCustomerId').value = '';
+        document.getElementById('newPropertyType').value = '';
+
+        // Reload the table
+        loadCustomers();
+    })
+    .catch(error => {
+        console.error('Error updating:', error);
+        alert("Error updating customer. Make sure that ID exists in the table below!");
+    });
 }
 
-// Function to instantly filter customers
+// --- FILTER FUNCTION (Search & Dropdown) ---
 function filterCustomers() {
-    const searchInput = document.getElementById("searchInput").value.toLowerCase();
-    const propertyFilter = document.getElementById("propertyFilter").value;
-    const tableBody = document.getElementById("customerTableBody");
-    const rows = tableBody.getElementsByTagName("tr");
-    const noResultsMessage = document.getElementById("noResultsMessage");
+    // 1. Get filter inputs
+    const searchText = document.getElementById('searchInput').value.toLowerCase();
+    const filterProperty = document.getElementById('propertyFilter').value.toLowerCase();
 
-    let visibleCount = 0;
+    // 2. Get table body and all rows
+    const tableBody = document.getElementById('customerTableBody');
+    const rows = tableBody.getElementsByTagName('tr');
 
+    let visibleRowCount = 0;
+
+    // 3. Loop through rows and apply filters
     for (let i = 0; i < rows.length; i++) {
-        const rowText = rows[i].innerText.toLowerCase();
-        const propertyCell = rows[i].getElementsByTagName("td")[4];
+        const row = rows[i];
 
-        if (propertyCell) {
-            const propertyTypeValue = propertyCell.innerText;
-            const matchesSearch = rowText.includes(searchInput);
-            const matchesFilter = (propertyFilter === "All" || propertyFilter === "All Property Types" || propertyTypeValue === propertyFilter);
+        // Column indexing (Name is cell[1], email/phone is cell[2], address is cell[4])
+        const name = row.cells[1].textContent.toLowerCase();
+        const contact = row.cells[2].textContent.toLowerCase(); // grabs both email and phone
+        const propertyType = row.cells[3].textContent.toLowerCase();
+        const address = row.cells[4].textContent.toLowerCase();
 
-            if (matchesSearch && matchesFilter) {
-                rows[i].style.display = "";
-                visibleCount++;
-            } else {
-                rows[i].style.display = "none";
-            }
+        // Check search against main text columns
+        const matchesSearch = name.includes(searchText) || contact.includes(searchText) || address.includes(searchText);
+
+        // Check property dropdown
+        const matchesProperty = (filterProperty === "all") || (propertyType.includes(filterProperty));
+
+        // 4. Show/Hide based on BOTH rules
+        if (matchesSearch && matchesProperty) {
+            row.style.display = ""; // Show
+            visibleRowCount++;
+        } else {
+            row.style.display = "none"; // Hide
         }
     }
 
-    if (noResultsMessage) {
-        noResultsMessage.style.display = visibleCount === 0 ? "" : "none";
+    // 5. Handle "No Results" message
+    const noResultsMessage = document.getElementById('noResultsMessage');
+    if (visibleRowCount === 0 && rows.length > 0) {
+        noResultsMessage.style.display = ""; // Show
+    } else {
+        noResultsMessage.style.display = "none"; // Hide
     }
 }

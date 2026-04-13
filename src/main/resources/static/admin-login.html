@@ -3,146 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - Real Estate</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
+    <title>Admin Access | LuxeEstate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* PERFECTLY CENTERED DARK MODE BODY */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);
+            --vibrant-purple: #a855f7;
+            --vibrant-cyan: #06b6d4;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #121212; /* Matches the dashboard */
-            color: #e0e0e0;
             margin: 0;
-            height: 100vh; /* Takes up exactly 100% of the screen height */
+            padding: 0;
+            /* Using the same vibrant background style as your registration page */
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.4), rgba(6, 182, 212, 0.4)),
+                        url('https://images.pexels.com/photos/37347/office-sitting-room-executive-sitting.jpg?auto=compress&cs=tinysrgb&w=1600');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
             display: flex;
-            align-items: center; /* Centers vertically */
-            justify-content: center; /* Centers horizontally */
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
-        /* PREMIUM LOGIN CARD */
+        /* Decorative Background Glows */
+        .glow-orb {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.5;
+        }
+        .orb-top { background: var(--vibrant-purple); top: -20%; left: -10%; }
+        .orb-bottom { background: var(--vibrant-cyan); bottom: -20%; right: -10%; }
+
         .login-container {
-            background: #1e1e2f; /* Elevated dark card */
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             padding: 50px 40px;
-            border-radius: 12px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-            width: 100%;
-            max-width: 380px;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
             text-align: center;
-            border-top: 5px solid #bb86fc; /* Matching neon purple line */
+            animation: slideUp 0.8s ease-out;
         }
 
-        h2 {
-            color: #bb86fc;
-            letter-spacing: 1.5px;
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-text {
+            font-size: 32px;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 36px;
+            font-weight: 700;
             margin-bottom: 10px;
-            margin-top: 0;
-            font-size: 26px;
+            background: linear-gradient(to right, #ffffff, var(--vibrant-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 20px rgba(6, 182, 212, 0.2);
         }
 
         .subtitle {
-            color: #888;
+            color: rgba(255, 255, 255, 0.6);
             font-size: 14px;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
-        /* ERROR MESSAGE STYLING */
+        /* ERROR MESSAGE */
         .error-msg {
-            color: #ff1744; /* Bright neon red so it stands out */
+            color: #ff4d4d;
             font-size: 14px;
             display: none;
-            background: rgba(255, 23, 68, 0.1);
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ff1744;
-            margin-bottom: 20px;
+            background: rgba(255, 77, 77, 0.15);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 77, 77, 0.3);
+            margin-bottom: 25px;
+            animation: shake 0.4s ease-in-out;
         }
 
-        /* LARGE, COMFORTABLE INPUT FIELDS */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
         input {
             width: 100%;
-            padding: 15px;
+            padding: 16px 20px;
             margin-bottom: 20px;
-            border: 1px solid #4a4a6a;
-            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
             box-sizing: border-box;
-            background-color: #2a2a40;
+            background: rgba(255, 255, 255, 0.05);
             color: #ffffff;
             font-family: 'Poppins', sans-serif;
             font-size: 15px;
-            transition: 0.3s;
-        }
-        input::placeholder { color: #888; }
-        input:focus {
-            outline: none;
-            border-color: #bb86fc;
-            box-shadow: 0 0 12px rgba(187, 134, 252, 0.4);
+            transition: all 0.3s;
         }
 
-        /* GLOWING ACTION BUTTON */
-        button {
-            width: 100%;
-            padding: 15px;
-            background-color: #6200ea; /* Deep purple */
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            font-size: 16px;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            margin-bottom: 25px;
-        }
-        button:hover {
-            background-color: #7c4dff;
-            box-shadow: 0 0 15px #6200ea; /* Purple glow */
+        input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--vibrant-cyan);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
             transform: translateY(-2px);
         }
 
-        /* MATCHING LINK */
+        button {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: all 0.4s;
+            box-shadow: 0 15px 30px rgba(168, 85, 247, 0.4);
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(6, 182, 212, 0.5);
+            filter: brightness(1.1);
+        }
+
+        .footer-nav {
+            margin-top: 30px;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 20px;
+        }
+
         .nav-link {
-            display: inline-block;
-            color: #bb86fc;
+            color: #ffffff;
             text-decoration: none;
             font-weight: 600;
             font-size: 14px;
-            transition: 0.3s ease;
+            transition: 0.3s;
+            opacity: 0.8;
         }
+
         .nav-link:hover {
-            color: #ffffff;
-            text-shadow: 0 0 10px #bb86fc;
+            opacity: 1;
+            color: var(--vibrant-cyan);
+            text-shadow: 0 0 10px var(--vibrant-cyan);
         }
     </style>
 </head>
 <body>
 
+<div class="glow-orb orb-top"></div>
+<div class="glow-orb orb-bottom"></div>
+
 <div class="login-container">
-    <h2>🔐 Admin Access</h2>
-    <p class="subtitle">Enter your credentials to manage leads.</p>
+    <span class="logo-text">LuxeEstate</span>
+    <h1>Admin Login</h1>
+    <p class="subtitle">Secure Staff Access</p>
 
-    <p class="error-msg" id="errorMessage">⚠️ Invalid username or password.</p>
+    <p class="error-msg" id="errorMessage">⚠️ Unauthorized Credentials</p>
 
-    <input type="text" id="username" placeholder="Username" required>
+    <input type="text" id="username" placeholder="Admin Username" required>
     <input type="password" id="password" placeholder="Password" required>
 
-    <button onclick="checkLogin()">Secure Login</button>
+    <button onclick="checkLogin()">Authorize Entry</button>
 
-    <a href="add-customer.html" class="nav-link">← Back to Registration</a>
+    <div class="footer-nav">
+        <a href="add-customer.html" class="nav-link">← Return to Registration</a>
+    </div>
 </div>
 
 <script>
     function checkLogin() {
         const user = document.getElementById("username").value;
         const pass = document.getElementById("password").value;
+        const error = document.getElementById("errorMessage");
 
-        // Check against our default username and password
         if (user === "admin" && pass === "admin123") {
-            // Success! Send them to the admin dashboard
             window.location.href = "view-customer.html";
         } else {
-            // Fail! Show the beautiful neon error message
-            document.getElementById("errorMessage").style.display = "block";
+            error.style.display = "block";
+            // Add a small shake effect for feedback
+            error.style.animation = 'none';
+            error.offsetHeight; /* trigger reflow */
+            error.style.animation = null;
         }
     }
 </script>

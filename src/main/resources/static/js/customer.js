@@ -1,4 +1,3 @@
-// Listen for the form submission on the Registration Page
 document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("customerForm");
     if (form) {
@@ -6,9 +5,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-// Function to save a new customer
 function saveCustomer(event) {
-    event.preventDefault(); // Prevent page reload
+    event.preventDefault();
+
+    const submitBtn = event.target.querySelector("button");
+    const originalText = submitBtn.innerText;
+
+    // UI Feedback
+    submitBtn.innerText = "Processing...";
+    submitBtn.style.opacity = "0.7";
+    submitBtn.disabled = true;
 
     const customerData = {
         name: document.getElementById("name").value,
@@ -25,11 +31,19 @@ function saveCustomer(event) {
     })
     .then(response => {
         if (response.ok) {
-            alert("✅ Customer saved successfully!");
+            alert("✨ Welcome to the Elite!\nYour profile has been saved successfully.");
             document.getElementById("customerForm").reset();
         } else {
-            alert("⚠️ Failed to save customer.");
+            alert("⚠️ Coordination Error: Could not save profile.");
         }
     })
-    .catch(error => console.error("Error:", error));
+    .catch(error => {
+        console.error("Error:", error);
+        alert("⚠️ Connection Failed: Make sure your Spring Boot server is running on port 8081.");
+    })
+    .finally(() => {
+        submitBtn.innerText = originalText;
+        submitBtn.style.opacity = "1";
+        submitBtn.disabled = false;
+    });
 }
