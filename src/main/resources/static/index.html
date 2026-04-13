@@ -6,519 +6,171 @@
     <title>LuxeEstate - Redefined Luxury Living</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- DYNAMIC & VIBRANT BACKGROUND --- */
         :root {
-            /* Core Vibrant Palette */
             --primary-gradient: linear-gradient(45deg, #a855f7, #06b6d4, #a855f7);
             --vibrant-cyan: #06b6d4;
             --vibrant-purple: #a855f7;
-            --vibrant-gold: #f59e0b;
-            --vibrant-teal: #14b8a6;
-
-            /* UI Elements (Glassmorphism) */
             --glass-bg: rgba(255, 255, 255, 0.95);
-            --glass-blur: blur(12px);
-            --glass-border: rgba(255, 255, 255, 0.4);
             --text-dark: #334155;
             --text-light: #94a3b8;
             --border-light: #e2e8f0;
+            --interface-bg: #f1f5f9; /* Interface background color */
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f8fafc;
+            margin: 0; padding: 0;
+            background: var(--interface-bg); /* Applied to the whole interface */
             color: var(--text-dark);
-            min-height: 100vh;
-            overflow-x: hidden;
-            font-size: 16px; /* Base font size slightly increased */
+            scroll-behavior: smooth;
         }
 
-        .container {
-            max-width: 1300px;
-            margin: auto;
-            padding: 0 20px;
-        }
+        .container { max-width: 1300px; margin: auto; padding: 0 20px; }
 
-        /* --- VIBRANT HEADER --- */
+        /* --- HEADER --- */
         header {
             background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--glass-border);
             padding: 15px 0;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+            top: 0; left: 0; width: 100%;
             z-index: 1000;
         }
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo h1 { margin: 0; font-size: 30px; font-weight: 700; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        nav ul { margin: 0; padding: 0; list-style: none; display: flex; gap: 30px; }
+        nav a { text-decoration: none; color: var(--text-dark); font-weight: 600; transition: 0.3s; }
+        nav a:hover { color: var(--vibrant-purple); }
+
+        /* --- PROFILE STATUS --- */
+        .profile-status {
+            display: flex; align-items: center; gap: 12px;
+            background: white; padding: 6px 18px; border-radius: 50px;
+            border: 1px solid var(--vibrant-cyan);
+            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.15);
         }
 
-        .logo h1 {
-            margin: 0;
-            font-size: 30px; /* Increased from 28px */
-            font-weight: 700;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .avatar-circle {
+            width: 34px; height: 34px; background: var(--primary-gradient);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 700;
         }
 
-        nav ul {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-            display: flex;
-            gap: 30px;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: var(--text-dark);
-            font-weight: 600;
-            font-size: 16px; /* Increased from 15px */
-            transition: color 0.3s;
-        }
-
-        nav a:hover {
-            color: var(--vibrant-purple);
-        }
-
-        .user-actions {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
+        .user-info { display: flex; flex-direction: column; line-height: 1.2; }
+        .user-name-label { font-weight: 600; color: var(--text-dark); font-size: 14px; }
+        .logout-link { font-size: 11px; color: #ef4444; text-decoration: none; cursor: pointer; font-weight: 700; text-transform: uppercase; }
 
         .sign-in-btn {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 10px 24px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px; /* Explicitly set to match nav */
-            transition: all 0.3s;
-            box-shadow: 0 4px 10px rgba(168, 85, 247, 0.3);
-            animation: pulseBtn 3s infinite;
+            background: var(--primary-gradient); color: white;
+            padding: 10px 24px; border-radius: 30px; text-decoration: none;
+            font-weight: 600; box-shadow: 0 4px 10px rgba(168, 85, 247, 0.3);
         }
 
-        .sign-in-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 15px rgba(168, 85, 247, 0.5);
-        }
-
-        @keyframes pulseBtn {
-            0% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.5); }
-            70% { box-shadow: 0 0 0 10px rgba(168, 85, 247, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0); }
-        }
-
-        /* --- HERO SECTION --- */
+        /* --- HERO --- */
         .hero {
-            padding-top: 180px;
-            padding-bottom: 140px;
-            text-align: center;
-            position: relative;
+            padding: 180px 0 100px; text-align: center;
             background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url('https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1600');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            background-size: cover; background-position: center; background-attachment: fixed;
         }
 
-        .listing-badge {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
-            color: #ffffff;
-            padding: 8px 18px;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 15px; /* Increased from 14px */
-            display: inline-block;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255,255,255,0.4);
-        }
+        .hero h2 { font-size: 58px; color: white; margin-bottom: 20px; }
+        .hero h2 span { color: var(--vibrant-cyan); }
+        .hero p { color: #e2e8f0; font-size: 20px; margin-bottom: 40px; }
 
-        .hero h2 {
-            font-size: 58px; /* Slightly increased */
-            font-weight: 700;
-            color: #ffffff;
-            margin: 0 0 20px 0;
-            line-height: 1.2;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        .hero h2 span {
-            color: var(--vibrant-cyan);
-        }
-
-        .hero p {
-            color: #e2e8f0;
-            font-size: 20px; /* Increased from 18px */
-            max-width: 750px; /* Broadened slightly to fit bigger text */
-            margin: auto;
-            margin-bottom: 40px;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
-        }
-
-        /* Modernized Search Bar */
         .search-bar-modern {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            border: 2px solid rgba(255,255,255,0.8);
-            border-radius: 50px;
-            padding: 12px; /* Slightly more padding for bigger text */
-            max-width: 850px;
-            margin: auto;
-            display: flex;
-            align-items: center;
-            gap: 15px;
+            background: var(--glass-bg); border-radius: 50px; padding: 12px;
+            max-width: 850px; margin: auto; display: flex; align-items: center; gap: 15px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            transition: all 0.3s;
         }
 
-        .search-bar-modern:focus-within {
-            border-color: var(--vibrant-purple);
-            box-shadow: 0 15px 40px rgba(168, 85, 247, 0.3);
-        }
-
-        .search-input-group {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 0 15px;
-            border-right: 1px solid var(--border-light);
-        }
-
-        .search-input-group:last-of-type {
-            border-right: none;
-        }
-
-        .search-input-group label {
-            font-size: 20px; /* Increased from 18px */
-        }
-
-        .search-input-group input, .search-input-group select {
-            flex: 1;
-            border: none;
-            padding: 12px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px; /* Increased from 16px */
-            color: var(--text-dark);
-            background: transparent;
-        }
-
-        .search-input-group input:focus, .search-input-group select:focus {
-            outline: none;
-        }
+        .search-input-group { flex: 1; display: flex; align-items: center; gap: 10px; padding: 0 15px; }
+        .search-input-group input, .search-input-group select { flex: 1; border: none; padding: 12px; font-size: 18px; outline: none; background: transparent; }
 
         .search-btn-vibrant {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 14px 30px;
-            border-radius: 30px;
-            font-weight: 600;
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px; /* Increased from 16px */
-            border: none;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-            box-shadow: 0 4px 10px rgba(168, 85, 247, 0.3);
+            background: var(--primary-gradient); color: white; padding: 14px 30px;
+            border-radius: 30px; font-weight: 600; border: none; cursor: pointer;
         }
 
-        .search-btn-vibrant:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(168, 85, 247, 0.5);
-        }
+        /* --- STATISTICS --- */
+        .stats-section { padding: 50px 0; background: rgba(255,255,255,0.6); border-bottom: 1px solid var(--border-light); }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; text-align: center; }
+        .stat-card { padding: 30px; border-radius: 15px; background: #fff; border: 1px solid #f0f4f8; }
+        .stat-card h3 { font-size: 34px; margin: 10px 0 5px; font-weight: 700; color: var(--text-dark); }
+        .stat-card p { color: var(--text-light); margin: 0; font-weight: 500; }
 
-        /* --- FEATURE COUNTER --- */
-        .feature-counter {
-            background: white;
-            padding: 40px 0;
-            border-bottom: 1px solid var(--border-light);
-        }
+        /* --- PROPERTY GRID --- */
+        .featured-properties { padding: 80px 0; }
+        .property-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
+        .property-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; transition: 0.3s; }
+        .property-card:hover { transform: translateY(-10px); }
+        .property-img { width: 100%; height: 240px; object-fit: cover; }
+        .badge { position: absolute; top: 15px; left: 15px; padding: 6px 14px; border-radius: 20px; font-size: 11px; color: white; font-weight: 700; text-transform: uppercase; }
+        .status-featured { background: #14b8a6; }
+        .status-popular { background: #f59e0b; }
+        .status-new { background: #3b82f6; }
+        .card-details { padding: 25px; }
+        .loc-text { color: var(--vibrant-cyan); font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+        .property-title { font-size: 22px; margin: 0 0 15px 0; font-weight: 700; }
+        .meta-tags { display: flex; gap: 15px; color: var(--text-light); font-size: 14px; margin-bottom: 20px; padding-top: 15px; border-top: 1px solid #f1f5f9; }
+        .property-price { font-size: 26px; font-weight: 800; color: var(--vibrant-purple); margin: 0; }
 
-        .counter-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-
-        .counter-card {
-            background: #fff;
-            border-radius: 15px;
-            border: 1px solid var(--border-light);
-            padding: 25px;
+        /* --- WHY US --- */
+        .why-us {
+            padding: 100px 0;
+            background: #f8fafc; /* Lighter background for the feature section */
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
         }
-
-        .counter-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--vibrant-purple);
-            box-shadow: 0 8px 20px rgba(168, 85, 247, 0.1);
-        }
-
-        .counter-icon {
-            font-size: 30px;
-            margin-bottom: 15px;
-            color: var(--vibrant-teal);
-        }
-
-        .counter-card.c2 .counter-icon { color: var(--vibrant-gold); }
-        .counter-card.c3 .counter-icon { color: #3b82f6; }
-        .counter-card.c4 .counter-icon { color: #f43f5e; }
-
-        .counter-data {
-            font-size: 34px; /* Increased slightly */
-            font-weight: 700;
-            color: var(--text-dark);
-            margin: 0 0 5px 0;
-        }
-
-        .counter-label {
-            color: var(--text-light);
-            font-size: 16px; /* Increased from 14px */
-            font-weight: 500;
-        }
-
-        /* --- FEATURED PROPERTIES --- */
-        .featured-properties {
-            padding: 80px 0;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .section-badge {
-            background: rgba(168, 85, 247, 0.1);
-            color: var(--vibrant-purple);
-            padding: 8px 18px;
-            border-radius: 30px;
-            font-weight: 600;
-            font-size: 15px; /* Increased from 14px */
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-
-        .section-header h2 {
-            font-size: 44px; /* Increased from 40px */
-            font-weight: 700;
-            color: var(--text-dark);
-            margin: 0;
-        }
-
-        .section-header h2 span {
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .section-header p {
-            color: var(--text-light);
-            max-width: 600px;
-            margin: 10px auto 0;
-            font-size: 18px; /* Added explicit bigger font size */
-        }
-
-        .property-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-        }
-
-        .property-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            transition: all 0.3s;
-            border: 1px solid #f0f4f8;
-            position: relative;
-        }
-
-        .property-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-            border-color: var(--border-light);
-        }
-
-        .card-img-wrapper {
-            width: 100%;
-            height: 240px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .property-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s;
-        }
-
-        .property-card:hover .property-img {
-            transform: scale(1.05);
-        }
-
-        .property-status {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 12px; /* Increased slightly */
-            text-transform: uppercase;
-            color: white;
-        }
-
-        .status-featured { background-color: var(--vibrant-teal); }
-        .status-new { background-color: #3b82f6; }
-        .status-popular { background-color: var(--vibrant-gold); }
-
-        .card-details {
-            padding: 24px; /* Added a little more breathing room */
-        }
-
-        .location {
-            color: var(--vibrant-cyan);
-            font-size: 14px; /* Increased from 13px */
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .property-title {
-            font-size: 20px; /* Increased from 18px */
-            font-weight: 700;
-            color: var(--text-dark);
-            margin: 0 0 15px 0;
-        }
-
-        .card-meta {
-            display: flex;
-            gap: 15px;
-            font-size: 15px; /* Increased from 13px */
-            color: var(--text-light);
-            border-top: 1px solid #f0f4f8;
-            padding-top: 15px;
-            margin-bottom: 15px;
-        }
-
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .meta-item strong {
-            color: var(--text-dark);
-            font-weight: 600;
-        }
-
-        .property-price {
-            font-size: 24px; /* Increased from 22px */
-            font-weight: 800;
-            color: var(--vibrant-purple);
-            margin: 0;
-        }
-
-        /* --- WHY CHOOSE US --- */
-        .why-choose {
-            padding: 80px 0;
-            background: white;
-            position: relative;
-            border-top: 1px solid var(--border-light);
-        }
-
         .benefits-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 30px;
+            margin-top: 50px;
         }
-
-        .benefit-card-modern {
-            background: #fff;
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
+        .benefit-card {
+            padding: 40px 20px;
+            background: white;
+            border-radius: 20px;
             border: 2px solid var(--border-light);
-            transition: all 0.3s;
-            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
-        .benefit-card-modern:hover {
-            transform: translateY(-5px);
+        .benefit-card:hover {
             border-color: var(--vibrant-purple);
-            box-shadow: 0 8px 20px rgba(168, 85, 247, 0.1);
+            transform: translateY(-12px);
+            box-shadow: 0 15px 30px rgba(168, 85, 247, 0.15);
         }
-
-        .benefit-icon-wrapper {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: rgba(168, 85, 247, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-        }
-
         .benefit-icon {
-            font-size: 28px;
+            width: 70px; height: 70px;
+            background: #f3e8ff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 30px;
             color: var(--vibrant-purple);
+            transition: 0.3s;
         }
-
-        .benefit-title {
-            font-size: 20px; /* Increased from 18px */
-            font-weight: 700;
-            color: var(--text-dark);
-            margin: 0 0 10px 0;
+        .benefit-card:hover .benefit-icon {
+            background: var(--vibrant-purple);
+            color: white;
         }
-
-        .benefit-text {
-            color: var(--text-light);
-            font-size: 16px; /* Increased from 14px */
-            line-height: 1.6;
-            margin: 0;
-        }
-
     </style>
 </head>
 <body>
 
 <header>
     <div class="container header-content">
-        <div class="logo">
-            <h1>LuxeEstate</h1>
-        </div>
+        <div class="logo"><h1>LuxeEstate</h1></div>
         <nav>
             <ul>
                 <li><a href="#">Buy</a></li>
                 <li><a href="#">Rent</a></li>
                 <li><a href="#">Sell</a></li>
-                <li><a href="#">Neighborhoods</a></li>
                 <li><a href="#">Agents</a></li>
             </ul>
         </nav>
-        <div class="user-actions">
+        <div id="userActions">
             <a href="add-customer.html" class="sign-in-btn">Sign In</a>
         </div>
     </div>
@@ -526,250 +178,165 @@
 
 <section class="hero">
     <div class="container">
-        <div class="listing-badge">✨ Over 12,000+ Premium Listings</div>
         <h2>Find Your <span>Dream Home</span> Today</h2>
-        <p>Discover luxury properties in the most prestigious neighborhoods. Your perfect home is just a search away.</p>
-
+        <p>Discover handpicked luxury properties from around the globe.</p>
         <div class="search-bar-modern">
-            <div class="search-input-group">
-                <label>📍</label>
-                <input type="text" id="searchInput" placeholder="City, neighborhood, or address">
-            </div>
-            <div class="search-input-group">
-                <label>🏠</label>
+            <div class="search-input-group">📍 <input type="text" id="searchInput" placeholder="Search by city or name..."></div>
+            <div class="search-input-group">🏠
                 <select id="propertyTypeSelect">
-                    <option value="All" selected>All Property Types</option>
+                    <option value="All">All Types</option>
                     <option value="House">House</option>
                     <option value="Apartment">Apartment</option>
-                    <option value="Land">Land</option>
                     <option value="Commercial">Commercial</option>
                 </select>
             </div>
-            <button onclick="filterProperties()" class="search-btn-vibrant">
-                🔍 Search
-            </button>
+            <button onclick="filterProperties()" class="search-btn-vibrant">🔍 Search</button>
         </div>
     </div>
 </section>
 
-<section class="feature-counter">
-    <div class="container counter-grid">
-        <div class="counter-card c1">
-            <div class="counter-icon">🏠</div>
-            <h3 class="counter-data">12,000+</h3>
-            <span class="counter-label">Properties</span>
-        </div>
-        <div class="counter-card c2">
-            <div class="counter-icon">😊</div>
-            <h3 class="counter-data">8,000+</h3>
-            <span class="counter-label">Happy Clients</span>
-        </div>
-        <div class="counter-card c3">
-            <div class="counter-icon">🤝</div>
-            <h3 class="counter-data">200+</h3>
-            <span class="counter-label">Expert Agents</span>
-        </div>
-        <div class="counter-card c4">
-            <div class="counter-icon">🏆</div>
-            <h3 class="counter-data">15+</h3>
-            <span class="counter-label">Years Experience</span>
-        </div>
+<section class="stats-section">
+    <div class="container stats-grid">
+        <div class="stat-card">🏠 <h3>12,000+</h3><p>Properties</p></div>
+        <div class="stat-card">😊 <h3>8,000+</h3><p>Happy Clients</p></div>
+        <div class="stat-card">🤝 <h3>200+</h3><p>Expert Agents</p></div>
+        <div class="stat-card">🏆 <h3>15+</h3><p>Years Experience</p></div>
     </div>
 </section>
 
 <section class="featured-properties" id="properties-section">
-    <div class="container section-header">
-        <div class="section-badge">OUR COLLECTION</div>
-        <h2>Featured <span>Properties</span></h2>
-        <p>Handpicked luxury properties from the world's most desirable locations</p>
-    </div>
-
-    <div class="container property-grid" id="propertyGrid">
-
-        <div class="property-card" data-type="Apartment">
-            <div class="card-img-wrapper">
-                <span class="property-status status-featured">Featured</span>
-                <img src="https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Penthouse" class="property-img">
-            </div>
-            <div class="card-details">
-                <p class="location">📍 Manhattan, New York</p>
-                <h3 class="property-title">Skyline Penthouse Suite</h3>
-                <div class="card-meta">
-                    <div class="meta-item">🛏️ <strong>4</strong> beds</div>
-                    <div class="meta-item">🚿 <strong>3</strong> baths</div>
-                    <div class="meta-item">📐 <strong>3,200</strong> sqft</div>
-                </div>
-                <p class="property-price">$4,250,000</p>
-            </div>
-        </div>
-
-        <div class="property-card" data-type="House">
-            <div class="card-img-wrapper">
-                <span class="property-status status-new">New</span>
-                <img src="https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Beach House" class="property-img">
-            </div>
-            <div class="card-details">
-                <p class="location">📍 Malibu, California</p>
-                <h3 class="property-title">Oceanfront Beach House</h3>
-                <div class="card-meta">
-                    <div class="meta-item">🛏️ <strong>5</strong> beds</div>
-                    <div class="meta-item">🚿 <strong>4</strong> baths</div>
-                    <div class="meta-item">📐 <strong>4,500</strong> sqft</div>
-                </div>
-                <p class="property-price">$6,800,000</p>
-            </div>
-        </div>
-
-        <div class="property-card" data-type="House">
-            <div class="card-img-wrapper">
-                <span class="property-status status-popular">Popular</span>
-                <img src="https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Townhouse" class="property-img">
-            </div>
-            <div class="card-details">
-                <p class="location">📍 Chelsea, London</p>
-                <h3 class="property-title">Historic Garden Townhouse</h3>
-                <div class="card-meta">
-                    <div class="meta-item">🛏️ <strong>3</strong> beds</div>
-                    <div class="meta-item">🚿 <strong>2</strong> baths</div>
-                    <div class="meta-item">📐 <strong>2,800</strong> sqft</div>
-                </div>
-                <p class="property-price">$3,150,000</p>
-            </div>
-        </div>
-
-        <div class="property-card" data-type="Commercial">
-            <div class="card-img-wrapper">
-                <span class="property-status status-featured">Featured</span>
-                <img src="https://images.pexels.com/photos/269077/pexels-photo-269077.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Office Space" class="property-img">
-            </div>
-            <div class="card-details">
-                <p class="location">📍 Downtown, Chicago</p>
-                <h3 class="property-title">Modern Corporate Office</h3>
-                <div class="card-meta">
-                    <div class="meta-item">🏢 <strong>2</strong> Floors</div>
-                    <div class="meta-item">🅿️ <strong>15</strong> spaces</div>
-                    <div class="meta-item">📐 <strong>8,000</strong> sqft</div>
-                </div>
-                <p class="property-price">$2,400 /mo</p>
-            </div>
-        </div>
-
-        <div class="property-card" data-type="House">
-            <div class="card-img-wrapper">
-                <span class="property-status status-popular">Popular</span>
-                <img src="https://images.pexels.com/photos/258154/pexels-photo-258154.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Modern Villa" class="property-img">
-            </div>
-            <div class="card-details">
-                <p class="location">📍 Beverly Hills, California</p>
-                <h3 class="property-title">Luxury Modern Villa</h3>
-                <div class="card-meta">
-                    <div class="meta-item">🛏️ <strong>6</strong> beds</div>
-                    <div class="meta-item">🚿 <strong>5</strong> baths</div>
-                    <div class="meta-item">📐 <strong>5,500</strong> sqft</div>
-                </div>
-                <p class="property-price">$8,500,000</p>
-            </div>
-        </div>
-
-        <div class="property-card" data-type="Land">
-            <div class="card-img-wrapper">
-                <span class="property-status status-new">New</span>
-                <img src="https://images.pexels.com/photos/418831/pexels-photo-418831.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Mountain Land" class="property-img">
-            </div>
-            <div class="card-details">
-                <p class="location">📍 Aspen, Colorado</p>
-                <h3 class="property-title">Prime Mountain Plot</h3>
-                <div class="card-meta">
-                    <div class="meta-item">⛰️ <strong>Views</strong></div>
-                    <div class="meta-item">🌲 <strong>5</strong> Acres</div>
-                    <div class="meta-item">📐 <strong>217,800</strong> sqft</div>
-                </div>
-                <p class="property-price">$1,200,000</p>
-            </div>
-        </div>
-
-    </div>
-</section>
-
-<section class="why-choose">
-    <div class="container section-header">
-        <div class="section-badge">WHY US</div>
-        <h2>Why Choose <span>LuxeEstate</span></h2>
-        <p>We combine technology with expertise to deliver an unmatched real estate experience</p>
-    </div>
-
-    <div class="container benefits-grid">
-        <div class="benefit-card-modern">
-            <div class="benefit-icon-wrapper">
-                <span class="benefit-icon">🛡️</span>
-            </div>
-            <h3 class="benefit-title">Trusted & Secure</h3>
-            <p class="benefit-text">Every transaction is verified and protected with our comprehensive security protocols.</p>
-        </div>
-        <div class="benefit-card-modern">
-            <div class="benefit-icon-wrapper">
-                <span class="benefit-icon">📈</span>
-            </div>
-            <h3 class="benefit-title">Market Insights</h3>
-            <p class="benefit-text">AI-powered analytics to help you make the smartest investment decisions.</p>
-        </div>
-        <div class="benefit-card-modern">
-            <div class="benefit-icon-wrapper">
-                <span class="benefit-icon">🎧</span>
-            </div>
-            <h3 class="benefit-title">24/7 Support</h3>
-            <p class="benefit-text">Our dedicated team is always available to guide you through every step.</p>
-        </div>
-        <div class="benefit-card-modern">
-            <div class="benefit-icon-wrapper">
-                <span class="benefit-icon">🎖️</span>
-            </div>
-            <h3 class="benefit-title">Award Winning</h3>
-            <p class="benefit-text">Recognized as the #1 luxury real estate platform for 5 consecutive years.</p>
-        </div>
-    </div>
-</section>
-
-<footer style="background-color: var(--text-dark); color: var(--text-light); padding: 40px 0; text-align: center;">
     <div class="container">
-        <h1 style="color: white; margin-bottom: 20px;">LuxeEstate</h1>
-        <p style="font-size: 16px; margin-bottom: 0;">© 2024 LuxeEstate. Redefining luxury. All rights reserved.</p>
+        <h2 style="text-align: center; font-size: 44px; margin-bottom: 50px;">Featured <span>Properties</span></h2>
+        <div class="property-grid" id="propertyGrid">
+
+            <div class="property-card" data-type="Apartment">
+                <span class="badge status-featured">Featured</span>
+                <img src="https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg" class="property-img">
+                <div class="card-details">
+                    <p class="loc-text">📍 Manhattan, New York</p>
+                    <h3 class="property-title">Skyline Penthouse Suite</h3>
+                    <div class="meta-tags"><span>🛏️ 4 beds</span> <span>🚿 3 baths</span> <span>📐 3,200 sqft</span></div>
+                    <p class="property-price">$4,250,000</p>
+                </div>
+            </div>
+
+            <div class="property-card" data-type="House">
+                <span class="badge status-new">New</span>
+                <img src="https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg" class="property-img">
+                <div class="card-details">
+                    <p class="loc-text">📍 Malibu, California</p>
+                    <h3 class="property-title">Oceanfront Beach House</h3>
+                    <div class="meta-tags"><span>🛏️ 5 beds</span> <span>🚿 4 baths</span> <span>📐 4,500 sqft</span></div>
+                    <p class="property-price">$6,800,000</p>
+                </div>
+            </div>
+
+            <div class="property-card" data-type="House">
+                <span class="badge status-popular">Popular</span>
+                <img src="https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg" class="property-img">
+                <div class="card-details">
+                    <p class="loc-text">📍 Chelsea, London</p>
+                    <h3 class="property-title">Historic Garden Townhouse</h3>
+                    <div class="meta-tags"><span>🛏️ 3 beds</span> <span>🚿 2 baths</span> <span>📐 2,800 sqft</span></div>
+                    <p class="property-price">$3,150,000</p>
+                </div>
+            </div>
+
+            <div class="property-card" data-type="Commercial">
+                <span class="badge status-featured">Featured</span>
+                <img src="https://images.pexels.com/photos/269077/pexels-photo-269077.jpeg" class="property-img">
+                <div class="card-details">
+                    <p class="loc-text">📍 Downtown, Chicago</p>
+                    <h3 class="property-title">Modern Corporate Office</h3>
+                    <div class="meta-tags"><span>🏢 2 Floors</span> <span>🅿️ 15 spaces</span> <span>📐 8,000 sqft</span></div>
+                    <p class="property-price">$2,400,000</p>
+                </div>
+            </div>
+
+            <div class="property-card" data-type="Apartment">
+                <span class="badge status-new">New</span>
+                <img src="https://images.pexels.com/photos/7031406/pexels-photo-7031406.jpeg?auto=compress&cs=tinysrgb&w=800" class="property-img">
+                <div class="card-details">
+                    <p class="loc-text">📍 Downtown, Dubai</p>
+                    <h3 class="property-title">Azure Skyline Penthouse</h3>
+                    <div class="meta-tags"><span>🛏️ 3 beds</span> <span>🚿 3 baths</span> <span>📐 2,900 sqft</span></div>
+                    <p class="property-price">$2,150,000</p>
+                </div>
+            </div>
+
+            <div class="property-card" data-type="House">
+                <span class="badge status-popular">Popular</span>
+                <img src="https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=800" class="property-img">
+                <div class="card-details">
+                    <p class="loc-text">📍 Aspen, Colorado</p>
+                    <h3 class="property-title">Forest Edge Cottage</h3>
+                    <div class="meta-tags"><span>🛏️ 4 beds</span> <span>🚿 2 baths</span> <span>📐 3,100 sqft</span></div>
+                    <p class="property-price">$1,850,000</p>
+                </div>
+            </div>
+
+        </div>
     </div>
+</section>
+
+<section class="why-us">
+    <div class="container">
+        <h2 style="font-size: 42px; margin-bottom: 10px;">Why Choose <span>LuxeEstate</span></h2>
+        <p style="color: var(--text-light); margin-bottom: 50px;">We combine technology with expertise to deliver an unmatched real estate experience</p>
+        <div class="benefits-grid">
+            <div class="benefit-card"><div class="benefit-icon">🛡️</div><h4>Trusted & Secure</h4><p>Verified transactions and secure payments.</p></div>
+            <div class="benefit-card"><div class="benefit-icon">📈</div><h4>Market Insights</h4><p>Data-driven investment advice and analytics.</p></div>
+            <div class="benefit-card"><div class="benefit-icon">🎧</div><h4>24/7 Support</h4><p>Our dedicated team is always here to help you.</p></div>
+            <div class="benefit-card"><div class="benefit-icon">🏆</div><h4>Award Winning</h4><p>Recognized as the #1 Luxury Platform for 5 years.</p></div>
+        </div>
+    </div>
+</section>
+
+<footer style="background: #1e293b; color: white; padding: 50px 0; text-align: center;">
+    <h1>LuxeEstate</h1>
+    <p>© 2026 Redefining Luxury Living. All rights reserved.</p>
 </footer>
 
 <script>
+    function handleLogout() {
+        if (confirm("Are you sure you want to log out from LuxeEstate?")) {
+            localStorage.removeItem('luxeUser');
+            window.location.reload();
+        }
+    }
+
+    function checkLoginStatus() {
+        const savedName = localStorage.getItem('luxeUser');
+        const userActions = document.getElementById('userActions');
+        if (savedName && userActions) {
+            const initial = savedName.charAt(0).toUpperCase();
+            userActions.innerHTML = `
+                <div class="profile-status">
+                    <div class="avatar-circle">${initial}</div>
+                    <div class="user-info">
+                        <span class="user-name-label">${savedName}</span>
+                        <a href="javascript:void(0)" class="logout-link" onclick="handleLogout()">Logout</a>
+                    </div>
+                </div>`;
+        }
+    }
+
     function filterProperties() {
-        // Get what the user typed and selected
         const searchInput = document.getElementById('searchInput').value.toLowerCase();
         const typeSelect = document.getElementById('propertyTypeSelect').value;
-
-        // Get all property cards
         const cards = document.querySelectorAll('.property-card');
-
-        // Loop through each card and decide to show or hide it
         cards.forEach(card => {
-            // Get the text inside the location and title of the card
-            const locationText = card.querySelector('.location').innerText.toLowerCase();
-            const titleText = card.querySelector('.property-title').innerText.toLowerCase();
-
-            // Get the hidden property type we set in the HTML (data-type)
+            const title = card.querySelector('.property-title').innerText.toLowerCase();
+            const location = card.querySelector('.loc-text').innerText.toLowerCase();
             const cardType = card.getAttribute('data-type');
-
-            // Check if the card matches our search
-            const matchesSearch = locationText.includes(searchInput) || titleText.includes(searchInput);
+            const matchesSearch = title.includes(searchInput) || location.includes(searchInput);
             const matchesType = (typeSelect === "All") || (cardType === typeSelect);
-
-            // If it matches both rules, show it. Otherwise, hide it!
-            if (matchesSearch && matchesType) {
-                card.style.display = 'block';
-            } else {
-                card.style.display = 'none';
-            }
+            card.style.display = (matchesSearch && matchesType) ? 'block' : 'none';
         });
-
-        // Smoothly scroll down to the properties section so the user can see the results
-        document.getElementById('properties-section').scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('properties-section').scrollIntoView();
     }
+
+    window.onload = checkLoginStatus;
 </script>
 
 </body>
