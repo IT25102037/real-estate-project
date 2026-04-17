@@ -10,12 +10,17 @@
             --primary-gradient: linear-gradient(45deg, #a855f7, #06b6d4, #a855f7);
             --vibrant-cyan: #06b6d4;
             --vibrant-purple: #a855f7;
-            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-bg: rgba(255, 255, 255, 0.98);
             --text-dark: #1e293b;
             --text-light: #64748b;
-            --border-light: #e2e8f0;
-            /* UPDATED: Light colourful blue background */
-            --interface-bg: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+
+            /* UPDATED: Clearer Ice Blue Background */
+            --interface-bg: #f8fafc;
+
+            /* UPDATED: Vibrant Tab/Meta Colors */
+            --light-blue-bg: #e0f2fe;
+            --light-blue-border: #7dd3fc;
+            --light-blue-text: #0369a1;
         }
 
         body {
@@ -33,7 +38,7 @@
         header {
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(6, 182, 212, 0.1);
+            border-bottom: 1px solid rgba(6, 182, 212, 0.15);
             padding: 18px 0;
             position: fixed;
             top: 0; left: 0; width: 100%;
@@ -43,35 +48,27 @@
         .header-content { display: flex; justify-content: space-between; align-items: center; }
         .logo h1 { margin: 0; font-size: 30px; font-weight: 800; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* UPDATED: Larger and bolder navigation */
         nav ul { margin: 0; padding: 0; list-style: none; display: flex; gap: 40px; }
-        nav a {
-            text-decoration: none;
-            color: var(--text-dark);
-            font-size: 19px; /* Increased size */
-            font-weight: 700; /* Extra Bold */
-            transition: 0.3s;
-            letter-spacing: 0.5px;
-        }
-        nav a:hover { color: var(--vibrant-cyan); transform: scale(1.05); }
+        nav a { text-decoration: none; color: var(--text-dark); font-size: 18px; font-weight: 700; transition: 0.3s; }
+        nav a:hover { color: var(--vibrant-cyan); }
 
-        /* --- PROFILE STATUS --- */
+        /* UPDATED: Centered Logout Button Alignment */
         .profile-status {
-            display: flex; align-items: center; gap: 12px;
-            background: white; padding: 6px 18px; border-radius: 50px;
+            display: flex; align-items: center; gap: 15px;
+            background: white; padding: 8px 22px; border-radius: 50px;
             border: 2px solid var(--vibrant-cyan);
             box-shadow: 0 8px 20px rgba(6, 182, 212, 0.15);
         }
 
         .avatar-circle {
-            width: 34px; height: 34px; background: var(--primary-gradient);
+            width: 38px; height: 38px; background: var(--primary-gradient);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
             color: white; font-weight: 700;
         }
 
-        .user-info { display: flex; flex-direction: column; line-height: 1.2; }
-        .user-name-label { font-weight: 700; color: var(--text-dark); font-size: 14px; }
-        .logout-link { font-size: 11px; color: #ef4444; text-decoration: none; cursor: pointer; font-weight: 800; text-transform: uppercase; }
+        .user-info { display: flex; flex-direction: column; align-items: center; line-height: 1.4; }
+        .user-name-label { font-weight: 700; color: var(--text-dark); font-size: 15px; }
+        .logout-link { font-size: 11px; color: #ef4444; text-decoration: none; cursor: pointer; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
 
         .sign-in-btn {
             background: var(--primary-gradient); color: white;
@@ -79,19 +76,19 @@
             font-weight: 700; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
             transition: 0.3s;
         }
-        .sign-in-btn:hover { opacity: 0.9; transform: translateY(-2px); }
 
         /* --- HERO --- */
         .hero {
-            padding: 200px 0 120px; text-align: center;
+            padding: 200px 0 100px; text-align: center;
             background-image: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.5)), url('https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1600');
             background-size: cover; background-position: center; background-attachment: fixed;
             clip-path: ellipse(150% 100% at 50% 0%);
         }
 
-        .hero h2 { font-size: 62px; color: white; margin-bottom: 20px; font-weight: 800; }
+        /* UPDATED: More space between words in titles */
+        .hero h2 { font-size: 62px; color: white; margin-bottom: 20px; font-weight: 800; word-spacing: 8px; }
         .hero h2 span { color: var(--vibrant-cyan); }
-        .hero p { color: #f1f5f9; font-size: 22px; margin-bottom: 40px; }
+        .hero p { color: #f1f5f9; font-size: 22px; margin-bottom: 40px; word-spacing: 4px; letter-spacing: 0.5px; }
 
         .search-bar-modern {
             background: var(--glass-bg); border-radius: 60px; padding: 15px;
@@ -100,73 +97,65 @@
         }
 
         .search-input-group { flex: 1; display: flex; align-items: center; gap: 10px; padding: 0 15px; border-right: 1px solid #e2e8f0; }
-        .search-input-group:last-of-type { border-right: none; }
-        .search-input-group input, .search-input-group select { flex: 1; border: none; padding: 12px; font-size: 17px; outline: none; background: transparent; font-weight: 500; }
+
+        /* UPDATED: Cleaner, more vibrant search tabs */
+        .search-input-group input, .search-input-group select {
+            flex: 1; border: 1px solid var(--light-blue-border);
+            padding: 12px 18px; font-size: 15px; outline: none;
+            background: var(--light-blue-bg); color: var(--light-blue-text);
+            font-weight: 600; border-radius: 30px; transition: 0.3s;
+        }
 
         .search-btn-vibrant {
             background: var(--primary-gradient); color: white; padding: 16px 40px;
             border-radius: 40px; font-weight: 700; border: none; cursor: pointer; transition: 0.3s;
         }
-        .search-btn-vibrant:hover { transform: scale(1.05); }
-
-        /* --- STATISTICS --- */
-        .stats-section { padding: 60px 0; }
-        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; text-align: center; }
-        .stat-card {
-            padding: 35px; border-radius: 20px; background: white;
-            border: 1px solid rgba(6, 182, 212, 0.1);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
-        }
-        .stat-card h3 { font-size: 36px; margin: 10px 0 5px; font-weight: 800; color: var(--text-dark); }
-        .stat-card p { color: var(--text-light); margin: 0; font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
 
         /* --- PROPERTY GRID --- */
-        .featured-properties { padding: 100px 0; }
-        .property-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 40px; }
-        .property-card { background: white; border-radius: 25px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.06); position: relative; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .property-card:hover { transform: translateY(-15px); box-shadow: 0 30px 60px rgba(6, 182, 212, 0.15); }
-        .property-img { width: 100%; height: 260px; object-fit: cover; }
-        .badge { position: absolute; top: 20px; left: 20px; padding: 8px 16px; border-radius: 30px; font-size: 12px; color: white; font-weight: 700; text-transform: uppercase; }
-        .status-featured { background: #14b8a6; }
-        .status-popular { background: #f59e0b; }
-        .status-new { background: #3b82f6; }
-        .card-details { padding: 30px; }
-        .loc-text { color: var(--vibrant-cyan); font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-        .property-title { font-size: 24px; margin: 0 0 15px 0; font-weight: 700; color: #1e293b; }
-        .meta-tags { display: flex; gap: 20px; color: var(--text-light); font-size: 15px; margin-bottom: 25px; padding-top: 20px; border-top: 1px solid #f1f5f9; }
-        .property-price { font-size: 28px; font-weight: 800; color: var(--vibrant-purple); margin: 0; }
+        .featured-properties { padding: 80px 0; }
+        /* UPDATED: Reduced Listing Card size */
+        .property-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+        .property-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; transition: 0.4s; }
+        .property-card:hover { transform: translateY(-8px); }
 
-        /* --- WHY US --- */
-        .why-us { padding: 100px 0; text-align: center; }
-        .benefits-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; margin-top: 60px; }
-        .benefit-card {
-            padding: 45px 25px;
-            background: white;
-            border-radius: 25px;
-            border: 2px solid transparent;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.04);
-            transition: all 0.4s ease;
+        .property-img { width: 100%; height: 180px; object-fit: cover; }
+
+        .badge { position: absolute; top: 15px; left: 15px; padding: 6px 14px; border-radius: 30px; font-size: 11px; color: white; font-weight: 700; text-transform: uppercase; }
+        .status-new { background: #3b82f6; }
+
+        .card-details { padding: 25px; }
+        .loc-text { color: var(--vibrant-cyan); font-size: 13px; font-weight: 700; margin-bottom: 8px; word-spacing: 2px; }
+        .property-title { font-size: 20px; margin: 0 0 15px 0; font-weight: 700; color: #1e293b; word-spacing: 2px; }
+
+        /* UPDATED: Vibrant Meta Tags for Owner info */
+        .meta-tags {
+            display: flex; gap: 10px; font-size: 13px; margin-bottom: 20px;
+            padding: 10px 15px; border-radius: 10px;
+            background: var(--light-blue-bg); color: var(--light-blue-text);
+            font-weight: 600; border: 1px solid var(--light-blue-border);
         }
-        .benefit-card:hover {
-            border-color: var(--vibrant-cyan);
-            transform: translateY(-10px);
-            background: #fff;
+
+        .property-price { font-size: 24px; font-weight: 800; color: var(--vibrant-purple); margin: 0; }
+
+        /* --- WHY CHOOSE US --- */
+        .features-section { padding: 80px 0; background: white; text-align: center; }
+        .features-section h2 { font-size: 40px; font-weight: 800; margin-bottom: 10px; word-spacing: 6px; }
+        .features-section h2 span { color: var(--vibrant-cyan); }
+        .features-subtitle { color: var(--text-light); margin-bottom: 50px; font-size: 18px; word-spacing: 3px; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .feature-box { padding: 40px 20px; border-radius: 20px; background: #fdfdff; border: 1px solid #f1f5f9; transition: 0.3s; }
+        .feature-box:hover { border-color: var(--vibrant-cyan); transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.03); }
+        .feature-icon { font-size: 40px; margin-bottom: 20px; display: inline-block; }
+        .feature-box h4 { font-size: 20px; margin-bottom: 12px; color: #1e293b; font-weight: 700; word-spacing: 3px; }
+        .feature-box p { font-size: 15px; line-height: 1.6; color: var(--text-light); margin: 0; word-spacing: 2px; }
+
+        .load-more-container { text-align: center; margin-top: 40px; }
+        .load-more-btn {
+            background: var(--primary-gradient); color: white; padding: 18px 50px;
+            border-radius: 50px; font-size: 18px; font-weight: 700; border: none; cursor: pointer; transition: 0.3s;
         }
-        .benefit-icon {
-            width: 80px; height: 80px;
-            background: #ecfeff;
-            border-radius: 24px;
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 30px;
-            font-size: 35px;
-            color: var(--vibrant-cyan);
-            transition: 0.3s;
-        }
-        .benefit-card:hover .benefit-icon { background: var(--vibrant-cyan); color: white; }
 
         footer { background: #0f172a; color: white; padding: 80px 0; text-align: center; }
-        footer h1 { font-weight: 800; margin-bottom: 20px; }
-        footer p { color: #94a3b8; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -176,12 +165,11 @@
         <div class="logo"><h1>LuxeEstate</h1></div>
         <nav>
             <ul>
-                <li><a href="#">Buy</a></li>
+                <li><a href="index.html">Buy</a></li>
                 <li><a href="#">Rent</a></li>
                 <li><a href="sell.html">Sell</a></li>
                 <li><a href="#">Agents</a></li>
                 <li><a href="#">Contact</a></li>
-                <li><a href="#">About Us</a></li>
             </ul>
         </nav>
         <div id="userActions">
@@ -192,16 +180,17 @@
 
 <section class="hero">
     <div class="container">
-        <h2>Find Your <span>Dream Home</span> Today</h2>
-        <p>Discover handpicked luxury properties from around the globe.</p>
+        <h2>Find  Your  <span>Dream  Home</span>  Today</h2>
+        <p>Discover  handpicked  luxury  properties  from  around  the  globe.</p>
         <div class="search-bar-modern">
-            <div class="search-input-group">📍 <input type="text" id="searchInput" placeholder="Search by city or name..."></div>
+            <div class="search-input-group">📍 <input type="text" id="searchInput" placeholder="Search city..."></div>
             <div class="search-input-group">🏠
                 <select id="propertyTypeSelect">
                     <option value="All">All Types</option>
-                    <option value="House">House</option>
-                    <option value="Apartment">Apartment</option>
-                    <option value="Commercial">Commercial</option>
+                    <option value="House">Mansion</option>
+                    <option value="Apartment">Penthouse</option>
+                    <option value="Land">Land</option>
+                    <option value="Industrial Building">Industrial Building</option>
                 </select>
             </div>
             <button onclick="filterProperties()" class="search-btn-vibrant">🔍 Search</button>
@@ -209,66 +198,40 @@
     </div>
 </section>
 
-<section class="stats-section">
-    <div class="container stats-grid">
-        <div class="stat-card">🏠 <h3>12,000+</h3><p>Properties</p></div>
-        <div class="stat-card">😊 <h3>8,000+</h3><p>Happy Clients</p></div>
-        <div class="stat-card">🤝 <h3>200+</h3><p>Expert Agents</p></div>
-        <div class="stat-card">🏆 <h3>15+</h3><p>Years Experience</p></div>
-    </div>
-</section>
-
 <section class="featured-properties" id="properties-section">
     <div class="container">
-        <h2 style="text-align: center; font-size: 48px; margin-bottom: 60px; font-weight: 800;">Featured <span>Properties</span></h2>
-        <div class="property-grid" id="propertyGrid">
-
-            <div class="property-card" data-type="Apartment">
-                <span class="badge status-featured">Featured</span>
-                <img src="https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg" class="property-img">
-                <div class="card-details">
-                    <p class="loc-text">📍 Manhattan, New York</p>
-                    <h3 class="property-title">Skyline Penthouse Suite</h3>
-                    <div class="meta-tags"><span>🛏️ 4 beds</span> <span>🚿 3 baths</span> <span>📐 3,200 sqft</span></div>
-                    <p class="property-price">$4,250,000</p>
-                </div>
-            </div>
-
-            <div class="property-card" data-type="House">
-                <span class="badge status-new">New</span>
-                <img src="https://images.pexels.com/photos/1396122/pexels-photo-1396122.jpeg" class="property-img">
-                <div class="card-details">
-                    <p class="loc-text">📍 Malibu, California</p>
-                    <h3 class="property-title">Oceanfront Beach House</h3>
-                    <div class="meta-tags"><span>🛏️ 5 beds</span> <span>🚿 4 baths</span> <span>📐 4,500 sqft</span></div>
-                    <p class="property-price">$6,800,000</p>
-                </div>
-            </div>
-
-            <div class="property-card" data-type="House">
-                <span class="badge status-popular">Popular</span>
-                <img src="https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg" class="property-img">
-                <div class="card-details">
-                    <p class="loc-text">📍 Chelsea, London</p>
-                    <h3 class="property-title">Historic Garden Townhouse</h3>
-                    <div class="meta-tags"><span>🛏️ 3 beds</span> <span>🚿 2 baths</span> <span>📐 2,800 sqft</span></div>
-                    <p class="property-price">$3,150,000</p>
-                </div>
-            </div>
-
+        <h2 style="text-align: center; font-size: 48px; margin-bottom: 60px; font-weight: 800; word-spacing: 8px;">Featured  <span>Properties</span></h2>
+        <div class="property-grid" id="propertyGrid"></div>
+        <div class="load-more-container">
+            <button id="loadMoreBtn" class="load-more-btn" onclick="renderNextBatch()">More Results</button>
         </div>
     </div>
 </section>
 
-<section class="why-us">
+<section class="features-section">
     <div class="container">
-        <h2 style="font-size: 44px; margin-bottom: 10px; font-weight: 800;">Why Choose <span>LuxeEstate</span></h2>
-        <p style="color: var(--text-light); margin-bottom: 50px; font-size: 18px;">We combine technology with expertise to deliver an unmatched real estate experience</p>
-        <div class="benefits-grid">
-            <div class="benefit-card"><div class="benefit-icon">🛡️</div><h4>Trusted & Secure</h4><p>Verified transactions and secure payments.</p></div>
-            <div class="benefit-card"><div class="benefit-icon">📈</div><h4>Market Insights</h4><p>Data-driven investment advice and analytics.</p></div>
-            <div class="benefit-card"><div class="benefit-icon">🎧</div><h4>24/7 Support</h4><p>Our dedicated team is always here to help you.</p></div>
-            <div class="benefit-card"><div class="benefit-icon">🏆</div><h4>Award Winning</h4><p>Recognized as the #1 Luxury Platform for 5 years.</p></div>
+        <h2>Why  Choose  <span>LuxeEstate</span></h2>
+        <div class="features-grid">
+            <div class="feature-box">
+                <span class="feature-icon">🛡️</span>
+                <h4>Trusted  &  Secure</h4>
+                <p>Verified  transactions  and  secure  payments  for  peace  of  mind.</p>
+            </div>
+            <div class="feature-box">
+                <span class="feature-icon">📊</span>
+                <h4>Market  Insights</h4>
+                <p>Data-driven  investment  advice  and  analytics.</p>
+            </div>
+            <div class="feature-box">
+                <span class="feature-icon">🎧</span>
+                <h4>24/7  Support</h4>
+                <p>Our  dedicated  team  is  always  here  to  help.</p>
+            </div>
+            <div class="feature-box">
+                <span class="feature-icon">🏆</span>
+                <h4>Award  Winning</h4>
+                <p>Recognized  as  the  #1  Luxury  Platform  for  5  years.</p>
+            </div>
         </div>
     </div>
 </section>
@@ -281,26 +244,86 @@
 </footer>
 
 <script>
-    function handleLogout() {
-        if (confirm("Are you sure you want to log out from LuxeEstate?")) {
-            localStorage.removeItem('luxeUser');
-            window.location.reload();
+    let allListings = [];
+    let currentIndex = 0;
+    const itemsPerPage = 6;
+
+    async function loadListingsFromDB() {
+        try {
+            const response = await fetch('http://localhost:8081/api/listings/all');
+            if (!response.ok) throw new Error("Backend not reachable");
+            allListings = await response.json();
+            allListings.reverse();
+
+            document.getElementById('propertyGrid').innerHTML = '';
+            currentIndex = 0;
+
+            renderNextBatch();
+        } catch (error) {
+            console.warn("Backend Error:", error);
+        }
+    }
+
+    function renderNextBatch() {
+        const grid = document.getElementById('propertyGrid');
+        const nextBatch = allListings.slice(currentIndex, currentIndex + itemsPerPage);
+
+        nextBatch.forEach(prop => {
+            const card = document.createElement('div');
+            card.className = 'property-card';
+            card.setAttribute('data-type', prop.propertyType);
+
+            const formattedPrice = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'LKR',
+                maximumFractionDigits: 0
+            }).format(prop.price).replace("LKR", "Rs.");
+
+            card.innerHTML = `
+                <span class="badge status-new">Recent</span>
+                <img src="${prop.imagePath}" class="property-img">
+                <div class="card-details">
+                    <p class="loc-text">📍 ${prop.location}</p>
+                    <h3 class="property-title">${prop.propertyTitle}</h3>
+                    <div class="meta-tags">
+                        <span>👤 Owner: ${prop.ownerName}</span>
+                    </div>
+                    <p class="property-price">${formattedPrice}</p>
+                </div>`;
+            grid.appendChild(card);
+            currentIndex++;
+        });
+
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        if (currentIndex >= allListings.length) {
+            loadMoreBtn.style.display = 'none';
+        } else {
+            loadMoreBtn.style.display = 'inline-block';
         }
     }
 
     function checkLoginStatus() {
         const savedName = localStorage.getItem('luxeUser');
-        const userActions = document.getElementById('userActions');
-        if (savedName && userActions) {
-            const initial = savedName.charAt(0).toUpperCase();
-            userActions.innerHTML = `
+        if (savedName) {
+            // ONLY SHOW FIRST NAME
+            const firstName = savedName.split(' ')[0];
+            const initial = firstName.charAt(0).toUpperCase();
+            document.getElementById('userActions').innerHTML = `
                 <div class="profile-status">
                     <div class="avatar-circle">${initial}</div>
                     <div class="user-info">
-                        <span class="user-name-label">${savedName}</span>
-                        <a href="javascript:void(0)" class="logout-link" onclick="handleLogout()">Logout</a>
+                        <span class="user-name-label">${firstName}</span>
+                        <a href="javascript:void(0)" class="logout-link" onclick="logout()">Logout</a>
                     </div>
                 </div>`;
+        }
+    }
+
+    function logout() {
+        // CONFIRM BEFORE LOGOUT
+        if (confirm("Are you sure you want to logout?")) {
+            localStorage.removeItem('luxeUser');
+            location.reload();
         }
     }
 
@@ -308,18 +331,23 @@
         const searchInput = document.getElementById('searchInput').value.toLowerCase();
         const typeSelect = document.getElementById('propertyTypeSelect').value;
         const cards = document.querySelectorAll('.property-card');
+
         cards.forEach(card => {
             const title = card.querySelector('.property-title').innerText.toLowerCase();
-            const location = card.querySelector('.loc-text').innerText.toLowerCase();
+            const loc = card.querySelector('.loc-text').innerText.toLowerCase();
             const cardType = card.getAttribute('data-type');
-            const matchesSearch = title.includes(searchInput) || location.includes(searchInput);
+
+            const matchesSearch = title.includes(searchInput) || loc.includes(searchInput);
             const matchesType = (typeSelect === "All") || (cardType === typeSelect);
+
             card.style.display = (matchesSearch && matchesType) ? 'block' : 'none';
         });
-        document.getElementById('properties-section').scrollIntoView();
     }
 
-    window.onload = checkLoginStatus;
+    window.onload = () => {
+        checkLoginStatus();
+        loadListingsFromDB();
+    };
 </script>
 
 </body>

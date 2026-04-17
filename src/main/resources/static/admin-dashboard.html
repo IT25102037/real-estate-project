@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Dashboard | LuxeEstate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);
+            --vibrant-purple: #a855f7;
+            --vibrant-cyan: #06b6d4;
+            --text-dark: #1e293b;
+            --card-glass: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.4), rgba(6, 182, 212, 0.4)),
+                        url('https://images.unsplash.com/photo-1598425277154-1590b16a2d98?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-text h1 {
+            font-size: 42px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            font-weight: 800;
+        }
+
+        .welcome-text p {
+            color: var(--text-dark);
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            width: 90%;
+            max-width: 1000px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-dark);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(168, 85, 247, 0.3);
+            border-color: var(--vibrant-purple);
+        }
+
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-gradient);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            color: white;
+            margin-bottom: 10px;
+            box-shadow: 0 10px 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .nav-card h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .nav-card p {
+            margin: 0;
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .logout-btn {
+            margin-top: 50px;
+            padding: 14px 40px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 50px;
+            color: #ef4444;
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .logout-btn:hover {
+            background: #fef2f2;
+            border-color: #fca5a5;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+<div class="welcome-text">
+    <h1>LuxeEstate Admin</h1>
+    <p>Control Center & Management</p>
+</div>
+
+<div class="dashboard-grid">
+    <a href="view-customer.html" class="nav-card">
+        <div class="icon-box">👥</div>
+        <h2>Registered Customers</h2>
+        <p>View, update, and manage all property leads and customer profiles.</p>
+    </a>
+
+    <a href="#" class="nav-card">
+        <div class="icon-box">🏡</div>
+        <h2>Property Listings</h2>
+        <p>Edit current inventory, adjust prices, and add new luxury homes.</p>
+    </a>
+
+    <a href="#" class="nav-card">
+        <div class="icon-box">📊</div>
+        <h2>Analytics</h2>
+        <p>Review sales performance, lead conversion, and site traffic.</p>
+    </a>
+</div>
+
+<a href="admin-login.html" class="logout-btn" onclick="return confirmLogout()">Secure Logout</a>
+
+<script>
+    function confirmLogout() {
+        return confirm("Are you sure you want to log out of the Admin panel?");
+    }
+</script>
+
+</body>
+</html>

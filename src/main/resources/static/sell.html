@@ -7,295 +7,243 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-gradient: linear-gradient(45deg, #a855f7, #06b6d4, #a855f7);
-            --vibrant-cyan: #06b6d4;
-            --vibrant-purple: #a855f7;
-            --text-dark: #1e293b;
-            --glass-bg: rgba(255, 255, 255, 0.9);
+            --primary-gradient: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            --light-blue: #e0f2fe;
+            --vibrant-blue: #0284c7;
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --text-dark: #0f172a;
             --error-red: #f43f5e;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
             margin: 0;
-            /* Creative Luxury Background */
-            background: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.6)),
-                        url('https://images.pexels.com/photos/7031406/pexels-photo-7031406.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
+            background: linear-gradient(rgba(224, 242, 254, 0.6), rgba(224, 242, 254, 0.6)),
+                        url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 40px 20px;
         }
 
-        .form-container {
+        .form-container, .listings-dashboard {
             background: var(--glass-bg);
-            backdrop-filter: blur(15px);
-            padding: 50px;
-            border-radius: 35px;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 800px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        h2 { font-weight: 800; font-size: 38px; margin-bottom: 5px; text-align: center; color: var(--text-dark); }
-        h2 span { background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .subtitle { text-align: center; color: #475569; margin-bottom: 40px; font-weight: 500; }
-
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        .full-width { grid-column: span 2; }
-
-        .form-group { margin-bottom: 10px; position: relative; }
-        label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 14px; color: #1e293b; }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 16px;
-            border-radius: 15px;
-            border: 2px solid #cbd5e1;
-            font-family: inherit;
-            font-size: 15px;
-            background: rgba(255, 255, 255, 0.8);
-            transition: all 0.3s ease;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--vibrant-cyan);
-            outline: none;
-            background: #fff;
-            box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
-        }
-
-        /* Error Styles */
-        input.invalid, select.invalid, textarea.invalid, .file-upload-box.invalid {
-            border-color: var(--error-red) !important;
-            background: #fff1f2;
-        }
-
-        .error-hint {
-            color: var(--error-red);
-            font-size: 12px;
-            font-weight: 600;
-            margin-top: 5px;
-            display: none;
-            padding-left: 5px;
-        }
-
-        /* File Upload Styling */
-        .file-upload-box {
-            background: white;
-            border: 2px dashed #94a3b8;
+            backdrop-filter: blur(12px);
             padding: 40px;
-            text-align: center;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .file-upload-box:hover {
-            border-color: var(--vibrant-purple);
-            background: #fdfaff;
-        }
-
-        .preview-img {
-            max-width: 150px;
-            border-radius: 10px;
-            margin-top: 15px;
-            display: none;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .submit-btn {
+            border-radius: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
             width: 100%;
-            background: var(--primary-gradient);
-            color: white;
-            padding: 20px;
-            border: none;
-            border-radius: 20px;
-            font-size: 19px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: 0.4s;
-            margin-top: 30px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            max-width: 900px;
+            margin: 20px auto;
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
 
-        .submit-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(168, 85, 247, 0.4);
-        }
+        /* Dashboard Styles */
+        .listings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+        .my-listing-card { background: white; border-radius: 20px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .my-listing-card img { width: 100%; height: 150px; object-fit: cover; border-radius: 15px; }
+        .card-controls { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-edit { flex: 1; background: #0ea5e9; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+        .btn-delete { flex: 1; background: #ef4444; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 600; }
 
-        /* Auth Error Screen */
-        #auth-error { display: none; text-align: center; }
-        .login-btn {
-            display: inline-block;
-            margin-top: 25px;
-            padding: 15px 35px;
-            background: var(--vibrant-cyan);
-            color: white;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 700;
-        }
+        /* Custom Deletion UI */
+        #deleteOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .delete-box { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
+        .delete-box textarea { margin-top: 15px; border: 1px solid #ddd; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: span 2; }
+        label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 13px; color: #334155; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #cbd5e1; box-sizing: border-box; }
+        .upload-zone { background: #f8fafc; border: 2px dashed #0284c7; padding: 20px; border-radius: 20px; text-align: center; cursor: pointer; }
+        .preview-img { max-width: 150px; border-radius: 10px; display: none; margin-top: 10px;}
+        .submit-btn { width: 100%; background: var(--primary-gradient); color: white; padding: 18px; border: none; border-radius: 15px; font-size: 18px; font-weight: 800; cursor: pointer; margin-top: 25px; }
+        .invalid-input { border: 2px solid var(--error-red) !important; }
+        .error-hint { color: var(--error-red); font-size: 12px; display: none; font-weight: 600; }
     </style>
 </head>
 <body>
 
-<div id="auth-error" class="form-container">
-    <div style="font-size: 80px;">🔒</div>
-    <h2>Sign In <span>Required</span></h2>
-    <p>Please login to your account to access the property listing dashboard.</p>
-    <a href="add-customer.html" class="login-btn">Login to LuxeEstate</a>
-</div>
-
 <div id="property-form-wrapper" class="form-container">
-    <h2>List Your <span>Property</span></h2>
-    <p class="subtitle">Join our elite network of property owners</p>
+    <header style="text-align:center; margin-bottom: 30px;">
+        <h2 id="formTitle">List Your <span>Property</span></h2>
+        <p class="subtitle">Enter details to update or publish your listing</p>
+    </header>
 
     <form id="listingForm" novalidate>
-        <div class="form-grid">
-            <div class="form-group full-width">
-                <label>Full Name *</label>
-                <input type="text" id="ownerName" placeholder="John Doe" required>
-                <div class="error-hint">Please provide your name</div>
-            </div>
-
-            <div class="form-group">
-                <label>Property Type *</label>
-                <select id="propType" required>
-                    <option value="">Choose Type</option>
-                    <option value="House">Mansion/House</option>
-                    <option value="Apartment">Luxury Apartment</option>
-                    <option value="Commercial">Business Space</option>
-                    <option value="Commercial">Land</option>
-                    <option value="Commercial">Industrial property</option>
-
-                </select>
-                <div class="error-hint">Select a category</div>
-            </div>
-
-            <div class="form-group">
-                <label>Asking Price (LKR) *</label>
-                <input type="number" id="propPrice" placeholder="e.g. 1500000" required>
-                <div class="error-hint">Enter a valid price</div>
-            </div>
-
-            <div class="form-group full-width">
-                <label>Property Location *</label>
-                <input type="text" id="propLocation" placeholder="Street, City, State" required>
-                <div class="error-hint">Location is mandatory</div>
-            </div>
-
-            <div class="form-group full-width">
-                <label>Property Gallery (Max 20MB) *</label>
-                <div class="file-upload-box" id="uploadZone" onclick="document.getElementById('propImages').click()">
-                    <div id="uploadText">
-                        <span style="font-size: 40px;">📂</span>
-                        <p style="font-weight: 600; margin: 10px 0 5px;">Click to upload high-res photos</p>
-                        <p style="font-size: 12px; color: #64748b;">JPG, PNG or WEBP (Max. 20MB)</p>
-                    </div>
-                    <img id="imgPreview" class="preview-img" alt="Preview">
-                    <input type="file" id="propImages" hidden accept="image/*" required>
-                </div>
-                <div class="error-hint" id="fileError">An image under 20MB is required</div>
-            </div>
-
-            <div class="form-group full-width">
-                <label>Description</label>
-                <textarea id="propDesc" rows="3" placeholder="Describe what makes this property unique..."></textarea>
+        <input type="hidden" id="editListingId"> <div class="form-grid">
+        <div class="form-group full-width">
+            <label>Seller Name</label>
+            <input type="text" id="ownerName" readonly style="background: #f1f5f9;">
+        </div>
+        <div class="form-group">
+            <label>Property Title *</label>
+            <input type="text" id="propertyTitle">
+            <div class="error-hint" id="titleError">⚠️ Enter a title</div>
+        </div>
+        <div class="form-group">
+            <label>Property Type *</label>
+            <select id="propertyType">
+                <option value="House">Mansion</option>
+                <option value="Land">Apartment</option>
+                <option value="Land">House</option>
+                <option value="Apartment">Penthouse</option>
+                <option value="Land">Land</option>
+                <option value="Land">Industrial Building</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Price (LKR) *</label>
+            <input type="number" id="price">
+        </div>
+        <div class="form-group">
+            <label>Location *</label>
+            <input type="text" id="location">
+        </div>
+        <div class="form-group full-width">
+            <label>Property Image *</label>
+            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('propImages').click()">
+                <img id="imgPreview" class="preview-img">
+                <p id="uploadText">📷 Click to upload image</p>
+                <input type="file" id="propImages" hidden accept="image/*">
             </div>
         </div>
-
-        <button type="submit" class="submit-btn">Publish Property Listing</button>
+    </div>
+        <button type="submit" class="submit-btn" id="submitBtn">Publish Listing</button>
     </form>
 </div>
 
+<div class="listings-dashboard">
+    <h2 style="text-align: center;">My <span>Listings Status</span></h2>
+    <div id="myListingsContainer" class="listings-grid">
+    </div>
+</div>
+
+<div id="deleteOverlay">
+    <div class="delete-box">
+        <h3>Delete Listing?</h3>
+        <p>Please provide a reason for deletion:</p>
+        <textarea id="deleteReason" rows="3" placeholder="e.g. Property Sold"></textarea>
+        <div class="card-controls">
+            <button class="btn-edit" onclick="closeDelete()">Cancel</button>
+            <button class="btn-delete" onclick="confirmDelete()">Confirm Delete</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    // Check Login State
+    let currentDeleteId = null;
+
     document.addEventListener("DOMContentLoaded", () => {
         const user = localStorage.getItem('luxeUser');
         if (user) {
-            document.getElementById('property-form-wrapper').style.display = 'block';
             document.getElementById('ownerName').value = user;
+            fetchMyListings(user);
         } else {
-            document.getElementById('auth-error').style.display = 'block';
-            document.getElementById('property-form-wrapper').style.display = 'none';
+            window.location.href = "add-customer.html";
         }
     });
 
-    // Image Preview & Validation
-    const fileInput = document.getElementById('propImages');
-    const fileError = document.getElementById('fileError');
-    const imgPreview = document.getElementById('imgPreview');
-    const uploadText = document.getElementById('uploadText');
-    const uploadZone = document.getElementById('uploadZone');
+    async function fetchMyListings(user) {
+        try {
+            const res = await fetch(`http://localhost:8081/api/listings/all`);
+            const data = await res.json();
+            const myData = data.filter(item => item.ownerName === user);
+            const container = document.getElementById('myListingsContainer');
+            container.innerHTML = myData.length ? '' : '<p>No listings found.</p>';
 
-    fileInput.onchange = function() {
-        if (this.files && this.files[0]) {
-            const file = this.files[0];
-            const sizeMB = file.size / 1024 / 1024;
+            myData.forEach(item => {
+                container.innerHTML += `
+                    <div class="my-listing-card">
+                        <img src="${item.imagePath}">
+                        <h4>${item.propertyTitle}</h4>
+                        <p>LKR ${item.price.toLocaleString()}</p>
+                        <div class="card-controls">
+                            <button class="btn-edit" onclick="startEdit(${JSON.stringify(item).replace(/"/g, '&quot;')})">Edit</button>
+                            <button class="btn-delete" onclick="openDelete(${item.id})">Delete</button>
+                        </div>
+                    </div>`;
+            });
+        } catch (e) { console.error("Load failed"); }
+    }
 
-            if (sizeMB > 20) {
-                fileError.innerText = "Error: This file is " + sizeMB.toFixed(1) + "MB. Limit is 20MB.";
-                fileError.style.display = 'block';
-                uploadZone.classList.add('invalid');
-                this.value = "";
-                imgPreview.style.display = 'none';
-                uploadText.style.display = 'block';
-            } else {
-                fileError.style.display = 'none';
-                uploadZone.classList.remove('invalid');
-                uploadText.style.display = 'none';
+    // Edit Function
+    function startEdit(item) {
+        window.scrollTo({top: 0, behavior: 'smooth'});
+        document.getElementById('formTitle').innerHTML = "Update <span>Listing</span>";
+        document.getElementById('submitBtn').innerText = "Save Changes";
+        document.getElementById('editListingId').value = item.id;
+        document.getElementById('propertyTitle').value = item.propertyTitle;
+        document.getElementById('propertyType').value = item.propertyType;
+        document.getElementById('price').value = item.price;
+        document.getElementById('location').value = item.location;
+        document.getElementById('imgPreview').src = item.imagePath;
+        document.getElementById('imgPreview').style.display = 'block';
+        document.getElementById('uploadText').style.display = 'none';
+    }
 
-                // Show Preview
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    imgPreview.src = e.target.result;
-                    imgPreview.style.display = 'inline-block';
-                };
-                reader.readAsDataURL(file);
+    // Delete Modal Functions
+    function openDelete(id) {
+        currentDeleteId = id;
+        document.getElementById('deleteOverlay').style.display = 'flex';
+    }
+    function closeDelete() {
+        document.getElementById('deleteOverlay').style.display = 'none';
+        document.getElementById('deleteReason').value = '';
+    }
+
+    async function confirmDelete() {
+        const reason = document.getElementById('deleteReason').value;
+        if(!reason) return alert("Please provide a reason.");
+
+        try {
+            const res = await fetch(`http://localhost:8081/api/listings/delete/${currentDeleteId}`, { method: 'DELETE' });
+            if(res.ok) {
+                alert("Listing Removed successfully.");
+                location.reload();
             }
-        }
+        } catch (e) { alert("Delete failed"); }
+    }
+
+    // Form Submit (Handles both Add and Update)
+    document.getElementById('listingForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const editId = document.getElementById('editListingId').value;
+        const endpoint = editId ? `update/${editId}` : 'add';
+
+        const data = {
+            ownerName: document.getElementById('ownerName').value,
+            propertyTitle: document.getElementById('propertyTitle').value,
+            propertyType: document.getElementById('propertyType').value,
+            price: parseFloat(document.getElementById('price').value),
+            location: document.getElementById('location').value,
+            imagePath: document.getElementById('imgPreview').src,
+            description: document.getElementById('description')?.value || ""
+        };
+
+        try {
+            const res = await fetch(`http://localhost:8081/api/listings/${endpoint}`, {
+                method: editId ? 'PUT' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                alert("✨ Success! Listing updated.");
+                location.reload();
+            }
+        } catch (err) { alert("Connection Error"); }
     };
 
-    // Final Form Validation
-    document.getElementById('listingForm').onsubmit = function(e) {
-        e.preventDefault();
-        let hasError = false;
-        const fields = this.querySelectorAll('[required]');
-
-        fields.forEach(f => {
-            const hint = (f.id === 'propImages') ? fileError : f.nextElementSibling;
-            const container = (f.id === 'propImages') ? uploadZone : f;
-
-            if (!f.value) {
-                container.classList.add('invalid');
-                if (hint) hint.style.display = 'block';
-                hasError = true;
-            } else {
-                container.classList.remove('invalid');
-                if (hint) hint.style.display = 'none';
-            }
-        });
-
-        if (!hasError) {
-            alert("✨ Success! Your luxury listing has been submitted for approval.");
-            window.location.href = "index.html";
-        } else {
-            // Smooth scroll to top of form if error
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+    // Image Preview logic
+    document.getElementById('propImages').onchange = function() {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('imgPreview').src = e.target.result;
+            document.getElementById('imgPreview').style.display = 'block';
+            document.getElementById('uploadText').style.display = 'none';
+        };
+        reader.readAsDataURL(this.files[0]);
     };
 </script>
 </body>
