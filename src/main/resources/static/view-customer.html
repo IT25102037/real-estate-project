@@ -3,289 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | LuxeEstate</title>
+    <title>Manage Customers | LuxeEstate Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Light, Luxe Brand Colors */
             --primary-gradient: linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);
             --vibrant-purple: #a855f7;
             --vibrant-cyan: #06b6d4;
             --text-dark: #1e293b;
-            --text-muted: #64748b;
-            --bg-light: #f8fafc;
-            --card-glass: rgba(255, 255, 255, 0.75); /* Increased slightly for readability over image */
-            --glass-blur: blur(20px);
-            --glass-border: rgba(255, 255, 255, 0.5);
+            --bg-light-blue: #f0f9ff;
             --table-border: #e2e8f0;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light-blue);
             margin: 0;
             padding: 40px 20px;
-
-            /* --- BACKGROUND IMAGE ADDED HERE --- */
-            background: linear-gradient(rgba(248, 250, 252, 0.8), rgba(248, 250, 252, 0.8)),
-                        url('https://images.unsplash.com/photo-1600607687940-4e524cb35a5a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-
             color: var(--text-dark);
-            min-height: 100vh;
         }
 
         .dashboard-container {
-            max-width: 1300px;
+            max-width: 1400px;
             margin: auto;
-            animation: fadeIn 0.8s ease-out;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* --- HEADER SECTION --- */
         .header-flex {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
-        .logo-area h1 {
-            font-size: 32px;
-            font-weight: 700;
-            margin: 0;
+        .logo-section h1 {
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin: 0;
+            font-size: 32px;
+            font-weight: 800;
         }
 
-        .nav-back {
+        .back-link {
             text-decoration: none;
             color: var(--vibrant-purple);
             font-weight: 600;
+        }
+
+        /* --- CLEAN FILTER BAR --- */
+        .filter-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-panel input, .filter-panel select {
+            padding: 12px 15px;
+            border: 1px solid var(--table-border);
+            border-radius: 10px;
+            font-family: 'Poppins';
+            outline: none;
+            font-size: 14px;
+        }
+
+        .input-id { width: 100px; }
+        .input-general { flex: 2; min-width: 250px; }
+        .select-type { flex: 1; min-width: 150px; }
+
+        .btn-filter {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
             transition: 0.3s;
         }
 
-        .nav-back:hover { color: var(--text-dark); transform: translateX(-5px); }
-
-        /* --- ACTION PANELS --- */
-        .grid-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .glass-panel {
-            background: var(--card-glass);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        }
-
-        .panel-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--vibrant-purple);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .control-group {
-            display: flex;
-            gap: 12px;
-        }
-
-        input, select {
-            background: rgba(255, 255, 255, 0.7);
-            border: 1px solid var(--table-border);
-            border-radius: 10px;
+        .btn-reset {
+            background: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
             padding: 12px 15px;
-            color: var(--text-dark);
-            font-family: 'Poppins', sans-serif;
-            transition: 0.3s;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
         }
 
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--vibrant-cyan);
-            box-shadow: 0 0 10px rgba(6, 182, 212, 0.1);
-        }
-
-        /* --- THE DATA TABLE --- */
-        .table-wrapper {
-            background: var(--card-glass);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
+        /* --- TABLE STYLING --- */
+        .table-container {
+            background: white;
             border-radius: 20px;
-            border: 1px solid var(--glass-border);
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            padding: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            text-align: left;
-        }
-
-        thead {
-            background: rgba(168, 85, 247, 0.05);
+            border: 1px solid var(--table-border);
         }
 
         th {
-            padding: 20px;
+            padding: 18px;
             color: var(--vibrant-purple);
-            font-weight: 600;
             text-transform: uppercase;
             font-size: 13px;
-            letter-spacing: 1px;
-            border-bottom: 2px solid var(--table-border);
+            border: 1px solid var(--table-border);
+            background-color: #fafafa;
+            text-align: center;
         }
 
         td {
-            padding: 18px 20px;
-            border-bottom: 1px solid var(--table-border);
-            border-right: 1px solid var(--table-border);
-            font-size: 15px;
-            color: var(--text-dark);
-        }
-
-        td:last-child {
-            border-right: none;
-        }
-
-        tr:hover {
-            background: rgba(255, 255, 255, 0.5);
+            padding: 15px;
+            border: 1px solid var(--table-border);
+            font-size: 14px;
+            text-align: center;
         }
 
         .property-badge {
-            background: var(--primary-gradient);
-            padding: 5px 14px;
+            background: #f0f9ff;
+            color: #0369a1;
+            padding: 4px 12px;
             border-radius: 20px;
-            color: white;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
         }
 
-        .btn {
-            padding: 10px 18px;
-            border-radius: 10px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .btn-update {
-            background: var(--primary-gradient);
-            color: white;
-            box-shadow: 0 4px 10px rgba(168, 85, 247, 0.2);
-        }
-
-        .btn-update:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(168, 85, 247, 0.4);
-        }
-
         .btn-delete {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px solid var(--table-border);
+            padding: 8px 16px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #64748b;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
         }
 
         .btn-delete:hover {
             background: #fef2f2;
-            color: #f43f5e;
+            color: #ef4444;
             border-color: #fca5a5;
         }
 
-        #noResultsMessage td {
-            padding: 80px;
-            text-align: center;
-            font-size: 18px;
-            color: var(--text-muted);
-            border: none;
-        }
-
+        /* Oops Message */
+        #noResultsRow { display: none; }
+        .no-results-content { padding: 50px 0; text-align: center; }
+        .no-results-content h2 { color: #ef4444; }
     </style>
 </head>
 <body>
 
 <div class="dashboard-container">
     <div class="header-flex">
-        <div class="logo-area">
+        <div class="logo-section">
             <h1>LuxeEstate</h1>
-            <p style="color: var(--text-muted); margin: 0;">Staff Lead Dashboard</p>
+            <p style="margin:0; color:#64748b; font-weight:500;">Staff Lead Dashboard</p>
         </div>
-        <a href="add-customer.html" class="nav-back">← Back to Registration</a>
+        <a href="admin-dashboard.html" class="back-link">← Back to Dashboard</a>
     </div>
 
-    <div class="grid-controls">
-        <div class="glass-panel">
-            <p class="panel-title">Quick Update</p>
-            <div class="control-group">
-                <input type="number" id="editCustomerId" placeholder="Lead ID" style="width: 100px;">
-                <input type="text" id="newPropertyType" placeholder="New Property Type" style="flex: 1;">
-                <button onclick="submitUpdate()" class="btn btn-update">Update</button>
-            </div>
-        </div>
-
-        <div class="glass-panel">
-            <p class="panel-title">Search & Filter</p>
-            <div class="control-group">
-                <input type="text" id="searchInput" onkeyup="filterCustomers()" placeholder="🔍 Search by name or email..." style="flex: 1;">
-                <select id="propertyFilter" onchange="filterCustomers()">
-                    <option value="All">All Types</option>
-                    <option value="House">House</option>
-                    <option value="Apartment">Apartment</option>
-                    <option value="Land">Land</option>
-                    <option value="Commercial">Commercial</option>
-                </select>
-            </div>
-        </div>
+    <div class="filter-panel">
+        <input type="text" id="searchId" class="input-id" placeholder="ID (#)">
+        <input type="text" id="searchGeneral" class="input-general" placeholder="Search by name, email or location...">
+        <select id="propertyFilter" class="select-type">
+            <option value="">All Interests</option>
+            <option value="House">House</option>
+            <option value="Apartment">Apartment</option>
+            <option value="Land">Land</option>
+            <option value="Commercial">Commercial</option>
+        </select>
+        <button class="btn-filter" onclick="filterCustomers()">🔍 Filter</button>
+        <button class="btn-reset" onclick="resetFilters()">Reset</button>
     </div>
 
-    <div class="table-wrapper">
+    <div class="table-container">
         <table>
             <thead>
             <tr>
                 <th>ID</th>
                 <th>Full Name</th>
-                <th>Contact</th>
+                <th>Contact Details</th>
                 <th>Interest</th>
                 <th>Location</th>
                 <th>Actions</th>
             </tr>
             </thead>
-            <tbody id="customerTableBody">
-            </tbody>
-            <tbody id="noResultsMessage" style="display: none;">
-            <tr>
+            <tbody id="customerTableBody"></tbody>
+            <tr id="noResultsRow">
                 <td colspan="6">
-                    <div style="font-size: 40px; margin-bottom: 10px;">🏘️</div>
-                    No leads found matching your filters.
+                    <div class="no-results-content">
+                        <h2>Oops! 🧐</h2>
+                        <p>Your result is not in there.</p>
+                    </div>
                 </td>
             </tr>
-            </tbody>
         </table>
     </div>
 </div>
 
 <script src="js/view-customer.js"></script>
-
 </body>
 </html>
