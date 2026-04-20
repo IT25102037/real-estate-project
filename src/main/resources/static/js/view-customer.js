@@ -15,17 +15,17 @@ function loadCustomers() {
                     <td style="font-weight:600; text-align:left;">${customer.name}</td>
                     <td style="text-align:left;">
                         <div style="font-size: 13px;">📧 ${customer.email}</div>
-                        <div style="font-size: 13px; color: #64748b;">📞 ${customer.phone}</div>
+                        <div style="font-size: 13px; color: #94a3b8;">📞 ${customer.phone}</div>
                     </td>
                     <td><span class="property-badge">${customer.propertyType}</span></td>
                     <td style="text-align:left;">📍 ${customer.address}</td>
                     <td>
-                        <button onclick="deleteCustomer(${customer.id})" class="btn-delete">Remove</button>
+                        <button onclick="deleteCustomer(${customer.id})" class="btn-remove">Remove</button>
                     </td>
                 </tr>`;
                 tableBody.innerHTML += row;
             });
-            filterCustomers(); // Run once to check if results exist
+            filterCustomers();
         })
         .catch(error => console.error('Error:', error));
 }
@@ -56,20 +56,14 @@ function filterCustomers() {
             rows[i].style.display = "none";
         }
     }
-
-    document.getElementById('noResultsRow').style.display = visibleCount === 0 ? "table-row" : "none";
-}
-
-function resetFilters() {
-    document.getElementById('searchId').value = "";
-    document.getElementById('searchGeneral').value = "";
-    document.getElementById('propertyFilter').value = "";
-    filterCustomers();
 }
 
 function deleteCustomer(id) {
-    if(confirm('Delete lead #' + id + '?')) {
+    if(confirm('Are you sure you want to remove lead #' + id + '?')) {
         fetch(`http://localhost:8081/api/customers/${id}`, { method: 'DELETE' })
-        .then(() => loadCustomers());
+        .then(() => {
+            loadCustomers();
+            // Optional: If you want the dashboard count to update immediately if you stayed on the page
+        });
     }
 }

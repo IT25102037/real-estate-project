@@ -3,181 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main Dashboard | LuxeEstate</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>LuxeEstate | Premium Admin Dashboard</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);
-            --vibrant-purple: #a855f7;
-            --vibrant-cyan: #06b6d4;
-            --text-dark: #1e293b;
-            --card-glass: rgba(255, 255, 255, 0.85);
-            --glass-border: rgba(255, 255, 255, 0.5);
+            --primary: #818cf8;
+            --accent: #22d3ee;
+            --sidebar-width: 280px;
+            --glass-dark: rgba(15, 23, 42, 0.8);
+            --card-glass: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.4), rgba(6, 182, 212, 0.4)),
-                        url('https://images.unsplash.com/photo-1598425277154-1590b16a2d98?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(49, 46, 129, 0.7)),
+                        url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            display: flex; height: 100vh; color: var(--text-main); overflow: hidden;
         }
 
-        .welcome-text {
-            text-align: center;
-            margin-bottom: 50px;
-            animation: fadeInDown 0.8s ease-out;
+        aside {
+            width: var(--sidebar-width);
+            background: var(--glass-dark);
+            backdrop-filter: blur(30px);
+            border-right: 1px solid var(--glass-border);
+            display: flex; flex-direction: column; padding: 35px 20px;
         }
 
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .admin-topic {
+            font-size: 14px; font-weight: 800; color: var(--accent);
+            letter-spacing: 2px; text-transform: uppercase;
+            margin-bottom: 40px; padding-left: 12px;
         }
 
-        .welcome-text h1 {
-            font-size: 42px;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0;
-            font-weight: 800;
+        .nav-menu { list-style: none; flex-grow: 1; }
+        .nav-item {
+            display: flex; align-items: center; padding: 14px 18px; margin-bottom: 8px;
+            border-radius: 14px; color: var(--text-dim); text-decoration: none;
+            font-weight: 500; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-item i { margin-right: 14px; width: 20px; }
+        .nav-item.active {
+            background: rgba(129, 140, 248, 0.15);
+            color: #c7d2fe;
+            border: 1px solid rgba(129, 140, 248, 0.4);
+        }
+        .nav-item:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            transform: translateX(5px);
         }
 
-        .welcome-text p {
-            color: var(--text-dark);
-            font-size: 18px;
-            font-weight: 600;
-            letter-spacing: 1px;
+        main { flex-grow: 1; padding: 40px; overflow-y: auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        header h1 { font-size: 28px; letter-spacing: -0.5px; }
+
+        .grid-container {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 25px;
         }
 
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            width: 90%;
-            max-width: 1000px;
-            animation: fadeInUp 0.8s ease-out;
+        .card {
+            background: var(--card-glass); backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border); border-radius: 24px;
+            padding: 24px; transition: 0.3s;
         }
+        .card:hover { border-color: var(--primary); transform: translateY(-4px); background: rgba(255,255,255,0.09); }
+        .card h3 { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+        .card .value { font-size: 28px; font-weight: 700; margin-top: 10px; }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .analytics-box {
+            background: var(--card-glass); border: 1px solid var(--glass-border);
+            border-radius: 30px; padding: 35px; margin-top: 10px;
         }
-
-        .nav-card {
-            background: var(--card-glass);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            border-radius: 25px;
-            padding: 40px;
-            text-align: center;
-            text-decoration: none;
-            color: var(--text-dark);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .nav-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(168, 85, 247, 0.3);
-            border-color: var(--vibrant-purple);
-        }
-
-        .icon-box {
-            width: 80px;
-            height: 80px;
-            background: var(--primary-gradient);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 35px;
-            color: white;
-            margin-bottom: 10px;
-            box-shadow: 0 10px 20px rgba(6, 182, 212, 0.3);
-        }
-
-        .nav-card h2 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .nav-card p {
-            margin: 0;
-            font-size: 14px;
-            color: #64748b;
-            line-height: 1.5;
-        }
-
-        .logout-btn {
-            margin-top: 50px;
-            padding: 14px 40px;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 50px;
-            color: #ef4444;
-            text-decoration: none;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: 0.3s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-
-        .logout-btn:hover {
-            background: #fef2f2;
-            border-color: #fca5a5;
-            transform: scale(1.05);
-        }
+        .chart-area { height: 350px; width: 100%; margin-top: 25px; }
+        .logout-link { color: #f472b6 !important; margin-top: auto; }
     </style>
 </head>
 <body>
 
-<div class="welcome-text">
-    <h1>LuxeEstate Admin</h1>
-    <p>Control Center & Management</p>
-</div>
-
-<div class="dashboard-grid">
-    <a href="view-customer.html" class="nav-card">
-        <div class="icon-box">👥</div>
-        <h2>Registered Customers</h2>
-        <p>View, update, and manage all property leads and customer profiles.</p>
+<aside>
+    <div class="admin-topic">Admin Dashboard</div>
+    <nav class="nav-menu">
+        <a href="#" class="nav-item active"><i data-lucide="layout-grid"></i> Dash board</a>
+        <a href="#" class="nav-item"><i data-lucide="bar-chart-big"></i> Analytics</a>
+        <a href="view-customer.html" class="nav-item"><i data-lucide="users-2"></i> Customers</a>
+        <a href="#" class="nav-item"><i data-lucide="contact-2"></i> Agents</a>
+        <a href="#" class="nav-item"><i data-lucide="landmark"></i> Transactions</a>
+        <a href="#" class="nav-item"><i data-lucide="palmtree"></i> Listings</a>
+        <a href="view-messages.html" class="nav-item"><i data-lucide="mail"></i> Messages</a>
+    </nav>
+    <a href="admin-login.html" class="nav-item logout-link" onclick="return confirm('Exit Dashboard?')">
+        <i data-lucide="power"></i> Logout
     </a>
+</aside>
 
-    <a href="view-listings.html" class="nav-card">
-        <div class="icon-box">🏡</div>
-        <h2>Property Listings</h2>
-        <p>Edit current inventory, adjust prices, and add new luxury homes.</p>
-    </a>
+<main>
+    <header>
+        <h1>Overview Dashboard</h1>
+        <div style="font-size: 35px; opacity: 0.6;">Welcome back !</div>
+    </header>
 
-    <a href="#" class="nav-card">
-        <div class="icon-box">📊</div>
-        <h2>Analytics</h2>
-        <p>Review sales performance, lead conversion, and site traffic.</p>
-    </a>
-</div>
+    <div class="grid-container">
+        <div class="card">
+            <h3>Total Customers</h3>
+            <div class="value" id="totalCustomerCount">--</div>
+        </div>
+        <div class="card">
+            <h3>Total Messages</h3>
+            <div class="value" id="totalMessageCount">--</div>
+        </div>
 
-<a href="admin-login.html" class="logout-btn" onclick="return confirmLogout()">Secure Logout</a>
+        <div class="card"><h3>Revenue</h3><div class="value">$92.4k</div></div>
+        <div class="card"><h3>Success Rate</h3><div class="value">94%</div></div>
+    </div>
+
+    <div class="grid-container">
+        <div class="card"><h3>Active Agents</h3><div class="value">12</div></div>
+        <div class="card"><h3>Listings</h3><div class="value">42</div></div>
+        <div class="card"><h3>Sold</h3><div class="value">18</div></div>
+        <div class="card"><h3>Support</h3><div class="value">03</div></div>
+    </div>
+
+    <div class="analytics-box">
+        <h2 style="font-size: 18px; color: var(--accent);">Analytics Performance</h2>
+        <div class="chart-area"><canvas id="mainPerformanceChart"></canvas></div>
+    </div>
+</main>
 
 <script>
-    function confirmLogout() {
-        return confirm("Are you sure you want to log out of the Admin panel?");
-    }
-</script>
+    lucide.createIcons();
 
+    // Chart Setup
+    const ctx = document.getElementById('mainPerformanceChart').getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(129, 140, 248, 0.4)');
+    gradient.addColorStop(1, 'rgba(129, 140, 248, 0)');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Platform Growth',
+                data: [35, 55, 40, 75, 60, 95],
+                borderColor: '#818cf8',
+                borderWidth: 4,
+                pointBackgroundColor: '#fff',
+                pointRadius: 5,
+                tension: 0.45,
+                fill: true,
+                backgroundColor: gradient
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#94a3b8' } },
+                x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+            }
+        }
+    });
+
+    // --- NEW FEATURE: DYNAMIC STATS UPDATE ---
+    async function updateDashboardStats() {
+        try {
+            // 1. Fetch Total Customers
+            const customerResponse = await fetch('http://localhost:8081/api/customers');
+            if (customerResponse.ok) {
+                const customers = await customerResponse.json();
+                document.getElementById('totalCustomerCount').innerText = customers.length.toLocaleString();
+            }
+
+            // 2. Fetch Total Messages (New Task)
+            const messageResponse = await fetch('http://localhost:8081/api/contact');
+            if (messageResponse.ok) {
+                const messages = await messageResponse.json();
+                document.getElementById('totalMessageCount').innerText = messages.length.toLocaleString();
+            }
+
+        } catch (error) {
+            console.error('Connection Error:', error);
+            document.getElementById('totalCustomerCount').innerText = "Error";
+            document.getElementById('totalMessageCount').innerText = "Error";
+        }
+    }
+
+    // Load everything when window opens
+    window.onload = updateDashboardStats;
+</script>
 </body>
 </html>

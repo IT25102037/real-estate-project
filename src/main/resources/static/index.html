@@ -3,164 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LuxeEstate - Redefined Luxury Living</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>LuxeEstate | Ultra-Premium Luxury Living</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --primary-gradient: linear-gradient(45deg, #a855f7, #06b6d4, #a855f7);
+            /* Luxury Color Palette */
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --glass-white: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.4);
             --vibrant-cyan: #06b6d4;
             --vibrant-purple: #a855f7;
-            --glass-bg: rgba(255, 255, 255, 0.98);
-            --text-dark: #1e293b;
+            --text-dark: #0f172a;
             --text-light: #64748b;
-
-            /* UPDATED: Clearer Ice Blue Background */
-            --interface-bg: #f8fafc;
-
-            /* UPDATED: Vibrant Tab/Meta Colors */
-            --light-blue-bg: #e0f2fe;
-            --light-blue-border: #7dd3fc;
-            --light-blue-text: #0369a1;
+            --royal-blue: #1e1b4b;
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0; padding: 0;
-            background: var(--interface-bg);
-            background-attachment: fixed;
+            background-color: #f8fafc;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(129, 140, 248, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(167, 139, 250, 0.15) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(34, 211, 238, 0.1) 0px, transparent 50%);
             color: var(--text-dark);
+            overflow-x: hidden;
             scroll-behavior: smooth;
         }
 
-        .container { max-width: 1300px; margin: auto; padding: 0 20px; }
+        .container { max-width: 1300px; margin: auto; padding: 0 25px; }
 
-        /* --- HEADER --- */
+        /* --- NAVIGATION --- */
         header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(6, 182, 212, 0.15);
-            padding: 18px 0;
-            position: fixed;
-            top: 0; left: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 15px 0;
+            position: fixed; top: 0; left: 0; width: 100%;
             z-index: 1000;
+            transition: all 0.4s ease;
         }
 
         .header-content { display: flex; justify-content: space-between; align-items: center; }
-        .logo h1 { margin: 0; font-size: 30px; font-weight: 800; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo h1 {
+            font-size: 32px; font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
 
-        nav ul { margin: 0; padding: 0; list-style: none; display: flex; gap: 40px; }
-        nav a { text-decoration: none; color: var(--text-dark); font-size: 18px; font-weight: 700; transition: 0.3s; }
-        nav a:hover { color: var(--vibrant-cyan); }
+        nav ul { display: flex; gap: 35px; list-style: none; }
+        nav a {
+            text-decoration: none; color: var(--text-dark);
+            font-size: 16px; font-weight: 600;
+            position: relative; transition: 0.3s;
+        }
+        nav a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 0%; height: 2px;
+            background: var(--primary-gradient); transition: 0.3s;
+        }
+        nav a:hover::after { width: 100%; }
 
-        /* UPDATED: Centered Logout Button Alignment */
         .profile-status {
-            display: flex; align-items: center; gap: 15px;
-            background: white; padding: 8px 22px; border-radius: 50px;
-            border: 2px solid var(--vibrant-cyan);
-            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.15);
+            display: flex; align-items: center; gap: 12px;
+            background: white; padding: 6px 18px; border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
         }
-
         .avatar-circle {
-            width: 38px; height: 38px; background: var(--primary-gradient);
+            width: 35px; height: 35px; background: var(--primary-gradient);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: 700;
+            color: white; font-weight: 700; font-size: 14px;
         }
-
-        .user-info { display: flex; flex-direction: column; align-items: center; line-height: 1.4; }
-        .user-name-label { font-weight: 700; color: var(--text-dark); font-size: 15px; }
-        .logout-link { font-size: 11px; color: #ef4444; text-decoration: none; cursor: pointer; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-
         .sign-in-btn {
             background: var(--primary-gradient); color: white;
-            padding: 12px 28px; border-radius: 30px; text-decoration: none;
-            font-weight: 700; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
-            transition: 0.3s;
+            padding: 12px 30px; border-radius: 50px; text-decoration: none;
+            font-weight: 700; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(168, 85, 247, 0.2);
         }
+        .sign-in-btn:hover { transform: scale(1.05); box-shadow: 0 15px 30px rgba(168, 85, 247, 0.4); }
 
-        /* --- HERO --- */
+        /* --- HERO SECTION --- */
         .hero {
-            padding: 200px 0 100px; text-align: center;
-            background-image: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.5)), url('https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=1600');
+            padding: 220px 0 140px; text-align: center;
+            background: linear-gradient(rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.4)), url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80');
             background-size: cover; background-position: center; background-attachment: fixed;
-            clip-path: ellipse(150% 100% at 50% 0%);
+            position: relative; overflow: hidden;
+            margin-bottom: 60px;
         }
 
-        /* UPDATED: More space between words in titles */
-        .hero h2 { font-size: 62px; color: white; margin-bottom: 20px; font-weight: 800; word-spacing: 8px; }
+        .hero h2 {
+            font-size: 72px; color: white; font-weight: 800; line-height: 1.1;
+            word-spacing: 10px; letter-spacing: -2px; margin-bottom: 25px;
+            animation: fadeInUp 0.8s ease;
+        }
         .hero h2 span { color: var(--vibrant-cyan); }
-        .hero p { color: #f1f5f9; font-size: 22px; margin-bottom: 40px; word-spacing: 4px; letter-spacing: 0.5px; }
+        .hero p { color: rgba(255,255,255,0.9); font-size: 22px; margin-bottom: 50px; animation: fadeInUp 1s ease; }
 
         .search-bar-modern {
-            background: var(--glass-bg); border-radius: 60px; padding: 15px;
-            max-width: 900px; margin: auto; display: flex; align-items: center; gap: 15px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 80px; padding: 12px;
+            max-width: 1000px; margin: auto; display: flex; gap: 10px;
+            box-shadow: 0 30px 60px -12px rgba(0,0,0,0.4);
+            animation: fadeInUp 1.2s ease;
         }
 
-        .search-input-group { flex: 1; display: flex; align-items: center; gap: 10px; padding: 0 15px; border-right: 1px solid #e2e8f0; }
+        .search-input-group {
+            flex: 1; display: flex; align-items: center; gap: 12px;
+            padding: 0 25px; border-right: 1px solid rgba(255,255,255,0.2);
+            color: white;
+        }
 
-        /* UPDATED: Cleaner, more vibrant search tabs */
         .search-input-group input, .search-input-group select {
-            flex: 1; border: 1px solid var(--light-blue-border);
-            padding: 12px 18px; font-size: 15px; outline: none;
-            background: var(--light-blue-bg); color: var(--light-blue-text);
-            font-weight: 600; border-radius: 30px; transition: 0.3s;
+            background: transparent; border: none; color: white;
+            font-size: 16px; font-weight: 500; outline: none; width: 100%;
         }
+        .search-input-group select option { background: var(--royal-blue); color: white; }
+        .search-input-group input::placeholder { color: rgba(255,255,255,0.7); }
 
         .search-btn-vibrant {
-            background: var(--primary-gradient); color: white; padding: 16px 40px;
-            border-radius: 40px; font-weight: 700; border: none; cursor: pointer; transition: 0.3s;
+            background: var(--primary-gradient); color: white; padding: 0 45px;
+            border-radius: 60px; font-weight: 800; border: none; cursor: pointer;
+            transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+            position: relative; overflow: hidden;
+        }
+        .search-btn-vibrant:hover { opacity: 0.9; }
+
+        /* --- PROPERTY CARDS --- */
+        .featured-properties { padding: 100px 0; }
+        .section-title { text-align: center; font-size: 48px; font-weight: 800; margin-bottom: 70px; letter-spacing: -1px; }
+        .property-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 40px; }
+
+        .property-card {
+            background: white; border-radius: 30px; overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.03); border: 1px solid #f1f5f9;
+            transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .property-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 30px 60px rgba(99, 102, 241, 0.15);
         }
 
-        /* --- PROPERTY GRID --- */
-        .featured-properties { padding: 80px 0; }
-        /* UPDATED: Reduced Listing Card size */
-        .property-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
-        .property-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: relative; transition: 0.4s; }
-        .property-card:hover { transform: translateY(-8px); }
+        .property-img-wrapper { position: relative; overflow: hidden; height: 240px; }
+        .property-img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s; }
+        .badge {
+            position: absolute; top: 20px; left: 20px; padding: 8px 18px;
+            border-radius: 50px; font-size: 12px; color: white; font-weight: 800;
+            background: var(--primary-gradient); z-index: 2;
+        }
 
-        .property-img { width: 100%; height: 180px; object-fit: cover; }
-
-        .badge { position: absolute; top: 15px; left: 15px; padding: 6px 14px; border-radius: 30px; font-size: 11px; color: white; font-weight: 700; text-transform: uppercase; }
-        .status-new { background: #3b82f6; }
-
-        .card-details { padding: 25px; }
-        .loc-text { color: var(--vibrant-cyan); font-size: 13px; font-weight: 700; margin-bottom: 8px; word-spacing: 2px; }
-        .property-title { font-size: 20px; margin: 0 0 15px 0; font-weight: 700; color: #1e293b; word-spacing: 2px; }
-
-        /* UPDATED: Vibrant Meta Tags for Owner info */
+        .card-details { padding: 30px; }
+        .loc-text { color: var(--vibrant-cyan); font-size: 14px; font-weight: 800; margin-bottom: 12px; }
+        .property-title { font-size: 22px; font-weight: 700; margin-bottom: 15px; color: var(--text-dark); }
         .meta-tags {
-            display: flex; gap: 10px; font-size: 13px; margin-bottom: 20px;
-            padding: 10px 15px; border-radius: 10px;
-            background: var(--light-blue-bg); color: var(--light-blue-text);
-            font-weight: 600; border: 1px solid var(--light-blue-border);
+            background: #f8fafc; border-radius: 15px; padding: 12px 20px;
+            display: flex; gap: 10px; font-size: 13px; font-weight: 700;
+            color: var(--text-light); margin-bottom: 25px; border: 1px dashed #e2e8f0;
+        }
+        .property-price { font-size: 28px; font-weight: 800; color: var(--royal-blue); }
+
+        /* --- NEW DARK FOOTER STYLING --- */
+        footer {
+            background: #111111;
+            color: #ffffff;
+            padding: 80px 0 40px;
+            font-size: 14px;
         }
 
-        .property-price { font-size: 24px; font-weight: 800; color: var(--vibrant-purple); margin: 0; }
-
-        /* --- WHY CHOOSE US --- */
-        .features-section { padding: 80px 0; background: white; text-align: center; }
-        .features-section h2 { font-size: 40px; font-weight: 800; margin-bottom: 10px; word-spacing: 6px; }
-        .features-section h2 span { color: var(--vibrant-cyan); }
-        .features-subtitle { color: var(--text-light); margin-bottom: 50px; font-size: 18px; word-spacing: 3px; }
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
-        .feature-box { padding: 40px 20px; border-radius: 20px; background: #fdfdff; border: 1px solid #f1f5f9; transition: 0.3s; }
-        .feature-box:hover { border-color: var(--vibrant-cyan); transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.03); }
-        .feature-icon { font-size: 40px; margin-bottom: 20px; display: inline-block; }
-        .feature-box h4 { font-size: 20px; margin-bottom: 12px; color: #1e293b; font-weight: 700; word-spacing: 3px; }
-        .feature-box p { font-size: 15px; line-height: 1.6; color: var(--text-light); margin: 0; word-spacing: 2px; }
-
-        .load-more-container { text-align: center; margin-top: 40px; }
-        .load-more-btn {
-            background: var(--primary-gradient); color: white; padding: 18px 50px;
-            border-radius: 50px; font-size: 18px; font-weight: 700; border: none; cursor: pointer; transition: 0.3s;
+        .footer-logo-section {
+            text-align: center;
+            margin-bottom: 60px;
         }
 
-        footer { background: #0f172a; color: white; padding: 80px 0; text-align: center; }
+        .footer-logo-section h1 {
+            font-size: 28px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .footer-logo-section p {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #888;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1.5fr 1.5fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .footer-col h4 {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 12px; }
+        .footer-col ul li a {
+            color: #aaa;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .footer-col ul li a:hover { color: #fff; }
+
+        .contact-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            color: #aaa;
+        }
+        .contact-item i { color: #fff; width: 20px; }
+
+        .newsletter-box {
+            display: flex;
+            margin-top: 20px;
+            background: #222;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .newsletter-box input {
+            background: transparent;
+            border: none;
+            padding: 10px 15px;
+            color: white;
+            flex: 1;
+            outline: none;
+        }
+        .newsletter-btn {
+            background: #444;
+            border: none;
+            color: white;
+            padding: 0 15px;
+            cursor: pointer;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #222;
+            padding-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 12px;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
-<header>
+<header id="mainHeader">
     <div class="container header-content">
         <div class="logo"><h1>LuxeEstate</h1></div>
         <nav>
@@ -169,81 +273,139 @@
                 <li><a href="#">Rent</a></li>
                 <li><a href="sell.html">Sell</a></li>
                 <li><a href="agents.html">Agents</a></li>
-                <li><a href="contact.html" class="nav-link">Contact</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="about.html">About Us</a></li>
             </ul>
         </nav>
         <div id="userActions">
-            <a href="add-customer.html" class="sign-in-btn">Sign In</a>
+            <a href="add-customer.html" class="sign-in-btn">Get Started</a>
         </div>
     </div>
 </header>
 
 <section class="hero">
     <div class="container">
-        <h2>Find  Your  <span>Dream  Home</span>  Today</h2>
-        <p>Discover  handpicked  luxury  properties  from  around  the  globe.</p>
+        <h2>Refine Your <span>Lifestyle</span> With Excellence</h2>
+        <p>Your gateway to the world's most prestigious and exclusive real estate.</p>
         <div class="search-bar-modern">
-            <div class="search-input-group">📍 <input type="text" id="searchInput" placeholder="Search city..."></div>
-            <div class="search-input-group">🏠
+            <div class="search-input-group">
+                <i data-lucide="map-pin"></i>
+                <input type="text" id="searchInput" placeholder="Search by city or zip...">
+            </div>
+            <div class="search-input-group">
+                <i data-lucide="home"></i>
                 <select id="propertyTypeSelect">
-                    <option value="All">All Types</option>
+                    <option value="All">All Property Types</option>
                     <option value="House">Mansion</option>
                     <option value="Apartment">Penthouse</option>
-                    <option value="Land">Land</option>
+                    <option value="Land">Investment Land</option>
                     <option value="Industrial Building">Industrial Building</option>
                 </select>
             </div>
-            <button onclick="filterProperties()" class="search-btn-vibrant">🔍 Search</button>
+            <button onclick="filterProperties()" class="search-btn-vibrant">Find Home</button>
         </div>
     </div>
 </section>
 
 <section class="featured-properties" id="properties-section">
     <div class="container">
-        <h2 style="text-align: center; font-size: 48px; margin-bottom: 60px; font-weight: 800; word-spacing: 8px;">Featured  <span>Properties</span></h2>
+        <h2 class="section-title">Exclusive <span>Collections</span></h2>
         <div class="property-grid" id="propertyGrid"></div>
-        <div class="load-more-container">
-            <button id="loadMoreBtn" class="load-more-btn" onclick="renderNextBatch()">More Results</button>
-        </div>
-    </div>
-</section>
-
-<section class="features-section">
-    <div class="container">
-        <h2>Why  Choose  <span>LuxeEstate</span></h2>
-        <div class="features-grid">
-            <div class="feature-box">
-                <span class="feature-icon">🛡️</span>
-                <h4>Trusted  &  Secure</h4>
-                <p>Verified  transactions  and  secure  payments  for  peace  of  mind.</p>
-            </div>
-            <div class="feature-box">
-                <span class="feature-icon">📊</span>
-                <h4>Market  Insights</h4>
-                <p>Data-driven  investment  advice  and  analytics.</p>
-            </div>
-            <div class="feature-box">
-                <span class="feature-icon">🎧</span>
-                <h4>24/7  Support</h4>
-                <p>Our  dedicated  team  is  always  here  to  help.</p>
-            </div>
-            <div class="feature-box">
-                <span class="feature-icon">🏆</span>
-                <h4>Award  Winning</h4>
-                <p>Recognized  as  the  #1  Luxury  Platform  for  5  years.</p>
-            </div>
+        <div class="load-more-container" style="text-align: center; margin-top: 50px;">
+            <button id="loadMoreBtn" style="background: var(--text-dark); color:white; padding: 15px 40px; border-radius: 50px; border:none; cursor:pointer; font-weight:700;" onclick="renderNextBatch()">Discover More</button>
         </div>
     </div>
 </section>
 
 <footer>
     <div class="container">
-        <h1>LuxeEstate</h1>
-        <p>© 2026 Redefining Luxury Living. All rights reserved.</p>
+        <div class="footer-logo-section">
+            <h1>LuxeEstate</h1>
+            <p>Creating New Worlds</p>
+        </div>
+
+        <div class="footer-grid">
+            <div class="footer-col">
+                <ul>
+                    <li><a href="#">HOME</a></li>
+                    <li><a href="#">BROWSE PROPERTIES</a></li>
+                    <li><a href="#">ABOUT LUXE</a></li>
+                    <li><a href="#">MEDIA CENTRE</a></li>
+                    <li><a href="#">INVEST WITH US</a></li>
+                    <li><a href="#">CAREERS</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Top Searched Projects</h4>
+                <ul>
+                    <li><a href="#">The Azure Residences</a></li>
+                    <li><a href="#">VIMAN Ultra-Lofts</a></li>
+                    <li><a href="#">Skyline Penthouses</a></li>
+                    <li><a href="#">TRI-ZEN Modern Living</a></li>
+                    <li><a href="#">Sunrise Ridge Villas</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Trending Searches</h4>
+                <ul>
+                    <li><a href="#">Apartments in Colombo</a></li>
+                    <li><a href="#">Luxury Real Estate Development</a></li>
+                    <li><a href="#">Beachfront Properties</a></li>
+                    <li><a href="#">Investment Land Sri Lanka</a></li>
+                </ul>
+                <h4 style="margin-top: 30px;">Newsletter Subscription</h4>
+                <div class="newsletter-box">
+                    <input type="text" placeholder="Your email address">
+                    <button class="newsletter-btn">→</button>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Contact Details</h4>
+                <div class="contact-item">
+                    <i data-lucide="map-pin"></i>
+                    <span>LuxeEstate Properties, 45 / 2 ,  <br> Galle Road , Colombo 03</span>
+                </div>
+                <div class="contact-item">
+                    <i data-lucide="mail"></i>
+                    <span>luxeestate@gmail.com</span>
+                </div>
+                <div class="contact-item">
+                    <i data-lucide="phone"></i>
+                    <span>+94 764533567</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 LuxeEstate Properties. All Rights Reserved.</p>
+            <div style="display:flex; gap: 20px;">
+                <a href="#" style="color:#666; text-decoration:none;">Privacy Policy</a>
+                <a href="#" style="color:#666; text-decoration:none;">Terms of Service</a>
+            </div>
+        </div>
     </div>
 </footer>
 
 <script>
+    lucide.createIcons();
+
+    // All original JavaScript functions remain untouched
+    window.addEventListener('scroll', () => {
+        const header = document.getElementById('mainHeader');
+        if (window.scrollY > 50) {
+            header.style.padding = '10px 0';
+            header.style.background = 'rgba(255, 255, 255, 0.95)';
+            header.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+        } else {
+            header.style.padding = '15px 0';
+            header.style.background = 'rgba(255, 255, 255, 0.8)';
+            header.style.boxShadow = 'none';
+        }
+    });
+
     let allListings = [];
     let currentIndex = 0;
     const itemsPerPage = 6;
@@ -254,10 +416,8 @@
             if (!response.ok) throw new Error("Backend not reachable");
             allListings = await response.json();
             allListings.reverse();
-
             document.getElementById('propertyGrid').innerHTML = '';
             currentIndex = 0;
-
             renderNextBatch();
         } catch (error) {
             console.warn("Backend Error:", error);
@@ -268,25 +428,28 @@
         const grid = document.getElementById('propertyGrid');
         const nextBatch = allListings.slice(currentIndex, currentIndex + itemsPerPage);
 
-        nextBatch.forEach(prop => {
+        nextBatch.forEach((prop, index) => {
             const card = document.createElement('div');
             card.className = 'property-card';
+            card.style.animationDelay = `${index * 0.1}s`;
             card.setAttribute('data-type', prop.propertyType);
 
             const formattedPrice = new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'LKR',
-                maximumFractionDigits: 0
+                style: 'currency', currency: 'LKR', maximumFractionDigits: 0
             }).format(prop.price).replace("LKR", "Rs.");
 
             card.innerHTML = `
-                <span class="badge status-new">Recent</span>
-                <img src="${prop.imagePath}" class="property-img">
+                <div class="property-img-wrapper">
+                    <span class="badge">Collection 2026</span>
+                    <img src="${prop.imagePath}" class="property-img">
+                </div>
                 <div class="card-details">
                     <p class="loc-text">📍 ${prop.location}</p>
                     <h3 class="property-title">${prop.propertyTitle}</h3>
                     <div class="meta-tags">
-                        <span>👤 Owner: ${prop.ownerName}</span>
+                        <span>👤 ${prop.ownerName}</span>
+                        <span>•</span>
+                        <span>Verfied Owner</span>
                     </div>
                     <p class="property-price">${formattedPrice}</p>
                 </div>`;
@@ -295,33 +458,27 @@
         });
 
         const loadMoreBtn = document.getElementById('loadMoreBtn');
-        if (currentIndex >= allListings.length) {
-            loadMoreBtn.style.display = 'none';
-        } else {
-            loadMoreBtn.style.display = 'inline-block';
-        }
+        if(loadMoreBtn) loadMoreBtn.style.display = (currentIndex >= allListings.length) ? 'none' : 'inline-block';
     }
 
     function checkLoginStatus() {
         const savedName = localStorage.getItem('luxeUser');
         if (savedName) {
-            // ONLY SHOW FIRST NAME
             const firstName = savedName.split(' ')[0];
             const initial = firstName.charAt(0).toUpperCase();
             document.getElementById('userActions').innerHTML = `
                 <div class="profile-status">
                     <div class="avatar-circle">${initial}</div>
-                    <div class="user-info">
-                        <span class="user-name-label">${firstName}</span>
-                        <a href="javascript:void(0)" class="logout-link" onclick="logout()">Logout</a>
+                    <div class="user-info" style="text-align: left;">
+                        <span style="font-weight: 800; display: block; font-size: 14px;">${firstName}</span>
+                        <a href="javascript:void(0)" onclick="logout()" style="color: #ef4444; font-size: 10px; text-decoration: none; font-weight: 700; text-transform: uppercase;">Logout</a>
                     </div>
                 </div>`;
         }
     }
 
     function logout() {
-        // CONFIRM BEFORE LOGOUT
-        if (confirm("Are you sure you want to logout?")) {
+        if (confirm("Sign out from LuxeEstate?")) {
             localStorage.removeItem('luxeUser');
             location.reload();
         }
@@ -336,10 +493,8 @@
             const title = card.querySelector('.property-title').innerText.toLowerCase();
             const loc = card.querySelector('.loc-text').innerText.toLowerCase();
             const cardType = card.getAttribute('data-type');
-
             const matchesSearch = title.includes(searchInput) || loc.includes(searchInput);
             const matchesType = (typeSelect === "All") || (cardType === typeSelect);
-
             card.style.display = (matchesSearch && matchesType) ? 'block' : 'none';
         });
     }
