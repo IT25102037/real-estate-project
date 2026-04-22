@@ -161,7 +161,7 @@
 
     <div class="footer-links">
         <a href="index.html" class="home-btn">← Back to Main Gallery</a>
-        <a href="admin-login.html" class="nav-link">Staff Login (Admin)</a>
+        <a href="templates/admin/admin-login.html" class="nav-link">Staff Login (Admin)</a>
     </div>
 </div>
 
@@ -179,7 +179,7 @@
         };
 
         // Your specific backend API URL
-        fetch('http://localhost:8081/api/customers', {
+        fetch('http://localhost:8080/api/customers', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(customerData)

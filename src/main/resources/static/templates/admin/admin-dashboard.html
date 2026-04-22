@@ -178,14 +178,14 @@
     async function updateDashboardStats() {
         try {
             // 1. Fetch Total Customers
-            const customerResponse = await fetch('http://localhost:8081/api/customers');
+            const customerResponse = await fetch('http://localhost:8080/api/customers');
             if (customerResponse.ok) {
                 const customers = await customerResponse.json();
                 document.getElementById('totalCustomerCount').innerText = customers.length.toLocaleString();
             }
 
             // 2. Fetch Total Messages (New Task)
-            const messageResponse = await fetch('http://localhost:8081/api/contact');
+            const messageResponse = await fetch('http://localhost:8080/api/contact');
             if (messageResponse.ok) {
                 const messages = await messageResponse.json();
                 document.getElementById('totalMessageCount').innerText = messages.length.toLocaleString();

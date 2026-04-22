@@ -24,7 +24,7 @@ function saveCustomer(event) {
         propertyType: document.getElementById("propertyType").value
     };
 
-    fetch("http://localhost:8081/api/customers", {
+    fetch("http://localhost:8080/api/customers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(customerData)
@@ -53,7 +53,7 @@ async function fetchListings() {
 
     try {
         // 1. Call your Spring Boot API
-        const response = await fetch('http://localhost:8081/api/listings/all');
+        const response = await fetch('http://localhost:8080/api/listings/all');
         const listings = await response.json();
 
         // 2. Clear existing placeholder content

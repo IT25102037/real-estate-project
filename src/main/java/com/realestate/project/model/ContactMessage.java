@@ -17,6 +17,8 @@ public class ContactMessage {
     private String userEmail;
     private String inquiryType;
     private String userPhone;
+    // Inside ContactMessage.java
+    private String status = "New";
 
     @Column(length = 1000)
     private String userMessage;

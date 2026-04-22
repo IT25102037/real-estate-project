@@ -3,7 +3,7 @@ window.onload = function() {
 };
 
 function loadCustomers() {
-    fetch('http://localhost:8081/api/customers')
+    fetch('http://localhost:8080/api/customers')
         .then(response => response.json())
         .then(data => {
             const tableBody = document.getElementById('customerTableBody');
