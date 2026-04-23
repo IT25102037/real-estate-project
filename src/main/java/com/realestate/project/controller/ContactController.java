@@ -21,7 +21,7 @@ public class ContactController {
      */
     @PostMapping
     public ContactMessage saveMessage(@RequestBody ContactMessage message) {
-        return contactRepository.save(message);
+        return contactRepository.save(message);   //Abstraction
     }
 
     /**
@@ -29,7 +29,7 @@ public class ContactController {
      */
     @GetMapping
     public List<ContactMessage> getAllMessages() {
-        return contactRepository.findAll();
+        return contactRepository.findAll();  //Abstraction
     }
 
     /**

@@ -39,7 +39,7 @@ function saveCustomer(event) {
     })
     .catch(error => {
         console.error("Error:", error);
-        alert("⚠️ Connection Failed: Make sure your Spring Boot server is running on port 8081.");
+        alert("⚠️ Connection Failed: Make sure your Spring Boot server is running on port 8080.");
     })
     .finally(() => {
         submitBtn.innerText = originalText;

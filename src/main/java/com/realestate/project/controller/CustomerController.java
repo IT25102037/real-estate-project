@@ -1,48 +1,43 @@
 package com.realestate.project.controller;
 
 import com.realestate.project.model.Customer;
-import com.realestate.project.repository.CustomerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.realestate.project.service.CustomerService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*") // This prevents the CORS errors
 @RestController
 @RequestMapping("/api/customers")
+@CrossOrigin(origins = "*") // ADD THIS LINE TO ALLOW THE FRONTEND TO TALK TO THE BACKEND
 public class CustomerController {
 
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final CustomerService customerService;
 
-    // 1. CREATE
+    // By defining this constructor, Spring automatically injects CustomerService.
+
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
+
     @PostMapping
     public Customer saveCustomer(@RequestBody Customer customer) {
-        return customerRepository.save(customer);
+        // Now 'this.customerService' will be properly initialized
+        return customerService.saveCustomer(customer);
     }
 
-    // 2. READ
     @GetMapping
     public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
+        return customerService.getAllCustomers();
     }
 
-    // 3. DELETE
     @DeleteMapping("/{id}")
-    public void deleteCustomer(@PathVariable Long id) {
-        customerRepository.deleteById(id);
+    public String deleteCustomer(@PathVariable Long id) {
+        customerService.deleteCustomer(id);
+        return "Customer deleted successfully";
     }
 
-    // 4. UPDATE (Edits only the property type using the ID)
     @PutMapping("/{id}")
-    public Customer updateCustomer(@PathVariable Long id, @RequestBody Customer customerDetails) {
-        Customer existingCustomer = customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
-
-        // Set the new property type
-        existingCustomer.setPropertyType(customerDetails.getPropertyType());
-
-        // Save the changes
-        return customerRepository.save(existingCustomer);
+    public Customer updateCustomer(@PathVariable Long id, @RequestBody Customer details) {
+        return customerService.updateCustomer(id, details);
     }
 }

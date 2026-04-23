@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Customers | LuxeEstate Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #818cf8; --accent: #22d3ee; --sidebar-width: 280px;
+            --glass-dark: rgba(15, 23, 42, 0.85); --card-glass: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.1); --text-main: #f8fafc;
+            --text-dim: #94a3b8; --danger: #ef4444; --success: #10b981;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(49, 46, 129, 0.7)),
+                        url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            display: flex; height: 100vh; color: var(--text-main); overflow: hidden;
+        }
+        aside { width: var(--sidebar-width); background: var(--glass-dark); backdrop-filter: blur(30px); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; padding: 35px 20px; }
+        .admin-topic { font-size: 14px; font-weight: 800; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 40px; padding-left: 12px; }
+        .nav-menu { list-style: none; flex-grow: 1; }
+        .nav-item { display: flex; align-items: center; padding: 14px 18px; margin-bottom: 8px; border-radius: 14px; color: var(--text-dim); text-decoration: none; font-weight: 500; transition: all 0.3s ease; }
+        .nav-item:hover, .nav-item.active { background: rgba(129, 140, 248, 0.15); color: #c7d2fe; border: 1px solid rgba(129, 140, 248, 0.4); }
+        main { flex-grow: 1; padding: 40px; overflow-y: auto; }
+        .header-section { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
+        .header-section h1 { font-size: 32px; font-weight: 700; }
+        .filter-glass-panel { background: var(--card-glass); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 20px; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .filter-glass-panel input, .filter-glass-panel select { background: rgba(255, 255, 255, 0.9); border: 1px solid var(--glass-border); padding: 12px 15px; border-radius: 12px; color: #000; outline: none; font-weight: 500; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 12px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .table-glass-container { background: var(--card-glass); backdrop-filter: blur(15px); border: 1px solid var(--glass-border); border-radius: 24px; padding: 20px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { padding: 15px; color: var(--accent); font-size: 12px; text-transform: uppercase; border-bottom: 1px solid var(--glass-border); }
+        td { padding: 18px 15px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 14px; }
+
+        .actions-cell { display: flex; gap: 10px; }
+        .btn-edit { background: rgba(34, 211, 238, 0.1); color: var(--accent); border: 1px solid var(--accent); padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px; transition: 0.3s; }
+        .btn-edit:hover { background: var(--accent); color: #000; }
+        .btn-remove { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid var(--danger); padding: 8px 16px; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px; transition: 0.3s; }
+        .btn-remove:hover { background: var(--danger); color: white; }
+
+        .property-badge { background: rgba(34, 211, 238, 0.1); color: var(--accent); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; }
+        #empty-state { display: none; text-align: center; padding: 40px; background: rgba(255, 255, 255, 0.03); border-radius: 20px; border: 1px dashed var(--glass-border); margin-top: 20px; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center; }
+        .modal-content { background: #1e293b; border: 1px solid var(--glass-border); padding: 40px; border-radius: 24px; width: 100%; max-width: 450px; }
+        .modal-content h2 { margin-bottom: 25px; color: var(--accent); }
+        .modal-content label { display: block; margin-bottom: 8px; font-size: 12px; color: var(--text-dim); text-transform: uppercase; }
+        .modal-content input { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 10px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; outline: none; }
+
+        /* Fixed visibility for Selection Box */
+        .modal-content select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.9); /* Lighter background */
+            color: #1e293b; /* Dark text for clarity */
+            outline: none;
+            font-weight: 600;
+        }
+        .modal-content select option {
+            background: white;
+            color: #1e293b;
+        }
+
+        .modal-content input:focus { border-color: var(--accent); }
+        .modal-actions { display: flex; gap: 15px; }
+        .btn-save { background: var(--success); color: white; border: none; padding: 12px; border-radius: 10px; flex: 1; cursor: pointer; font-weight: 700; transition: 0.3s; }
+        .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-cancel { background: transparent; color: white; border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; flex: 1; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="modal-overlay" id="editModal">
+    <div class="modal-content">
+        <h2>Edit Customer</h2>
+        <input type="hidden" id="editId">
+
+        <label>Email Address</label>
+        <input type="email" id="editEmail" placeholder="example@mail.com">
+
+        <label>Phone Number</label>
+        <input type="text" id="editPhone" placeholder="+123456789">
+
+        <label>Property Interest</label>
+        <select id="editPropertyType">
+            <option value="House">House</option>
+            <option value="Apartment">Apartment</option>
+            <option value="Land">Land</option>
+            <option value="Commercial">Commercial</option>
+        </select>
+
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+            <button class="btn-save" id="saveBtn" onclick="saveUpdate()">Update Record</button>
+        </div>
+    </div>
+</div>
+
+<aside>
+    <div class="admin-topic">LuxeEstate</div>
+    <nav class="nav-menu">
+        <a href="admin-dashboard.html" class="nav-item"><i data-lucide="layout-grid"></i> Dash board</a>
+        <a href="view-customer.html" class="nav-item active"><i data-lucide="users"></i> Customers</a>
+        <a href="view-messages.html" class="nav-item"><i data-lucide="mail"></i> Messages</a>
+        <a href="view-listings.html" class="nav-item"><i data-lucide="home"></i> Listings</a>
+    </nav>
+    <a href="admin-login.html" class="nav-item" style="color: #fda4af;"><i data-lucide="power"></i> Logout</a>
+</aside>
+
+<main>
+    <div class="header-section">
+        <h1>Manage Customers</h1>
+        <button class="btn-primary" onclick="exportData()"><i data-lucide="download"></i> Export CSV</button>
+    </div>
+
+    <div class="filter-glass-panel">
+        <input type="text" id="searchId" style="width: 80px;" placeholder="ID">
+        <input type="text" id="searchGeneral" style="flex: 1;" placeholder="Search name, email, or location...">
+        <select id="propertyFilter">
+            <option value="">All Interests</option>
+            <option value="House">House</option>
+            <option value="Apartment">Apartment</option>
+            <option value="Land">Land</option>
+            <option value="Commercial">Commercial</option>
+        </select>
+        <button class="btn-primary" onclick="filterCustomers()">🔍 Filter</button>
+    </div>
+
+    <div class="table-glass-container">
+        <table id="customerTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Contact Info</th>
+                <th>Interest</th>
+                <th>Location</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="customerTableBody">
+            </tbody>
+        </table>
+        <div id="empty-state">
+            <i data-lucide="search-x" style="margin-bottom: 15px; color: var(--danger);"></i>
+            <h3>No data in our database</h3>
+        </div>
+    </div>
+</main>
+
+<script>
+    lucide.createIcons();
+    let currentCustomers = [];
+
+    async function loadCustomers() {
+        try {
+            const response = await fetch('http://localhost:8080/api/customers');
+            currentCustomers = await response.json();
+            const tableBody = document.getElementById('customerTableBody');
+            const emptyState = document.getElementById('empty-state');
+            const table = document.getElementById('customerTable');
+
+            if (currentCustomers.length === 0) {
+                table.style.display = "none";
+                emptyState.style.display = "block";
+                return;
+            }
+
+            table.style.display = "table";
+            emptyState.style.display = "none";
+
+            tableBody.innerHTML = currentCustomers.map(cust => `
+                <tr id="row-${cust.id}">
+                    <td>#${cust.id}</td>
+                    <td><b>${cust.name}</b></td>
+                    <td>${cust.email}<br><small>${cust.phone}</small></td>
+                    <td><span class="property-badge">${cust.propertyType}</span></td>
+                    <td>${cust.address || 'N/A'}</td>
+                    <td class="actions-cell">
+                        <button class="btn-edit" onclick="openEditModal(${cust.id})">Edit</button>
+                        <button class="btn-remove" onclick="removeLead(${cust.id})">Remove</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            lucide.createIcons();
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    function openEditModal(id) {
+        const customer = currentCustomers.find(c => c.id === id);
+        if (customer) {
+            document.getElementById('editId').value = customer.id;
+            document.getElementById('editEmail').value = customer.email;
+            document.getElementById('editPhone').value = customer.phone;
+            document.getElementById('editPropertyType').value = customer.propertyType;
+            document.getElementById('editModal').style.display = 'flex';
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    async function saveUpdate() {
+        const id = document.getElementById('editId').value;
+        const saveBtn = document.getElementById('saveBtn');
+        const customer = currentCustomers.find(c => c.id == id);
+
+        if (!customer) return;
+
+        saveBtn.innerText = "Saving...";
+        saveBtn.disabled = true;
+
+        const updatedData = {
+            ...customer,
+            email: document.getElementById('editEmail').value,
+            phone: document.getElementById('editPhone').value,
+            propertyType: document.getElementById('editPropertyType').value
+        };
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/customers/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (response.ok) {
+                closeModal();
+                await loadCustomers();
+            } else {
+                alert("Update failed on server. Please check the backend.");
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert("Network error. Is the Spring Boot server running?");
+        } finally {
+            saveBtn.innerText = "Update Record";
+            saveBtn.disabled = false;
+        }
+    }
+
+    async function removeLead(id) {
+        if(confirm("Permanently delete this customer record?")) {
+            try {
+                const response = await fetch(`http://localhost:8080/api/customers/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if(response.ok) {
+                    await loadCustomers();
+                } else {
+                    alert("Delete failed on server.");
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    }
+
+    function filterCustomers() {
+        const idSearch = document.getElementById('searchId').value.toLowerCase();
+        const generalSearch = document.getElementById('searchGeneral').value.toLowerCase();
+        const interestFilter = document.getElementById('propertyFilter').value.toLowerCase();
+        const rows = document.querySelectorAll('#customerTableBody tr');
+
+        rows.forEach(row => {
+            const matchesId = idSearch === "" || row.cells[0].textContent.toLowerCase().includes(idSearch);
+            const matchesGeneral = generalSearch === "" || row.innerText.toLowerCase().includes(generalSearch);
+            const matchesInterest = interestFilter === "" || row.cells[3].textContent.toLowerCase().includes(interestFilter);
+            row.style.display = (matchesId && matchesGeneral && matchesInterest) ? "" : "none";
+        });
+    }
+
+    function exportData() {
+        alert("CSV Export initiated.");
+    }
+
+    window.onload = loadCustomers;
+</script>
+</body>
+</html>

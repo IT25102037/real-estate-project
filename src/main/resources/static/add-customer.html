@@ -161,7 +161,7 @@
 
     <div class="footer-links">
         <a href="index.html" class="home-btn">← Back to Main Gallery</a>
-        <a href="templates/admin/admin-login.html" class="nav-link">Staff Login (Admin)</a>
+        <a href="admin-login.html" class="nav-link">Staff Login (Admin)</a>
     </div>
 </div>
 
@@ -169,7 +169,6 @@
     document.getElementById('customerForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // Capture the form data
         const customerData = {
             name: document.getElementById('name').value,
             email: document.getElementById('email').value,
@@ -178,25 +177,26 @@
             propertyType: document.getElementById('propertyType').value
         };
 
-        // Your specific backend API URL
+        // FIXED URL: Removed '/save-customer' because the Controller handles POST at root '/api/customers'
         fetch('http://localhost:8080/api/customers', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(customerData)
         })
         .then(response => {
-            if (!response.ok) throw new Error('Registration failed');
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text || 'Registration failed') });
+            }
             return response.json();
         })
         .then(data => {
-            // THE PROCESS: Save user to local memory and redirect
             localStorage.setItem('luxeUser', data.name);
             alert("Welcome to LuxeEstate, " + data.name + "!");
             window.location.href = "index.html";
         })
         .catch(error => {
-            console.error('Error:', error);
-            alert("Registration failed. Please try again.");
+            console.error('Detailed Error:', error);
+            alert("Registration failed. Make sure your Spring Boot server is running!");
         });
     });
 </script>
