@@ -1,6 +1,5 @@
 package com.realestate.project.model;
 
-
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,4 +24,6 @@ public class RentalProperty extends Property {
     public String getPropertyCategory(){
         return "Rental Property";
     }
+
+
 }
