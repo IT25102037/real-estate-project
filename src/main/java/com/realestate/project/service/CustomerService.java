@@ -1,11 +1,14 @@
 package com.realestate.project.service;
 
-import com.realestate.project.model.Customer;
+import com.realestate.project.dto.CustomerDto;
+import com.realestate.project.model.CustomerEntity;
 import com.realestate.project.repository.CustomerRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; // Import this
+
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -13,25 +16,28 @@ public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    // 1. Get all customers
-    public List<Customer> getAllCustomers() {
+    @Autowired
+    private ModelMapper modelMapper;
+
+    public List<CustomerEntity> getAllCustomers() {
         return customerRepository.findAll();
     }
 
-    // 2. Save a customer
-    public Customer saveCustomer(Customer customer) {
-        return customerRepository.save(customer);
+    // Adding @Transactional ensures the data is "Committed" to MySQL
+    @Transactional
+    public void saveCustomer(CustomerDto customerDto) {
+        CustomerEntity customerEntity = modelMapper.map(customerDto, CustomerEntity.class);
+        customerRepository.save(customerEntity);
     }
 
-    // 3. Delete a customercustomerservice.java file
+    @Transactional
     public void deleteCustomer(Long id) {
         customerRepository.deleteById(id);
     }
 
-    // 4. Update a customer
-    public Customer updateCustomer(Long id, Customer details) {
+    @Transactional
+    public CustomerEntity updateCustomer(Long id, CustomerEntity details) {
         return customerRepository.findById(id).map(customer -> {
-            // Only update if the new value is not null or empty
             if (details.getName() != null) customer.setName(details.getName());
             if (details.getEmail() != null) customer.setEmail(details.getEmail());
             if (details.getPhone() != null) customer.setPhone(details.getPhone());

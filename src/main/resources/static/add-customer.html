@@ -13,6 +13,7 @@
             --glass-border: rgba(255, 255, 255, 0.1);
             --text-main: #f8fafc;
             --text-dim: #94a3b8;
+            --error-red: #ff4b2b;
         }
 
         * {
@@ -44,11 +45,11 @@
             background: var(--glass-dark);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            padding: 35px 40px; /* Reduced vertical padding */
+            padding: 35px 40px;
             border-radius: 28px;
             border: 1px solid var(--glass-border);
             width: 100%;
-            max-width: 450px; /* Slimmer width */
+            max-width: 450px;
             box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
             text-align: center;
             animation: slideUp 0.6s ease-out;
@@ -66,18 +67,18 @@
         h2 {
             color: var(--text-main);
             font-weight: 700;
-            margin-bottom: 25px; /* Reduced margin */
+            margin-bottom: 25px;
             font-size: 30px;
             letter-spacing: -1px;
         }
 
         .input-group {
-            margin-bottom: 12px; /* Uniform tight spacing */
+            margin-bottom: 12px;
         }
 
         input, select, textarea {
             width: 100%;
-            padding: 12px 20px; /* Compact padding */
+            padding: 12px 20px;
             border: 1px solid var(--glass-border);
             border-radius: 14px;
             background: rgba(255, 255, 255, 0.05);
@@ -88,7 +89,7 @@
 
         textarea {
             resize: none;
-            height: 80px; /* Fixed height for address */
+            height: 80px;
         }
 
         input:focus, textarea:focus, select:focus {
@@ -123,6 +124,16 @@
             transform: translateY(-2px);
             filter: brightness(1.1);
             box-shadow: 0 10px 20px rgba(217, 70, 239, 0.3);
+        }
+
+        /* Password Error Style */
+        .error-message {
+            color: var(--error-red);
+            font-size: 11px;
+            margin-top: 4px;
+            display: none;
+            text-align: left;
+            padding-left: 10px;
         }
 
         .footer-links {
@@ -178,7 +189,12 @@
                 <option value="Apartment">Apartment</option>
                 <option value="Land">Land</option>
                 <option value="Commercial">Commercial</option>
+                <option value="Industrial Building">Industrial Building</option>
             </select>
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Create Password" required>
+            <div id="passwordError" class="error-message">Password must be at least 8 characters, with 1 uppercase and 1 number.</div>
         </div>
 
         <button type="submit">Save Profile</button>
@@ -194,15 +210,31 @@
     document.getElementById('customerForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
+        const password = document.getElementById('password').value;
+        const passwordError = document.getElementById('passwordError');
+
+        // Strong Password Validation (8 chars, 1 letter, 1 number)
+        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+        if (!strongPasswordRegex.test(password)) {
+            passwordError.style.display = 'block';
+            document.getElementById('password').style.borderColor = 'var(--error-red)';
+            return; // Stop the form submission
+        } else {
+            passwordError.style.display = 'none';
+            document.getElementById('password').style.borderColor = 'var(--glass-border)';
+        }
+
         const customerData = {
             name: document.getElementById('name').value,
             email: document.getElementById('email').value,
             phone: document.getElementById('phone').value,
             address: document.getElementById('address').value,
-            propertyType: document.getElementById('propertyType').value
+            propertyType: document.getElementById('propertyType').value,
+            password: document.getElementById("password").value
         };
 
-        fetch('http://localhost:8080/api/customers', {
+        fetch('http://localhost:8080/api/customers/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(customerData)

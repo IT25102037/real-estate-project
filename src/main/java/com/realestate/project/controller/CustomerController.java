@@ -1,43 +1,50 @@
 package com.realestate.project.controller;
 
-import com.realestate.project.model.Customer;
+import com.realestate.project.dto.CustomerDto;
+import com.realestate.project.model.CustomerEntity;
 import com.realestate.project.service.CustomerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/customers")
-@CrossOrigin(origins = "*") // ADD THIS LINE TO ALLOW THE FRONTEND TO TALK TO THE BACKEND
+@CrossOrigin(origins = "*")
 public class CustomerController {
 
-    private final CustomerService customerService;
+    @Autowired
+    private CustomerService customerService;
 
-    // By defining this constructor, Spring automatically injects CustomerService.
-
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
+    // 1. SAVE TO DATABASE
+    // This matches: fetch("http://localhost:8080/api/customers/register", ...)
+    @PostMapping("/register")
+    public ResponseEntity<CustomerDto> register(@RequestBody CustomerDto customerDto) {
+        System.out.println("Received : " +customerDto);
+        // This calls the service which saves to MySQL
+        customerService.saveCustomer(customerDto);
+        return ResponseEntity.ok(customerDto);
     }
 
-    @PostMapping
-    public Customer saveCustomer(@RequestBody Customer customer) {
-        // Now 'this.customerService' will be properly initialized
-        return customerService.saveCustomer(customer);
-    }
-
+    // 2. GET FROM DATABASE
+    // This matches: fetch('http://localhost:8080/api/customers/')
     @GetMapping
-    public List<Customer> getAllCustomers() {
+    public List<CustomerEntity> getAll() {
         return customerService.getAllCustomers();
     }
 
+    // 3. DELETE FROM DATABASE
     @DeleteMapping("/{id}")
-    public String deleteCustomer(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         customerService.deleteCustomer(id);
-        return "Customer deleted successfully";
+        return ResponseEntity.ok().build();
     }
 
+    // 4. UPDATE IN DATABASE
     @PutMapping("/{id}")
-    public Customer updateCustomer(@PathVariable Long id, @RequestBody Customer details) {
-        return customerService.updateCustomer(id, details);
+    public ResponseEntity<CustomerEntity> update(@PathVariable Long id, @RequestBody CustomerEntity details) {
+        CustomerEntity updated = customerService.updateCustomer(id, details);
+        return ResponseEntity.ok(updated);
     }
 }

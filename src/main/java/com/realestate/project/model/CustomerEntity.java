@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "customers")
-public class Customer {
+public class CustomerEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,10 +19,11 @@ public class Customer {
     private String name;
     private String email;
     private String phone;
+    @Column(name = "property_type")
     private String propertyType;
 
-    // NEW FIELD ADDED HERE
     private String address;
+    private String password;
 
 
 }

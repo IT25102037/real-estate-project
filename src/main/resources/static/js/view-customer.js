@@ -3,7 +3,7 @@ window.onload = function() {
 };
 
 function loadCustomers() {
-    fetch('http://localhost:8080/api/customers')
+    fetch('/api/customers')
         .then(response => response.json())
         .then(data => {
             const tableBody = document.getElementById('customerTableBody');
@@ -60,10 +60,17 @@ function filterCustomers() {
 
 function deleteCustomer(id) {
     if(confirm('Are you sure you want to remove lead #' + id + '?')) {
-        fetch(`http://localhost:8081/api/customers/${id}`, { method: 'DELETE' })
-        .then(() => {
-            loadCustomers();
-            // Optional: If you want the dashboard count to update immediately if you stayed on the page
-        });
+
+        fetch(`/api/customers/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if(response.ok) {
+                loadCustomers(); // Refresh table
+            } else {
+                alert("Failed to delete.");
+            }
+        })
+        .catch(error => console.error('Error:', error));
     }
 }
