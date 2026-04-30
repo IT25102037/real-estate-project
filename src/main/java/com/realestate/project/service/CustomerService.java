@@ -30,6 +30,21 @@ public class CustomerService {
         customerRepository.save(customerEntity);
     }
 
+    @Transactional(readOnly = true)
+    public CustomerEntity login(String email, String password) {
+        // 1. Look for the user by email
+        CustomerEntity customer = customerRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 2. Check if the password matches (Plain text for now)
+        if (!customer.getPassword().equals(password)) {
+            throw new RuntimeException("Invalid credentials");
+        }
+
+        // 3. Return the customer object if successful
+        return customer;
+    }
+
     @Transactional
     public void deleteCustomer(Long id) {
         customerRepository.deleteById(id);
