@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Property - LuxeEstate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            --light-blue: #e0f2fe;
+            --vibrant-blue: #0284c7;
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --text-dark: #0f172a;
+            --error-red: #f43f5e;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background: linear-gradient(rgba(224, 242, 254, 0.6), rgba(224, 242, 254, 0.6)),
+                        url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            min-height: 100vh; padding: 40px 20px;
+        }
+
+        .form-container, .listings-dashboard {
+            background: var(--glass-bg); backdrop-filter: blur(12px);
+            padding: 40px; border-radius: 30px; margin: 20px auto;
+            max-width: 900px; border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .listings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+        .my-listing-card { background: white; border-radius: 20px; padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .my-listing-card img { width: 100%; height: 150px; object-fit: cover; border-radius: 15px; }
+        .card-controls { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-edit { flex: 1; background: #0ea5e9; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+        .btn-delete { flex: 1; background: #ef4444; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+
+        #deleteOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .delete-box { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
+        .delete-box textarea { width: 100%; margin-top: 15px; border: 1px solid #ddd; padding: 10px; border-radius: 8px; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: span 2; }
+        label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 13px; color: #334155; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #cbd5e1; }
+        .upload-zone { background: #f8fafc; border: 2px dashed #0284c7; padding: 20px; border-radius: 20px; text-align: center; cursor: pointer; }
+        .preview-img { max-width: 150px; border-radius: 10px; display: none; margin: 10px auto;}
+        .submit-btn { width: 100%; background: var(--primary-gradient); color: white; padding: 18px; border: none; border-radius: 15px; font-size: 18px; font-weight: 800; cursor: pointer; margin-top: 25px; }
+    </style>
+</head>
+<body>
+
+<div id="property-form-wrapper" class="form-container">
+    <header style="text-align:center; margin-bottom: 30px;">
+        <h2 id="formTitle">List Your <span>Property</span></h2>
+        <p>Enter details to update or publish your listing</p>
+    </header>
+    <form id="listingForm">
+        <input type="hidden" id="editListingId">
+        <div class="form-grid">
+            <div class="form-group full-width">
+                <label>Seller Name</label>
+                <input type="text" id="ownerName" readonly style="background: #f1f5f9;">
+            </div>
+            <div class="form-group">
+                <label>Property Title *</label>
+                <input type="text" id="propertyTitle" required>
+            </div>
+            <div class="form-group">
+                <label>Property Type *</label>
+                <select id="propertyType">
+                    <option value="House">Mansion</option>
+                    <option value="Apartment">Penthouse</option>
+                    <option value="House">House</option>
+                    <option value="Land">Land</option>
+                    <option value="Industrial Building">Industrial Building</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Price (LKR) *</label>
+                <input type="number" id="price" required>
+            </div>
+            <div class="form-group">
+                <label>Location *</label>
+                <input type="text" id="location" required>
+            </div>
+            <div class="form-group full-width">
+                <label>Property Image *</label>
+                <div class="upload-zone" onclick="document.getElementById('propImages').click()">
+                    <img id="imgPreview" class="preview-img">
+                    <p id="uploadText">📷 Click to upload image</p>
+                    <input type="file" id="propImages" hidden accept="image/*">
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="submit-btn" id="submitBtn">Publish Listing</button>
+    </form>
+</div>
+
+<div class="listings-dashboard">
+    <h2 style="text-align: center;">My <span>Listings Status</span></h2>
+    <div id="myListingsContainer" class="listings-grid"></div>
+</div>
+
+<div id="deleteOverlay">
+    <div class="delete-box">
+        <h3>Delete Listing?</h3>
+        <p>Please provide a reason for deletion:</p>
+        <textarea id="deleteReason" rows="3" placeholder="e.g. Property Sold"></textarea>
+        <div class="card-controls">
+            <button class="btn-edit" onclick="closeDelete()">Cancel</button>
+            <button class="btn-delete" onclick="confirmDelete()">Confirm Delete</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentDeleteId = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const user = localStorage.getItem('luxeUser');
+        if (user) {
+            document.getElementById('ownerName').value = user;
+            fetchMyListings(user);
+
+            // HANDLE REDIRECT ACTIONS FROM INDEX
+            const action = sessionStorage.getItem('pendingAction');
+            const dataStr = sessionStorage.getItem('pendingData');
+            if (action && dataStr) {
+                const data = JSON.parse(dataStr);
+                sessionStorage.removeItem('pendingAction');
+                sessionStorage.removeItem('pendingData');
+                if (action === 'edit') startEdit(data);
+                else if (action === 'delete') openDelete(data.id);
+            }
+        } else { window.location.href = "add-customer.html"; }
+    });
+
+    async function fetchMyListings(user) {
+        try {
+            const res = await fetch(`http://localhost:8081/api/listings/all`);
+            const data = await res.json();
+            const myData = data.filter(item => item.ownerName === user);
+            const container = document.getElementById('myListingsContainer');
+            container.innerHTML = myData.length ? '' : '<p>No listings found.</p>';
+            myData.forEach(item => {
+                container.innerHTML += `
+                    <div class="my-listing-card">
+                        <img src="${item.imagePath}">
+                        <h4>${item.propertyTitle}</h4>
+                        <p>LKR ${item.price.toLocaleString()}</p>
+                        <div class="card-controls">
+                            <button class="btn-edit" onclick="startEdit(${JSON.stringify(item).replace(/"/g, '&quot;')})">Edit</button>
+                            <button class="btn-delete" onclick="openDelete(${item.id})">Delete</button>
+                        </div>
+                    </div>`;
+            });
+        } catch (e) { console.error("Load failed"); }
+    }
+
+    function startEdit(item) {
+        window.scrollTo({top: 0, behavior: 'smooth'});
+        document.getElementById('formTitle').innerHTML = "Update <span>Listing</span>";
+        document.getElementById('submitBtn').innerText = "Save Changes";
+        document.getElementById('editListingId').value = item.id;
+        document.getElementById('propertyTitle').value = item.propertyTitle;
+        document.getElementById('propertyType').value = item.propertyType;
+        document.getElementById('price').value = item.price;
+        document.getElementById('location').value = item.location;
+        document.getElementById('imgPreview').src = item.imagePath;
+        document.getElementById('imgPreview').style.display = 'block';
+        document.getElementById('uploadText').style.display = 'none';
+    }
+
+    function openDelete(id) {
+        currentDeleteId = id;
+        document.getElementById('deleteOverlay').style.display = 'flex';
+    }
+
+    function closeDelete() {
+        document.getElementById('deleteOverlay').style.display = 'none';
+        document.getElementById('deleteReason').value = '';
+    }
+
+    async function confirmDelete() {
+        const reason = document.getElementById('deleteReason').value;
+        if(!reason) return alert("Please provide a reason.");
+        try {
+            const res = await fetch(`http://localhost:8081/api/listings/delete/${currentDeleteId}`, { method: 'DELETE' });
+            if(res.ok) { alert("Deleted successfully."); location.reload(); }
+        } catch (e) { alert("Delete failed"); }
+    }
+
+    document.getElementById('listingForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const editId = document.getElementById('editListingId').value;
+        const endpoint = editId ? `update/${editId}` : 'add';
+        const data = {
+            ownerName: document.getElementById('ownerName').value,
+            propertyTitle: document.getElementById('propertyTitle').value,
+            propertyType: document.getElementById('propertyType').value,
+            price: parseFloat(document.getElementById('price').value),
+            location: document.getElementById('location').value,
+            imagePath: document.getElementById('imgPreview').src
+        };
+        try {
+            const res = await fetch(`http://localhost:8081/api/listings/${endpoint}`, {
+                method: editId ? 'PUT' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) { alert("Success!"); location.reload(); }
+        } catch (err) { alert("Connection Error"); }
+    };
+
+    document.getElementById('propImages').onchange = function() {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('imgPreview').src = e.target.result;
+            document.getElementById('imgPreview').style.display = 'block';
+            document.getElementById('uploadText').style.display = 'none';
+        };
+        reader.readAsDataURL(this.files[0]);
+    };
+</script>
+</body>
+</html>

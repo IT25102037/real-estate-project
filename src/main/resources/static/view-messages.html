@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Inquiries | LuxeEstate Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #818cf8;
+            --accent: #22d3ee;
+            --sidebar-width: 280px;
+            --glass-dark: rgba(15, 23, 42, 0.85);
+            --card-glass: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --danger: #ef4444;
+            /* Enhanced Status Colors (Higher Opacity) */
+            --status-green: rgba(34, 197, 94, 0.35);
+            --status-blue: rgba(99, 102, 241, 0.35); /* Indigo/Blue for Pending */
+            --status-red: rgba(220, 38, 38, 0.35);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(49, 46, 129, 0.7)),
+                        url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            display: flex; height: 100vh; color: var(--text-main); overflow: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+        aside {
+            width: var(--sidebar-width);
+            background: var(--glass-dark);
+            backdrop-filter: blur(30px);
+            border-right: 1px solid var(--glass-border);
+            display: flex; flex-direction: column; padding: 35px 20px;
+        }
+
+        .admin-topic {
+            font-size: 14px; font-weight: 800; color: var(--accent);
+            letter-spacing: 2px; text-transform: uppercase;
+            margin-bottom: 40px; padding-left: 12px;
+        }
+
+        .nav-menu { list-style: none; flex-grow: 1; }
+        .nav-item {
+            display: flex; align-items: center; padding: 14px 18px; margin-bottom: 8px;
+            border-radius: 14px; color: var(--text-dim); text-decoration: none;
+            font-weight: 500; transition: all 0.3s ease;
+        }
+        .nav-item i { margin-right: 14px; width: 20px; }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(129, 140, 248, 0.15);
+            color: #c7d2fe;
+            border: 1px solid rgba(129, 140, 248, 0.4);
+        }
+
+        /* --- MAIN CONTENT --- */
+        main { flex-grow: 1; padding: 40px; overflow-y: auto; }
+        .header-section { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
+        .header-section h1 { font-size: 32px; font-weight: 700; }
+
+        .filter-glass-panel {
+            background: var(--card-glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex; align-items: center; gap: 15px; flex-wrap: wrap;
+        }
+
+        .filter-glass-panel input, .filter-glass-panel select {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--glass-border);
+            padding: 12px 15px; border-radius: 12px;
+            color: #000000;
+            outline: none; transition: 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white; border: none; padding: 12px 24px; border-radius: 12px;
+            cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;
+        }
+
+        /* --- DATA TABLE --- */
+        .table-glass-container {
+            background: var(--card-glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { padding: 15px; color: var(--accent); font-size: 12px; text-transform: uppercase; border-bottom: 1px solid var(--glass-border); }
+        td { padding: 18px 15px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 14px; vertical-align: middle; transition: 0.4s ease; }
+
+        .inquiry-badge {
+            background: rgba(34, 211, 238, 0.1);
+            color: var(--accent);
+            padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase;
+        }
+
+        .btn-remove {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 11px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-remove:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-logout { margin-top: auto; color: #fda4af; }
+
+        .status-select {
+            background: rgba(15, 23, 42, 0.6);
+            color: #fff;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 8px;
+            outline: none;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .status-select option { color: #000; background: #fff; }
+
+        #empty-state {
+            display: none;
+            text-align: center; padding: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px; border: 1px dashed var(--glass-border); margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<aside>
+    <div class="admin-topic">LuxeEstate</div>
+    <nav class="nav-menu">
+        <a href="admin-dashboard.html" class="nav-item"><i data-lucide="layout-grid"></i> Dash board</a>
+        <a href="#" class="nav-item"><i data-lucide="bar-chart-3"></i> Analytics</a>
+        <a href="view-customer.html" class="nav-item"><i data-lucide="users"></i> Customers</a>
+        <a href="#" class="nav-item"><i data-lucide="contact-2"></i> Agents</a>
+        <a href="#" class="nav-item"><i data-lucide="landmark"></i> Transactions</a>
+        <a href="view-listings.html" class="nav-item"><i data-lucide="home"></i> Listings</a>
+        <a href="view-messages.html" class="nav-item active"><i data-lucide="mail"></i> Messages</a>
+    </nav>
+    <a href="admin-login.html" class="nav-item btn-logout">
+        <i data-lucide="power"></i> Logout
+    </a>
+</aside>
+
+<main>
+    <div class="header-section">
+        <h1>Customer Inquiries</h1>
+    </div>
+
+    <div class="filter-glass-panel">
+        <input type="text" id="searchId" style="width: 80px;" placeholder="ID">
+        <input type="text" id="searchGeneral" style="flex: 1;" placeholder="Search name, email, or message content...">
+
+        <select id="statusFilter">
+            <option value="">Filter by Status</option>
+            <option value="New">New</option>
+            <option value="Pending">Pending</option>
+            <option value="Replied">Replied</option>
+            <option value="Reject">Reject</option>
+        </select>
+
+        <select id="inquiryFilter">
+            <option value="">All Inquiries</option>
+            <option value="General">General</option>
+            <option value="Property Inquiry">Property Inquiry</option>
+            <option value="Support">Support</option>
+            <option value="Feedback">Feedback</option>
+        </select>
+        <button class="btn-primary" onclick="filterMessages()">🔍 Filter</button>
+    </div>
+
+    <div class="table-glass-container">
+        <table id="messageTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Inquiry Type</th>
+                <th>Status</th>
+                <th>Contact Info</th>
+                <th>Message</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="messageTableBody">
+            </tbody>
+        </table>
+
+        <div id="empty-state">
+            <i data-lucide="search-x" style="margin-bottom: 15px; color: var(--danger);"></i>
+            <h3>No inquiries found</h3>
+            <p>Try adjusting your filters or search terms.</p>
+        </div>
+    </div>
+</main>
+
+<script>
+    lucide.createIcons();
+
+    // Enhanced row colors
+    function getRowColor(status) {
+        if (status === 'Replied') return 'var(--status-green)';
+        if (status === 'Pending') return 'var(--status-blue)';
+        if (status === 'Reject') return 'var(--status-red)';
+        return 'transparent';
+    }
+
+    async function loadMessages() {
+        try {
+            const response = await fetch('http://localhost:8080/api/contact');
+            const messages = await response.json();
+            const tableBody = document.getElementById('messageTableBody');
+
+            tableBody.innerHTML = messages.map(msg => `
+                <tr id="row-${msg.id}" data-status="${msg.status}" style="background-color: ${getRowColor(msg.status)}">
+                    <td>#${msg.id}</td>
+                    <td><b>${msg.userName}</b></td>
+                    <td><span class="inquiry-badge">${msg.inquiryType}</span></td>
+                    <td>
+                        <select class="status-select" onchange="updateStatus(${msg.id}, this.value)">
+                            <option value="New" ${msg.status === 'New' ? 'selected' : ''}>New</option>
+                            <option value="Pending" ${msg.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option value="Replied" ${msg.status === 'Replied' ? 'selected' : ''}>Replied</option>
+                            <option value="Reject" ${msg.status === 'Reject' ? 'selected' : ''}>Reject</option>
+                        </select>
+                    </td>
+                    <td>
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <span>${msg.userEmail}</span>
+                            <small style="color: var(--text-dim); display: flex; align-items: center; gap: 4px;">
+                                <i data-lucide="phone" style="width:12px; height:12px;"></i> ${msg.userPhone || 'No Phone'}
+                            </small>
+                        </div>
+                    </td>
+                    <td style="max-width: 350px; line-height: 1.5; color: #cbd5e1;">${msg.userMessage}</td>
+                    <td>
+                        <button class="btn-remove" onclick="removeInquiry(${msg.id})">Remove</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            lucide.createIcons();
+        } catch (error) {
+            console.error('Error loading messages:', error);
+        }
+    }
+
+    async function updateStatus(id, newStatus) {
+        try {
+            const response = await fetch(`http://localhost:8080/api/contact/${id}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newStatus)
+            });
+
+            if (response.ok) {
+                const row = document.getElementById(`row-${id}`);
+                row.style.backgroundColor = getRowColor(newStatus);
+                row.setAttribute('data-status', newStatus); // Update for filtering
+                console.log("Status updated to " + newStatus);
+            } else {
+                alert("Failed to update status");
+            }
+        } catch (error) {
+            console.error('Error updating status:', error);
+        }
+    }
+
+    function filterMessages() {
+        const idSearch = document.getElementById('searchId').value.toLowerCase();
+        const generalSearch = document.getElementById('searchGeneral').value.toLowerCase();
+        const statusSearch = document.getElementById('statusFilter').value.toLowerCase();
+        const inquirySearch = document.getElementById('inquiryFilter').value.toLowerCase();
+
+        const rows = document.querySelectorAll('#messageTableBody tr');
+        const table = document.getElementById('messageTable');
+        const emptyState = document.getElementById('empty-state');
+
+        let foundMatch = false;
+
+        rows.forEach(row => {
+            const idText = row.cells[0].textContent.toLowerCase();
+            const customer = row.cells[1].textContent.toLowerCase();
+            const type = row.cells[2].textContent.toLowerCase();
+            const currentStatus = row.getAttribute('data-status').toLowerCase();
+            const contact = row.cells[4].textContent.toLowerCase();
+            const message = row.cells[5].textContent.toLowerCase();
+
+            const matchesId = idSearch === "" || idText.includes(idSearch);
+            const matchesGeneral = generalSearch === "" ||
+                                   customer.includes(generalSearch) ||
+                                   contact.includes(generalSearch) ||
+                                   message.includes(generalSearch);
+            const matchesStatus = statusSearch === "" || currentStatus === statusSearch;
+            const matchesType = inquirySearch === "" || type.includes(inquirySearch);
+
+            if (matchesId && matchesGeneral && matchesStatus && matchesType) {
+                row.style.display = "";
+                foundMatch = true;
+            } else {
+                row.style.display = "none";
+            }
+        });
+
+        table.style.display = foundMatch ? "table" : "none";
+        emptyState.style.display = foundMatch ? "none" : "block";
+    }
+
+    async function removeInquiry(id) {
+        if(confirm("Are you sure you want to remove this inquiry?")) {
+            try {
+                const response = await fetch(`http://localhost:8080/api/contact/${id}`, {
+                    method: 'DELETE'
+                });
+                if(response.ok) {
+                    alert("Inquiry removed.");
+                    loadMessages();
+                } else {
+                    alert("Failed to delete inquiry.");
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    }
+
+    window.onload = loadMessages;
+</script>
+</body>
+</html>

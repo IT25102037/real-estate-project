@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeEstate | Admin Access</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            /* Exact color palette from your main interface */
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+            --vibrant-cyan: #06b6d4;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --dark-navy: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            /* High-end background matching the hero section style */
+            background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)),
+                        url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            padding: 50px 40px;
+            border-radius: 40px; /* Matching the rounded feel of the search bar */
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .logo-area h2 {
+            font-size: 32px;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: white;
+            font-size: 38px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            letter-spacing: -1px;
+        }
+
+        h1 span {
+            color: var(--vibrant-cyan);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Input styling matching your main search bar */
+        .input-group {
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 18px 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 80px; /* Exact same radius as your search bar */
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--vibrant-cyan);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+        }
+
+        /* Authorize button matching the "Find Home" button */
+        .auth-btn {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 80px;
+            font-size: 16px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3);
+        }
+
+        .auth-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 30px rgba(168, 85, 247, 0.5);
+        }
+
+        .error-msg {
+            color: #fb7185;
+            background: rgba(251, 113, 133, 0.1);
+            border: 1px solid rgba(251, 113, 133, 0.2);
+            padding: 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .footer-links {
+            margin-top: 30px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover {
+            color: white;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <div class="logo-area">
+        <h2>LuxeEstate</h2>
+    </div>
+
+    <h1>Admin <span>Portal</span></h1>
+    <p class="subtitle">Secure Management Access</p>
+
+    <div class="error-msg" id="errorMessage">Invalid Access Credentials</div>
+
+    <div class="input-group">
+        <input type="text" id="username" placeholder="Username" required>
+    </div>
+
+    <div class="input-group">
+        <input type="password" id="password" placeholder="Password" required>
+    </div>
+
+    <button class="auth-btn" onclick="checkLogin()">Authorize Entry</button>
+
+    <div class="footer-links">
+        <a href="add-customer.html" class="nav-link">← Return to Main Page</a>
+    </div>
+</div>
+
+<script>
+    function checkLogin() {
+        const user = document.getElementById("username").value;
+        const pass = document.getElementById("password").value;
+        const error = document.getElementById("errorMessage");
+
+        // Logic remains exactly the same as provided
+        if (user === "admin" && pass === "admin123") {
+            window.location.href = "admin-dashboard.html";
+        } else {
+            error.style.display = "block";
+            const card = document.querySelector('.login-card');
+            card.style.animation = 'none';
+            card.offsetHeight;
+            card.style.animation = 'shake 0.4s ease-in-out';
+        }
+    }
+</script>
+
+</body>
+</html>
