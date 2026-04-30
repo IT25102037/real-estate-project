@@ -74,3 +74,15 @@ function deleteCustomer(id) {
         .catch(error => console.error('Error:', error));
     }
 }
+
+function printReport() {
+    // Optional: Add a title or date to the top before printing
+    const originalTitle = document.title;
+    document.title = "Customer_Report_" + new Date().toISOString().slice(0,10);
+
+    // Trigger the browser print dialog
+    window.print();
+
+    // Restore original title
+    document.title = originalTitle;
+}

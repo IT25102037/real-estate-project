@@ -6,6 +6,7 @@
     <title>Manage Customers | LuxeEstate Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="js/view-customer.js" defer></script>
     <style>
         :root {
             --primary: #818cf8; --accent: #22d3ee; --sidebar-width: 280px;
@@ -73,6 +74,64 @@
         .btn-save { background: var(--success); color: white; border: none; padding: 12px; border-radius: 10px; flex: 1; cursor: pointer; font-weight: 700; transition: 0.3s; }
         .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
         .btn-cancel { background: transparent; color: white; border: 1px solid var(--glass-border); padding: 12px; border-radius: 10px; flex: 1; cursor: pointer; }
+
+ @media print {
+    /* 1. Hide UI elements that shouldn't be on a paper report */
+    aside,
+    .filter-glass-panel,
+    .header-section button,
+    .actions-cell,
+    th:last-child,
+    td:last-child,
+    .nav-menu {
+        display: none !important;
+    }
+
+    /* 2. Reset the background to plain white */
+    body {
+        background: white !important;
+        color: black !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    main {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    /* 3. Make the table look like a standard document */
+    .table-glass-container {
+        background: transparent !important;
+        border: none !important;
+        backdrop-filter: none !important;
+        box-shadow: none !important;
+    }
+
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        color: black !important;
+    }
+
+    th, td {
+        border: 1px solid #ddd !important; /* Add visible borders for the paper */
+        padding: 10px !important;
+        color: black !important;
+    }
+
+    th {
+        background-color: #f2f2f2 !important;
+        -webkit-print-color-adjust: exact; /* Force background colors to print */
+    }
+
+    .property-badge {
+        background: #eee !important;
+        color: black !important;
+        border: 1px solid #ccc !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -117,9 +176,10 @@
 <main>
     <div class="header-section">
         <h1>Manage Customers</h1>
-        <button class="btn-primary" onclick="exportData()"><i data-lucide="download"></i> Export CSV</button>
+        <button class="btn-primary" onclick="printReport()">
+            <i data-lucide="printer"></i> Print Report
+        </button>
     </div>
-
     <div class="filter-glass-panel">
         <input type="text" id="searchId" style="width: 80px;" placeholder="ID">
         <input type="text" id="searchGeneral" style="flex: 1;" placeholder="Search name, email, or location...">
