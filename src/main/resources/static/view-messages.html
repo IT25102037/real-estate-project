@@ -4,163 +4,178 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Inquiries | LuxeEstate Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --primary: #818cf8;
-            --accent: #22d3ee;
-            --sidebar-width: 280px;
-            --glass-dark: rgba(15, 23, 42, 0.85);
-            --card-glass: rgba(255, 255, 255, 0.06);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --text-main: #f8fafc;
-            --text-dim: #94a3b8;
-            --danger: #ef4444;
-            /* Enhanced Status Colors (Higher Opacity) */
-            --status-green: rgba(34, 197, 94, 0.35);
-            --status-blue: rgba(99, 102, 241, 0.35); /* Indigo/Blue for Pending */
-            --status-red: rgba(220, 38, 38, 0.35);
+            --gold: #c9a96e;
+            --gold-light: #e8d5b0;
+            --gold-dark: #8b6914;
+            --obsidian: #0a0a0a;
+            --white: #ffffff;
+            --border-gold: rgba(201,169,110,0.3);
+            --glass-bg: rgba(45, 35, 20, 0.46);
+            --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+            /* Status Accents */
+            --status-green: rgba(34, 197, 94, 0.25);
+            --status-blue: rgba(99, 102, 241, 0.25);
+            --status-red: rgba(220, 38, 38, 0.25);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(49, 46, 129, 0.7)),
-                        url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1920&q=80');
-            background-size: cover; background-position: center; background-attachment: fixed;
-            display: flex; height: 100vh; color: var(--text-main); overflow: hidden;
+            font-family: 'DM Sans', sans-serif;
+            background: #0a0a0a;
+            color: var(--white);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* --- BACKGROUND LAYERS (Matched to Register Page) --- */
+        .bg-layer {
+            position: fixed; inset: 0;
+            background: url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+            filter: brightness(0.45) saturate(1.1);
+            z-index: -2;
+        }
+        .bg-overlay {
+            position: fixed; inset: 0;
+            background: linear-gradient(160deg, rgba(30,22,10,0.5) 0%, rgba(10,8,4,0.7) 100%);
+            z-index: -1;
+        }
+        .bg-grain {
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.2; z-index: -1; pointer-events: none;
         }
 
         /* --- SIDEBAR --- */
         aside {
-            width: var(--sidebar-width);
-            background: var(--glass-dark);
-            backdrop-filter: blur(30px);
-            border-right: 1px solid var(--glass-border);
-            display: flex; flex-direction: column; padding: 35px 20px;
+            width: 280px;
+            background: rgba(15, 12, 8, 0.85);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border-gold);
+            display: flex; flex-direction: column; padding: 40px 24px;
+            z-index: 10;
         }
 
         .admin-topic {
-            font-size: 14px; font-weight: 800; color: var(--accent);
-            letter-spacing: 2px; text-transform: uppercase;
-            margin-bottom: 40px; padding-left: 12px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px; letter-spacing: 4px; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 50px; text-align: center;
         }
 
         .nav-menu { list-style: none; flex-grow: 1; }
         .nav-item {
-            display: flex; align-items: center; padding: 14px 18px; margin-bottom: 8px;
-            border-radius: 14px; color: var(--text-dim); text-decoration: none;
-            font-weight: 500; transition: all 0.3s ease;
+            display: flex; align-items: center; padding: 14px 18px; margin-bottom: 10px;
+            border-radius: 2px; color: rgba(255,255,255,0.5); text-decoration: none;
+            font-size: 12px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase;
+            transition: var(--transition); border: 1px solid transparent;
         }
-        .nav-item i { margin-right: 14px; width: 20px; }
+        .nav-item i { margin-right: 12px; width: 18px; color: var(--gold); }
         .nav-item:hover, .nav-item.active {
-            background: rgba(129, 140, 248, 0.15);
-            color: #c7d2fe;
-            border: 1px solid rgba(129, 140, 248, 0.4);
+            color: var(--white);
+            background: rgba(201,169,110,0.1);
+            border-color: var(--border-gold);
         }
+
+        .btn-logout { margin-top: auto; color: #fda4af; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
 
         /* --- MAIN CONTENT --- */
-        main { flex-grow: 1; padding: 40px; overflow-y: auto; }
-        .header-section { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
-        .header-section h1 { font-size: 32px; font-weight: 700; }
+        main { flex-grow: 1; padding: 60px; overflow-y: auto; z-index: 1; }
 
+        .header-section { margin-bottom: 40px; opacity: 0; animation: fadeUp 0.8s forwards; }
+        .header-section h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 42px; font-weight: 300; letter-spacing: -1px;
+        }
+
+        /* --- FILTERS --- */
         .filter-glass-panel {
-            background: var(--card-glass);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 25px;
-            display: flex; align-items: center; gap: 15px; flex-wrap: wrap;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-gold);
+            padding: 24px; border-radius: 4px; margin-bottom: 30px;
+            display: flex; align-items: center; gap: 15px;
+            opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
         }
 
         .filter-glass-panel input, .filter-glass-panel select {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid var(--glass-border);
-            padding: 12px 15px; border-radius: 12px;
-            color: #000000;
-            outline: none; transition: 0.3s;
-            font-weight: 600;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(201,169,110,0.2);
+            padding: 12px 16px; border-radius: 2px;
+            color: var(--white); outline: none; font-size: 13px;
         }
+
+        .filter-glass-panel select option { background: #1e160a; }
 
         .btn-primary {
-            background: var(--primary);
-            color: white; border: none; padding: 12px 24px; border-radius: 12px;
-            cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px;
+            background: var(--gold);
+            color: var(--obsidian); border: none; padding: 12px 24px;
+            cursor: pointer; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 2px; font-size: 11px; transition: var(--transition);
         }
+        .btn-primary:hover { background: var(--gold-light); box-shadow: 0 0 20px rgba(201,169,110,0.3); }
 
-        /* --- DATA TABLE --- */
+        /* --- TABLE --- */
         .table-glass-container {
-            background: var(--card-glass);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 20px;
-            overflow-x: auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-gold);
+            border-radius: 4px; padding: 10px;
+            opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
         }
 
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th { padding: 15px; color: var(--accent); font-size: 12px; text-transform: uppercase; border-bottom: 1px solid var(--glass-border); }
-        td { padding: 18px 15px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 14px; vertical-align: middle; transition: 0.4s ease; }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            padding: 20px 15px; color: var(--gold); font-size: 10px;
+            text-transform: uppercase; letter-spacing: 2px; text-align: left;
+            border-bottom: 1px solid var(--border-gold);
+        }
+        td { padding: 20px 15px; font-size: 13px; border-bottom: 1px solid rgba(201,169,110,0.1); vertical-align: middle; }
 
         .inquiry-badge {
-            background: rgba(34, 211, 238, 0.1);
-            color: var(--accent);
-            padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase;
+            border: 1px solid var(--gold);
+            color: var(--gold); padding: 4px 10px; font-size: 10px; font-weight: 700; text-transform: uppercase;
         }
 
         .btn-remove {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            border: 1px solid var(--danger);
-            padding: 8px 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 11px;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
+            background: transparent; color: #ff6b6b; border: 1px solid #ff6b6b;
+            padding: 8px 15px; font-size: 10px; font-weight: 700; text-transform: uppercase;
+            cursor: pointer; transition: var(--transition);
         }
-
-        .btn-remove:hover {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-logout { margin-top: auto; color: #fda4af; }
+        .btn-remove:hover { background: #ff6b6b; color: var(--white); }
 
         .status-select {
-            background: rgba(15, 23, 42, 0.6);
-            color: #fff;
-            border: 1px solid var(--glass-border);
-            border-radius: 8px;
-            padding: 8px;
-            outline: none;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 12px;
+            background: rgba(0,0,0,0.3); color: var(--white);
+            border: 1px solid rgba(201,169,110,0.3); padding: 6px; font-size: 11px;
         }
-        .status-select option { color: #000; background: #fff; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         #empty-state {
-            display: none;
-            text-align: center; padding: 40px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 20px; border: 1px dashed var(--glass-border); margin-top: 20px;
+            padding: 50px; text-align: center; color: var(--gold-light);
+            border: 1px dashed var(--border-gold); margin: 20px; display: none;
         }
     </style>
 </head>
 <body>
 
+<div class="bg-layer"></div>
+<div class="bg-overlay"></div>
+<div class="bg-grain"></div>
+
 <aside>
-    <div class="admin-topic">LuxeEstate</div>
+    <div class="admin-topic">Luxe<span>_Estate</span></div>
     <nav class="nav-menu">
-        <a href="admin-dashboard.html" class="nav-item"><i data-lucide="layout-grid"></i> Dash board</a>
-        <a href="#" class="nav-item"><i data-lucide="bar-chart-3"></i> Analytics</a>
+        <a href="admin-dashboard.html" class="nav-item"><i data-lucide="layout-grid"></i> Dashboard</a>
         <a href="view-customer.html" class="nav-item"><i data-lucide="users"></i> Customers</a>
-        <a href="#" class="nav-item"><i data-lucide="contact-2"></i> Agents</a>
-        <a href="#" class="nav-item"><i data-lucide="landmark"></i> Transactions</a>
         <a href="view-listings.html" class="nav-item"><i data-lucide="home"></i> Listings</a>
         <a href="view-messages.html" class="nav-item active"><i data-lucide="mail"></i> Messages</a>
     </nav>
@@ -171,15 +186,15 @@
 
 <main>
     <div class="header-section">
-        <h1>Customer Inquiries</h1>
+        <h1>Client <em>Inquiries</em></h1>
     </div>
 
     <div class="filter-glass-panel">
         <input type="text" id="searchId" style="width: 80px;" placeholder="ID">
-        <input type="text" id="searchGeneral" style="flex: 1;" placeholder="Search name, email, or message content...">
+        <input type="text" id="searchGeneral" style="flex: 1;" placeholder="Search names, emails, or content...">
 
         <select id="statusFilter">
-            <option value="">Filter by Status</option>
+            <option value="">Status</option>
             <option value="New">New</option>
             <option value="Pending">Pending</option>
             <option value="Replied">Replied</option>
@@ -193,7 +208,7 @@
             <option value="Support">Support</option>
             <option value="Feedback">Feedback</option>
         </select>
-        <button class="btn-primary" onclick="filterMessages()">🔍 Filter</button>
+        <button class="btn-primary" onclick="filterMessages()"><span>Filter</span></button>
     </div>
 
     <div class="table-glass-container">
@@ -202,9 +217,9 @@
             <tr>
                 <th>ID</th>
                 <th>Customer</th>
-                <th>Inquiry Type</th>
+                <th>Type</th>
                 <th>Status</th>
-                <th>Contact Info</th>
+                <th>Contact</th>
                 <th>Message</th>
                 <th>Actions</th>
             </tr>
@@ -214,9 +229,9 @@
         </table>
 
         <div id="empty-state">
-            <i data-lucide="search-x" style="margin-bottom: 15px; color: var(--danger);"></i>
-            <h3>No inquiries found</h3>
-            <p>Try adjusting your filters or search terms.</p>
+            <i data-lucide="search-x" style="width: 48px; height: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+            <h3>No Records Found</h3>
+            <p>Refine your search criteria.</p>
         </div>
     </div>
 </main>
@@ -224,7 +239,6 @@
 <script>
     lucide.createIcons();
 
-    // Enhanced row colors
     function getRowColor(status) {
         if (status === 'Replied') return 'var(--status-green)';
         if (status === 'Pending') return 'var(--status-blue)';
@@ -252,14 +266,12 @@
                         </select>
                     </td>
                     <td>
-                        <div style="display: flex; flex-direction: column; gap: 4px;">
-                            <span>${msg.userEmail}</span>
-                            <small style="color: var(--text-dim); display: flex; align-items: center; gap: 4px;">
-                                <i data-lucide="phone" style="width:12px; height:12px;"></i> ${msg.userPhone || 'No Phone'}
-                            </small>
+                        <div style="line-height: 1.4;">
+                            <span style="display:block; font-weight: 500;">${msg.userEmail}</span>
+                            <small style="color: var(--gold-light); font-size: 11px;">${msg.userPhone || 'No Phone'}</small>
                         </div>
                     </td>
-                    <td style="max-width: 350px; line-height: 1.5; color: #cbd5e1;">${msg.userMessage}</td>
+                    <td style="max-width: 300px; color: rgba(255,255,255,0.7); font-size: 12px; line-height: 1.6;">${msg.userMessage}</td>
                     <td>
                         <button class="btn-remove" onclick="removeInquiry(${msg.id})">Remove</button>
                     </td>
@@ -283,71 +295,50 @@
             if (response.ok) {
                 const row = document.getElementById(`row-${id}`);
                 row.style.backgroundColor = getRowColor(newStatus);
-                row.setAttribute('data-status', newStatus); // Update for filtering
-                console.log("Status updated to " + newStatus);
+                row.setAttribute('data-status', newStatus);
             } else {
-                alert("Failed to update status");
+                alert("Update failed");
             }
         } catch (error) {
-            console.error('Error updating status:', error);
+            console.error('Error:', error);
         }
     }
 
     function filterMessages() {
         const idSearch = document.getElementById('searchId').value.toLowerCase();
-        const generalSearch = document.getElementById('searchGeneral').value.toLowerCase();
-        const statusSearch = document.getElementById('statusFilter').value.toLowerCase();
-        const inquirySearch = document.getElementById('inquiryFilter').value.toLowerCase();
+        const genSearch = document.getElementById('searchGeneral').value.toLowerCase();
+        const statSearch = document.getElementById('statusFilter').value.toLowerCase();
+        const typeSearch = document.getElementById('inquiryFilter').value.toLowerCase();
 
         const rows = document.querySelectorAll('#messageTableBody tr');
-        const table = document.getElementById('messageTable');
-        const emptyState = document.getElementById('empty-state');
-
-        let foundMatch = false;
+        let found = false;
 
         rows.forEach(row => {
-            const idText = row.cells[0].textContent.toLowerCase();
-            const customer = row.cells[1].textContent.toLowerCase();
-            const type = row.cells[2].textContent.toLowerCase();
-            const currentStatus = row.getAttribute('data-status').toLowerCase();
-            const contact = row.cells[4].textContent.toLowerCase();
-            const message = row.cells[5].textContent.toLowerCase();
+            const idT = row.cells[0].textContent.toLowerCase();
+            const cusT = row.cells[1].textContent.toLowerCase();
+            const typeT = row.cells[2].textContent.toLowerCase();
+            const statT = row.getAttribute('data-status').toLowerCase();
+            const conT = row.cells[4].textContent.toLowerCase();
 
-            const matchesId = idSearch === "" || idText.includes(idSearch);
-            const matchesGeneral = generalSearch === "" ||
-                                   customer.includes(generalSearch) ||
-                                   contact.includes(generalSearch) ||
-                                   message.includes(generalSearch);
-            const matchesStatus = statusSearch === "" || currentStatus === statusSearch;
-            const matchesType = inquirySearch === "" || type.includes(inquirySearch);
+            const match = (idSearch === "" || idT.includes(idSearch)) &&
+                          (genSearch === "" || cusT.includes(genSearch) || conT.includes(genSearch)) &&
+                          (statSearch === "" || statT === statSearch) &&
+                          (typeSearch === "" || typeT.includes(typeSearch));
 
-            if (matchesId && matchesGeneral && matchesStatus && matchesType) {
-                row.style.display = "";
-                foundMatch = true;
-            } else {
-                row.style.display = "none";
-            }
+            row.style.display = match ? "" : "none";
+            if(match) found = true;
         });
 
-        table.style.display = foundMatch ? "table" : "none";
-        emptyState.style.display = foundMatch ? "none" : "block";
+        document.getElementById('messageTable').style.display = found ? "table" : "none";
+        document.getElementById('empty-state').style.display = found ? "none" : "block";
     }
 
     async function removeInquiry(id) {
-        if(confirm("Are you sure you want to remove this inquiry?")) {
+        if(confirm("Permanently delete this inquiry?")) {
             try {
-                const response = await fetch(`http://localhost:8080/api/contact/${id}`, {
-                    method: 'DELETE'
-                });
-                if(response.ok) {
-                    alert("Inquiry removed.");
-                    loadMessages();
-                } else {
-                    alert("Failed to delete inquiry.");
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
+                const response = await fetch(`http://localhost:8080/api/contact/${id}`, { method: 'DELETE' });
+                if(response.ok) loadMessages();
+            } catch (error) { console.error('Error:', error); }
         }
     }
 
