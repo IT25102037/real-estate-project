@@ -20,6 +20,7 @@ function loadCustomers() {
                     <td><span class="property-badge">${customer.propertyType}</span></td>
                     <td style="text-align:left;">📍 ${customer.address}</td>
                     <td>
+                        <button class="btn-edit" onclick="openEditModal(${customer.id})">Edit</button>
                         <button onclick="deleteCustomer(${customer.id})" class="btn-remove">Remove</button>
                     </td>
                 </tr>`;
@@ -57,6 +58,8 @@ function filterCustomers() {
         }
     }
 }
+
+
 
 function deleteCustomer(id) {
     if(confirm('Are you sure you want to remove lead #' + id + '?')) {
