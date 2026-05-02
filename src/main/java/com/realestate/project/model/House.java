@@ -1,4 +1,25 @@
 package com.realestate.project.model;
 
-public class House {
+import jakarta.persistence.Entity;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@NoArgsConstructor
+@Getter
+@Setter
+public class House extends Property {
+
+    private int numOfFloors;
+
+    public House(String title, String location, double price, String description, int numOfFloors) {
+        super(title, location, price, description);
+        this.numOfFloors = numOfFloors;
+    }
+
+    @Override
+    public String getPropertyCategory() {
+        return "House";
+    }
 }
