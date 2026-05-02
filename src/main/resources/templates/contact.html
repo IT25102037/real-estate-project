@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact an Agent | LuxeEstate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CORE DESIGN SYSTEM --- */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);
+            --vibrant-purple: #a855f7;
+            --vibrant-cyan: #06b6d4;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --card-glass: rgba(255, 255, 255, 0.9); /* Slightly more opaque glass for better text readability */
+            --glass-blur: blur(25px);
+            --glass-border: rgba(255, 255, 255, 0.4);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+
+            /* --- STUNNING, HIGH-RES BACKGROUND IMAGE --- */
+            background-image: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)),
+            url('https://images.pexels.com/photos/101808/pexels-photo-101808.jpeg?auto=compress&cs=tinysrgb&w=1920&q=100');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Parallax effect on scroll */
+        }
+
+        .main-container {
+            max-width: 1300px;
+            margin: auto;
+            padding: 60px 20px;
+            flex: 1; /* Pushes footer down */
+        }
+
+        /* --- LOGO AREA --- */
+        .header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-area h1 {
+            font-size: 34px;
+            font-weight: 700;
+            margin: 0;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-link-back {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            opacity: 0.8;
+        }
+
+        .nav-link-back:hover { opacity: 1; transform: translateX(-5px); }
+
+        /* --- THE FLEX GRID SYSTEM --- */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr; /* 1 part direct contact, 1.5 parts form */
+            gap: 40px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- SIDEBAR: DIRECT CONTACT DETAILS --- */
+        .glass-panel-sidebar {
+            background: rgba(255, 255, 255, 0.08); /* Darker glass for sidebar */
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            align-self: flex-start; /* Keeps it from stretching */
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .panel-heading-white {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .direct-info-group {
+            margin-bottom: 30px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .icon-circle {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 20px;
+            box-shadow: 0 8px 15px rgba(6, 182, 212, 0.3);
+        }
+
+        .info-label {
+            font-weight: 600;
+            font-size: 15px;
+            color: rgba(255,255,255,0.7);
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            font-size: 18px;
+            font-weight: 500;
+            color: #ffffff;
+            line-height: 1.4;
+        }
+
+        .subtitle-text { font-size: 14px; color: rgba(255,255,255,0.7); margin-top: 5px; }
+
+        /* --- MAIN FORM: GLASS PANEL --- */
+        .glass-panel-main {
+            background: var(--card-glass);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 25px;
+            padding: 50px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+        }
+
+        .main-panel-title {
+            font-size: 30px;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            color: var(--text-dark);
+        }
+
+        .main-panel-title span {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .main-subtitle { color: var(--text-muted); font-size: 17px; margin-bottom: 40px; }
+
+        /* --- FORM FIELDS STYLING --- */
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-group { flex: 1; display: flex; flex-direction: column; }
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            color: #475569;
+        }
+
+        input, select, textarea {
+            padding: 16px 20px;
+            border-radius: 14px;
+            border: 2px solid var(--border-color);
+            background: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            color: var(--text-dark);
+            transition: 0.3s;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--vibrant-cyan);
+            box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.1);
+        }
+
+        textarea { resize: vertical; min-height: 150px; line-height: 1.6; }
+
+        .form-info-icon { font-size: 12px; color: #a855f7; margin-left: 5px; cursor: help; }
+
+        /* --- SUBMIT BUTTON --- */
+        .btn-submit {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 20px;
+            border: none;
+            border-radius: 16px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4);
+            display: block;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(6, 182, 212, 0.5);
+            filter: brightness(1.05);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background: #0f172a;
+            color: rgba(255,255,255,0.7);
+            padding: 40px 0;
+            text-align: center;
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        footer h1 { font-size: 24px; color: #ffffff; margin-bottom: 10px; }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 900px) {
+            .content-grid { grid-template-columns: 1fr; }
+            .form-row { flex-direction: column; gap: 0; }
+            .glass-panel-main { padding: 30px; }
+            .glass-panel-sidebar { padding: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="header-flex">
+        <div class="logo-area">
+            <h1>LuxeEstate</h1>
+        </div>
+        <a href="index.html" class="nav-link-back">← Back to Properties</a>
+    </div>
+
+    <div class="content-grid">
+
+        <div class="glass-panel-sidebar">
+            <p class="panel-heading-white">Direct Agent Support</p>
+
+            <div class="direct-info-group">
+                <div class="icon-circle">📞</div>
+                <div>
+                    <span class="info-label">Call Us Anytime</span>
+                    <span class="info-value">+94 764533567</span>
+                    <p class="subtitle-text">Mon - Sat: 9 AM - 8 PM (EST)</p>
+                </div>
+            </div>
+
+            <div class="direct-info-group">
+                <div class="icon-circle">📧</div>
+                <div>
+                    <span class="info-label">Email Our Team</span>
+                    <span class="info-value">luxeestate@gmail.com</span>
+                    <p class="subtitle-text">We'll respond within 1 hours.</p>
+                </div>
+            </div>
+
+            <div class="direct-info-group">
+                <div class="icon-circle">📍</div>
+                <div>
+                    <span class="info-label">Global Headquarters</span>
+                    <span class="info-value">45 / 2 , Galle Road , Colombo 03</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-panel-main">
+            <h2 class="main-panel-title">Speak With An <span>Agent</span></h2>
+            <p class="main-subtitle">Share your needs or ask a question. Our dedicated agents are ready to assist you.</p>
+
+            <form id="contactForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Your Full Name</label>
+                        <input type="text" id="userName" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="userEmail" placeholder="demo@example.com" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Inquiry Type <span class="form-info-icon" title="Choose the primary reason for your message">ⓘ</span></label>
+                        <select id="inquiryType" required>
+                            <option value="" disabled selected>Select an option...</option>
+                            <option value="buy">Buy a  Property</option>
+                            <option value="rent">Rent a  Property</option>
+                            <option value="support">Report a Website or Account Problem</option>
+                            <option value="other">General Question</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number (Optional)</label>
+                        <input type="tel" id="userPhone" placeholder="+94 764533456">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <label>Your Detailed Message</label>
+                    <textarea id="userMessage" placeholder="Please describe the property you are interested in, or detail the issue you are experiencing..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">Send My Request</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <h1>LuxeEstate</h1>
+        <p>© 2026 Redefining Luxury Living. All rights reserved.</p>
+    </div>
+</footer>
+
+<script>
+    document.getElementById('contactForm').onsubmit = async function(e) {
+        e.preventDefault(); // Prevents page reload
+
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.innerText = "Sending... ✉️";
+        submitBtn.disabled = true;
+
+        const data = {
+            userName: document.getElementById('userName').value,
+            userEmail: document.getElementById('userEmail').value,
+            inquiryType: document.getElementById('inquiryType').value,
+            userPhone: document.getElementById('userPhone').value,
+            userMessage: document.getElementById('userMessage').value
+        };
+
+        try {
+            // REPLACE THIS URL with your backend contact API endpoint
+            const response = await fetch('http://localhost:8080/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                alert("✨ Thank you for contacting LuxeEstate! Your request has been sent to our agents. We'll be in touch very soon.");
+                this.reset(); // Clears form
+            } else {
+                alert("⚠️ Error: There was a problem sending your request. Please check your data or try again later.");
+            }
+        } catch (error) {
+            console.error('Connection Error:', error);
+            alert("Connection Error: Make sure your backend server is running on port 8081 and listening at /api/contact");
+        } finally {
+            submitBtn.innerText = "Send My Request";
+            submitBtn.disabled = false;
+        }
+    };
+</script>
+
+</body>
+</html>
