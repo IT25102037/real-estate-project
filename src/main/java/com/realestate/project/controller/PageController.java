@@ -11,18 +11,28 @@ public class PageController {
         return "Index";
     }
 
-    @GetMapping("/rent")
+    @GetMapping({"/rent", "/rent.html"})
     public String showRentPage() {
-        return "Rent";
+        return "rent";
     }
 
-    @GetMapping("/sell")
+    @GetMapping({"/sell", "/sell.html"})
     public String showSellPage() {
-        return "Sell";
+        return "sell";
     }
 
     @GetMapping({"/agents", "/agents.html"})
     public String showAgentsPage() {
         return "Agents";
+    }
+
+    @GetMapping({"/contact", "/contact.html"})
+    public String showContactPage(){
+        return "Contact";
+    }
+
+    @GetMapping({"/about" , "/about.html"})
+    public String showAboutPage(){
+        return "about";
     }
 }

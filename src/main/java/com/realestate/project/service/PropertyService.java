@@ -4,7 +4,9 @@ import com.realestate.project.model.Property;
 import com.realestate.project.model.House;
 import com.realestate.project.model.Apartment;
 import com.realestate.project.model.RentalProperty;
+import com.realestate.project.repository.PropertyImageRepository;
 import com.realestate.project.repository.PropertyRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 
@@ -18,9 +20,11 @@ import java.util.Optional;
 public class PropertyService {
 
     private final PropertyRepository propertyRepository;
+    private final PropertyImageRepository propertyImageRepository;
 
-    public PropertyService(PropertyRepository propertyRepository){
+    public PropertyService(PropertyRepository propertyRepository, PropertyImageRepository propertyImageRepository){
         this.propertyRepository = propertyRepository;
+        this.propertyImageRepository = propertyImageRepository;
     }
 
     /// save a property
@@ -37,7 +41,9 @@ public class PropertyService {
 
     }
     /// deleting a property object
+    @Transactional
     public void deleteProperty(long id){
+        propertyImageRepository.deleteByPropertyId(id);
         propertyRepository.deleteById(id);
 
 
@@ -64,6 +70,8 @@ public class PropertyService {
                 ((Apartment)existingProperty).setFloorNumber(((Apartment) updatedProperty).getFloorNumber());
             } else if (existingProperty instanceof  RentalProperty && updatedProperty instanceof RentalProperty) {
                 ((RentalProperty)existingProperty).setMonthlyRent(((RentalProperty)updatedProperty).getMonthlyRent());
+                ((RentalProperty)existingProperty).setAdvanceAmount(((RentalProperty)updatedProperty).getAdvanceAmount());
+                ((RentalProperty)existingProperty).setDuration(((RentalProperty)updatedProperty).getDuration());
             }
 
             return propertyRepository.save(existingProperty);

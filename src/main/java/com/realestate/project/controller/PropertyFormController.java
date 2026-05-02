@@ -1,14 +1,18 @@
 package com.realestate.project.controller;
 
-import com.realestate.project.model.House;
 import com.realestate.project.model.Apartment;
-import com.realestate.project.model.RentalProperty;
+import com.realestate.project.model.House;
 import com.realestate.project.model.Property;
 import com.realestate.project.model.PropertyImage;
+import com.realestate.project.model.RentalProperty;
 import com.realestate.project.repository.PropertyImageRepository;
 import com.realestate.project.service.PropertyService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -19,7 +23,7 @@ public class PropertyFormController {
     private final PropertyService propertyService;
     private final PropertyImageRepository propertyImageRepository;
 
-    public PropertyFormController(PropertyService propertyService, PropertyImageRepository propertyImageRepository){
+    public PropertyFormController(PropertyService propertyService, PropertyImageRepository propertyImageRepository) {
         this.propertyService = propertyService;
         this.propertyImageRepository = propertyImageRepository;
     }
@@ -39,8 +43,6 @@ public class PropertyFormController {
         return "rental-form";
     }
 
-
-    /// for house(house details with images )
     @PostMapping("/properties/save/house")
     public String saveHouse(
             @RequestParam String title,
@@ -48,31 +50,14 @@ public class PropertyFormController {
             @RequestParam double price,
             @RequestParam String description,
             @RequestParam int numOfFloors,
-            @RequestParam("images")MultipartFile[]images
-    )throws  IOException{
-
-        /// saving the house details
-        House house = new House(title,location,price,description,numOfFloors);
+            @RequestParam(value = "images", required = false) MultipartFile[] images
+    ) throws IOException {
+        House house = new House(title, location, price, description, numOfFloors);
         Property savedProperty = propertyService.saveProperty(house);
-
-        /// saving the images of the house
-        for (MultipartFile image:images){
-            if (!image.isEmpty()){
-                PropertyImage propertyImage = new PropertyImage(
-                        image.getOriginalFilename(),
-                        image.getContentType(),
-                        image.getBytes(),
-                        savedProperty
-                );
-                propertyImageRepository.save(propertyImage);
-
-
-            }
-        }
-        return "redirect:/properties";
+        saveImages(savedProperty, images);
+        return "redirect:/sell";
     }
 
-    /// for apartment (apartment details with images )
     @PostMapping("/properties/save/apartment")
     public String saveApartment(
             @RequestParam String title,
@@ -80,28 +65,14 @@ public class PropertyFormController {
             @RequestParam double price,
             @RequestParam String description,
             @RequestParam int floorNumber,
-            @RequestParam("images") MultipartFile[] images
+            @RequestParam(value = "images", required = false) MultipartFile[] images
     ) throws IOException {
-
         Apartment apartment = new Apartment(title, location, price, description, floorNumber);
         Property savedProperty = propertyService.saveProperty(apartment);
-
-        for (MultipartFile image : images) {
-            if (!image.isEmpty()) {
-                PropertyImage propertyImage = new PropertyImage(
-                        image.getOriginalFilename(),
-                        image.getContentType(),
-                        image.getBytes(),
-                        savedProperty
-                );
-                propertyImageRepository.save(propertyImage);
-            }
-        }
-
-        return "redirect:/properties";
+        saveImages(savedProperty, images);
+        return "redirect:/sell";
     }
 
-    /// for rental property (rental details with images)
     @PostMapping("/properties/save/rental")
     public String saveRental(
             @RequestParam String title,
@@ -109,11 +80,33 @@ public class PropertyFormController {
             @RequestParam double price,
             @RequestParam String description,
             @RequestParam double monthlyRent,
+            @RequestParam(defaultValue = "0") double advanceAmount,
+            @RequestParam(required = false) String duration,
+            @RequestParam(value = "images", required = false) MultipartFile[] images
+    ) throws IOException {
+        RentalProperty rental = new RentalProperty(title, location, price, description, monthlyRent, advanceAmount, duration);
+        Property savedProperty = propertyService.saveProperty(rental);
+        saveImages(savedProperty, images);
+        return "redirect:/sell";
+    }
+
+    @PostMapping("/api/properties/{id}/images")
+    @ResponseBody
+    public String addImagesToProperty(
+            @PathVariable Long id,
             @RequestParam("images") MultipartFile[] images
     ) throws IOException {
+        Property savedProperty = propertyService.getPropertyById(id)
+                .orElseThrow(() -> new RuntimeException("Property not found"));
 
-        RentalProperty rental = new RentalProperty(title, location, price, description, monthlyRent);
-        Property savedProperty = propertyService.saveProperty(rental);
+        saveImages(savedProperty, images);
+        return "Images added successfully";
+    }
+
+    private void saveImages(Property savedProperty, MultipartFile[] images) throws IOException {
+        if (images == null) {
+            return;
+        }
 
         for (MultipartFile image : images) {
             if (!image.isEmpty()) {
@@ -126,16 +119,5 @@ public class PropertyFormController {
                 propertyImageRepository.save(propertyImage);
             }
         }
-
-        return "redirect:/properties";
     }
-
-
-
-
-
-
-
-
-
 }
