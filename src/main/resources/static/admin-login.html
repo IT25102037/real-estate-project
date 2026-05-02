@@ -382,7 +382,8 @@
             <input type="password" id="password" placeholder="Enter your password" required>
         </div>
 
-        <button class="auth-btn" onclick="checkLogin()"><span>Authorize Entry</span></button>
+        <button type="button" class="auth-btn" onclick="checkLogin()"><span>Authorize Entry</span></button>
+
 
         <div class="footer-links">
             <a href="add-customer.html" class="nav-link">Return to Main Page</a>
@@ -396,30 +397,39 @@
 
 <script>
     function checkLogin() {
-        const user = document.getElementById("username").value;
-        const pass = document.getElementById("password").value;
-        const error = document.getElementById("errorMessage");
+    const user = document.getElementById("username").value;
+    const pass = document.getElementById("password").value;
+    const error = document.getElementById("errorMessage");
+    const btn = document.querySelector(".auth-btn span");
+    const card = document.getElementById('loginCard');
 
-        // Logic remains exactly the same as provided
-        if (user === "admin" && pass === "admin123") {
+    // 1. Hide previous errors
+    error.style.display = "none";
+
+    // 2. Check fixed credentials
+    if (user === "admin" && pass === "admin123") {
+        // Change button text for a "premium" feel
+        btn.textContent = "Verifying Credentials...";
+
+        // Brief delay before redirecting
+        setTimeout(() => {
             window.location.href = "admin-dashboard.html";
-        } else {
-            error.style.display = "block";
-            const card = document.getElementById('loginCard');
-            card.classList.remove('shake');
-            void card.offsetWidth;
-            card.classList.add('shake');
-        }
+        }, 800);
+    } else {
+        // 3. Handle failure
+        error.style.display = "block";
+        card.classList.remove('shake');
+        void card.offsetWidth; // Trigger reflow to restart animation
+        card.classList.add('shake');
     }
+}
 
-    // Allow Enter key to trigger login
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') checkLogin();
-    });
+// Allow Enter key to trigger login
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') checkLogin();
+});
 </script>
 
 </body>
 </html>
 
-//Username - admin
-//password admin123
