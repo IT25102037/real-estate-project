@@ -22,6 +22,7 @@ function saveCustomer(event) {
         phone: document.getElementById("phone").value,
         address: document.getElementById("address").value,
         propertyType: document.getElementById("propertyType").value
+        password: document.getElementById("password").value
     };
 
     fetch("/api/customers/register", {
