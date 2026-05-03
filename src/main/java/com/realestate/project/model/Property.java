@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+import org.springframework.http.converter.json.GsonBuilderUtils;
 
 @Entity
 @Getter
@@ -45,6 +46,9 @@ public abstract class Property{
     }
 
     public abstract String getPropertyCategory();
+
+
+
 
 
 
