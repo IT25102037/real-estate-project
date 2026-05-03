@@ -23,7 +23,7 @@ public class CustomerController {
     // This matches: fetch("http://localhost:8080/api/customers/register", ...)
     @PostMapping("/register")
     public ResponseEntity<CustomerDto> register(@RequestBody CustomerDto customerDto) {
-        System.out.println("Received : " +customerDto);
+        System.out.println("Received : " + customerDto);
         // This calls the service which saves to MySQL
         customerService.saveCustomer(customerDto);
         return ResponseEntity.ok(customerDto);
@@ -48,11 +48,21 @@ public class CustomerController {
         }
     }
 
-    // 2. GET FROM DATABASE
+    // 2. GET ALL FROM DATABASE
     // This matches: fetch('http://localhost:8080/api/customers/')
     @GetMapping
     public List<CustomerEntity> getAll() {
         return customerService.getAllCustomers();
+    }
+
+    // ── NEW: GET SINGLE CUSTOMER BY ID ──
+    // Used by profile.html to fetch the logged-in user's latest data from the database.
+    // This matches: fetch(`http://localhost:8080/api/customers/${id}`)
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerEntity> getById(@PathVariable Long id) {
+        return customerService.getCustomerById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // 3. DELETE FROM DATABASE
