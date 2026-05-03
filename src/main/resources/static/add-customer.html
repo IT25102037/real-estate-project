@@ -474,7 +474,12 @@
             return response.json();
         })
         .then(data => {
+            // ── ORIGINAL line (unchanged) ──
             localStorage.setItem('luxeUser', data.name);
+            // ── NEW: also save the id and full object so profile.html can use them ──
+            localStorage.setItem('luxeUserId', data.id);
+            localStorage.setItem('luxeUserData', JSON.stringify(data));
+
             alert("Welcome to LuxeEstate, " + data.name + "!");
             window.location.href = "index.html";
         })
