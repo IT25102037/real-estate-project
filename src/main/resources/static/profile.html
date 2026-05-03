@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | LuxeEstate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --gold: #c9a96e;
+            --gold-light: #e8d5b0;
+            --gold-dark: #8b6914;
+            --obsidian: #0a0a0a;
+            --charcoal: #1a1a1a;
+            --pearl: #f5f0e8;
+            --cream: #faf7f2;
+            --white: #ffffff;
+            --text-muted: #9a9a9a;
+            --border-subtle: rgba(201,169,110,0.15);
+            --border-gold: rgba(201,169,110,0.4);
+            --error-red: #ef4444;
+            --success-green: #10b981;
+            --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            background: var(--obsidian);
+            color: var(--pearl);
+            overflow-x: hidden;
+        }
+
+        /* ---- BACKGROUND ---- */
+        .bg-layer {
+            position: fixed; inset: 0;
+            background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+            filter: brightness(0.18) saturate(0.7);
+            transform: scale(1.04);
+            z-index: 0;
+        }
+        .bg-overlay {
+            position: fixed; inset: 0;
+            background: radial-gradient(ellipse at 30% 20%, rgba(201,169,110,0.07) 0%, transparent 55%),
+                        radial-gradient(ellipse at 80% 80%, rgba(10,10,10,0.9) 0%, transparent 60%);
+            z-index: 1; pointer-events: none;
+        }
+        .bg-grain {
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.3; z-index: 2; pointer-events: none;
+        }
+
+        /* ---- HEADER ---- */
+        header {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: rgba(10,10,10,0.92);
+            backdrop-filter: blur(30px) saturate(1.5);
+            border-bottom: 1px solid var(--border-subtle);
+            z-index: 1000;
+        }
+        .header-content {
+            max-width: 1320px; margin: auto; padding: 0 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            height: 80px;
+        }
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px; font-weight: 300; letter-spacing: 6px;
+            text-transform: uppercase; color: var(--white); text-decoration: none;
+        }
+        .logo span { color: var(--gold); }
+
+        .back-btn {
+            display: flex; align-items: center; gap: 10px;
+            color: rgba(255,255,255,0.5); text-decoration: none;
+            font-size: 11px; font-weight: 500; letter-spacing: 2px;
+            text-transform: uppercase; transition: color 0.3s;
+        }
+        .back-btn:hover { color: var(--gold); }
+        .back-btn i { width: 15px; height: 15px; }
+
+        /* ---- MAIN LAYOUT ---- */
+        .page-wrapper {
+            position: relative; z-index: 10;
+            min-height: 100vh;
+            padding: 120px 40px 80px;
+            max-width: 1100px; margin: 0 auto;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+
+        /* ---- LEFT PANEL (Avatar Card) ---- */
+        .profile-sidebar {
+            position: sticky; top: 110px;
+            opacity: 0;
+            animation: fadeSlideUp 0.7s 0.2s var(--transition-smooth) forwards;
+        }
+
+        .avatar-card {
+            background: rgba(20,15,8,0.65);
+            backdrop-filter: blur(36px) saturate(1.4);
+            border: 1px solid var(--border-gold);
+            border-radius: 3px;
+            padding: 48px 36px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.4),
+                        inset 0 1px 0 rgba(201,169,110,0.15);
+        }
+        .avatar-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0;
+            width: 48px; height: 48px;
+            border-top: 1px solid var(--gold);
+            border-left: 1px solid var(--gold);
+            opacity: 0.5;
+        }
+        .avatar-card::after {
+            content: '';
+            position: absolute; bottom: 0; right: 0;
+            width: 48px; height: 48px;
+            border-bottom: 1px solid var(--gold);
+            border-right: 1px solid var(--gold);
+            opacity: 0.5;
+        }
+
+        .avatar-ring {
+            width: 110px; height: 110px;
+            margin: 0 auto 28px;
+            position: relative;
+        }
+        .avatar-ring::before {
+            content: '';
+            position: absolute; inset: -4px;
+            border-radius: 50%;
+            background: conic-gradient(var(--gold) 0deg, var(--gold-light) 90deg, transparent 180deg, var(--gold-dark) 270deg, var(--gold) 360deg);
+            animation: rotateBorder 8s linear infinite;
+        }
+        @keyframes rotateBorder {
+            to { transform: rotate(360deg); }
+        }
+        .avatar-ring::after {
+            content: '';
+            position: absolute; inset: -2px;
+            border-radius: 50%;
+            background: rgba(20,15,8,0.7);
+        }
+        .avatar-circle-lg {
+            position: relative; z-index: 1;
+            width: 110px; height: 110px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 44px; font-weight: 500;
+            color: var(--obsidian);
+            letter-spacing: -1px;
+        }
+
+        .avatar-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px; font-weight: 400;
+            color: var(--white); letter-spacing: -0.3px;
+            margin-bottom: 6px;
+        }
+        .avatar-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(201,169,110,0.1);
+            border: 1px solid var(--border-gold);
+            padding: 5px 16px; border-radius: 20px;
+            font-size: 10px; font-weight: 600;
+            letter-spacing: 2px; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 36px;
+        }
+        .avatar-badge::before {
+            content: ''; width: 6px; height: 6px;
+            border-radius: 50%; background: var(--success-green);
+            box-shadow: 0 0 8px var(--success-green);
+        }
+
+        .sidebar-divider {
+            width: 100%; height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-gold), transparent);
+            margin: 0 0 28px;
+        }
+
+        .sidebar-stat {
+            display: flex; justify-content: space-between;
+            align-items: center; padding: 12px 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .sidebar-stat:last-of-type { border-bottom: none; }
+        .sidebar-stat-label {
+            font-size: 10px; font-weight: 500;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        .sidebar-stat-value {
+            font-size: 12px; font-weight: 600;
+            color: var(--gold-light); letter-spacing: 0.3px;
+        }
+
+        /* Danger zone */
+        .danger-zone {
+            margin-top: 24px;
+            padding: 20px;
+            background: rgba(239,68,68,0.06);
+            border: 1px solid rgba(239,68,68,0.2);
+            border-radius: 3px;
+        }
+        .danger-label {
+            font-size: 9px; font-weight: 600;
+            letter-spacing: 2px; text-transform: uppercase;
+            color: #fca5a5; margin-bottom: 12px;
+        }
+        .btn-delete {
+            width: 100%;
+            background: transparent;
+            color: #fca5a5;
+            border: 1px solid rgba(239,68,68,0.35);
+            padding: 12px;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 11px; font-weight: 600;
+            letter-spacing: 2px; text-transform: uppercase;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.4s var(--transition-smooth);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-delete:hover {
+            background: var(--error-red);
+            color: white; border-color: var(--error-red);
+            box-shadow: 0 0 30px rgba(239,68,68,0.3);
+        }
+
+        /* ---- RIGHT PANEL (Details / Edit) ---- */
+        .profile-main {
+            opacity: 0;
+            animation: fadeSlideUp 0.7s 0.4s var(--transition-smooth) forwards;
+        }
+
+        .section-eyebrow {
+            display: inline-flex; align-items: center; gap: 14px;
+            color: var(--gold); font-size: 10px;
+            font-weight: 500; letter-spacing: 4px;
+            text-transform: uppercase; margin-bottom: 16px;
+        }
+        .section-eyebrow::before {
+            content: ''; width: 32px; height: 1px;
+            background: var(--gold); opacity: 0.6;
+        }
+
+        .section-heading {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 52px; font-weight: 300;
+            color: var(--white); line-height: 1.05;
+            letter-spacing: -1px; margin-bottom: 40px;
+        }
+        .section-heading em { font-style: italic; color: var(--gold); }
+
+        /* Glass Card */
+        .glass-card {
+            background: rgba(20,15,8,0.55);
+            backdrop-filter: blur(30px) saturate(1.3);
+            border: 1px solid var(--border-gold);
+            border-radius: 3px;
+            padding: 40px;
+            margin-bottom: 24px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3),
+                        inset 0 1px 0 rgba(201,169,110,0.1);
+            position: relative;
+        }
+
+        .card-title {
+            font-size: 10px; font-weight: 600;
+            letter-spacing: 3px; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .card-title i { width: 14px; height: 14px; opacity: 0.8; }
+
+        /* View Mode — field grid */
+        .field-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        .field-item { position: relative; }
+        .field-label {
+            font-size: 9px; font-weight: 600;
+            letter-spacing: 2px; text-transform: uppercase;
+            color: var(--text-muted); margin-bottom: 8px;
+        }
+        .field-value {
+            font-size: 14px; font-weight: 400;
+            color: var(--pearl); letter-spacing: 0.3px;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border-subtle);
+            border-radius: 2px;
+            min-height: 48px;
+            display: flex; align-items: center;
+            line-height: 1.5;
+        }
+        .field-item.full { grid-column: 1 / -1; }
+
+        /* Edit Mode — inputs */
+        .edit-mode { display: none; }
+        .view-mode { display: block; }
+
+        .input-group { margin-bottom: 0; }
+        .input-label {
+            font-size: 9px; font-weight: 600;
+            letter-spacing: 2px; text-transform: uppercase;
+            color: var(--gold); opacity: 0.85; margin-bottom: 8px;
+            display: block;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(201,169,110,0.22);
+            border-radius: 2px;
+            color: var(--white);
+            font-size: 13px; font-weight: 400;
+            font-family: 'DM Sans', sans-serif;
+            letter-spacing: 0.3px;
+            transition: all 0.35s var(--transition-smooth);
+            outline: none; -webkit-appearance: none; appearance: none;
+        }
+        input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.3); }
+        input:focus, select:focus, textarea:focus {
+            background: rgba(201,169,110,0.08);
+            border-color: var(--border-gold);
+            box-shadow: 0 0 0 3px rgba(201,169,110,0.08);
+        }
+        textarea { resize: none; height: 90px; line-height: 1.6; }
+        .select-wrapper { position: relative; }
+        .select-wrapper::after {
+            content: '↓'; position: absolute;
+            right: 16px; top: 50%; transform: translateY(-50%);
+            color: var(--gold); font-size: 12px; pointer-events: none; opacity: 0.7;
+        }
+        select option { background: #1a120a; color: white; }
+
+        /* Action Buttons */
+        .action-bar {
+            display: flex; gap: 14px; margin-top: 32px;
+        }
+        .btn-edit-profile {
+            flex: 1;
+            background: transparent;
+            color: var(--gold);
+            border: 1px solid var(--border-gold);
+            padding: 16px 32px; border-radius: 2px;
+            cursor: pointer;
+            font-size: 11px; font-weight: 600;
+            letter-spacing: 2.5px; text-transform: uppercase;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.4s var(--transition-smooth);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-edit-profile:hover {
+            background: rgba(201,169,110,0.1);
+            box-shadow: 0 0 30px rgba(201,169,110,0.15);
+        }
+        .btn-save-profile {
+            flex: 1;
+            background: var(--gold);
+            color: var(--obsidian);
+            border: 1px solid var(--gold);
+            padding: 16px 32px; border-radius: 2px;
+            cursor: pointer;
+            font-size: 11px; font-weight: 700;
+            letter-spacing: 2.5px; text-transform: uppercase;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.4s var(--transition-smooth);
+            display: none; align-items: center; justify-content: center; gap: 10px;
+            position: relative; overflow: hidden;
+        }
+        .btn-save-profile::before {
+            content: ''; position: absolute; inset: 0;
+            background: var(--gold-light);
+            transform: scaleX(0); transform-origin: left;
+            transition: transform 0.4s var(--transition-smooth);
+        }
+        .btn-save-profile:hover { box-shadow: 0 0 40px rgba(201,169,110,0.4); }
+        .btn-save-profile:hover::before { transform: scaleX(1); }
+        .btn-save-profile span { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; }
+        .btn-cancel-edit {
+            background: transparent;
+            color: rgba(255,255,255,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 16px 24px; border-radius: 2px;
+            cursor: pointer;
+            font-size: 11px; font-weight: 500;
+            letter-spacing: 1.5px; text-transform: uppercase;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s;
+            display: none;
+        }
+        .btn-cancel-edit:hover { color: var(--white); border-color: rgba(255,255,255,0.3); }
+
+        /* Toast notification */
+        .toast {
+            position: fixed; bottom: 40px; right: 40px;
+            padding: 18px 28px;
+            border-radius: 3px;
+            font-size: 13px; font-weight: 500;
+            letter-spacing: 0.5px;
+            z-index: 9999;
+            display: flex; align-items: center; gap: 12px;
+            transform: translateY(80px); opacity: 0;
+            transition: all 0.5s var(--transition-spring);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success {
+            background: rgba(16,185,129,0.15);
+            border: 1px solid rgba(16,185,129,0.4);
+            color: #6ee7b7;
+        }
+        .toast.error {
+            background: rgba(239,68,68,0.15);
+            border: 1px solid rgba(239,68,68,0.4);
+            color: #fca5a5;
+        }
+        .toast i { width: 18px; height: 18px; }
+
+        /* Confirm Modal */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            align-items: center; justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: rgba(20,15,8,0.9);
+            border: 1px solid rgba(239,68,68,0.35);
+            border-radius: 3px;
+            padding: 48px 44px;
+            max-width: 420px; width: 90%;
+            text-align: center;
+            box-shadow: 0 60px 120px rgba(0,0,0,0.6);
+            animation: fadeSlideUp 0.4s var(--transition-spring);
+        }
+        .modal-icon {
+            width: 64px; height: 64px;
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 24px;
+            color: #fca5a5;
+        }
+        .modal-icon i { width: 28px; height: 28px; }
+        .modal-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px; font-weight: 300;
+            color: var(--white); margin-bottom: 12px;
+        }
+        .modal-text {
+            color: rgba(255,255,255,0.45);
+            font-size: 13px; line-height: 1.7;
+            margin-bottom: 36px;
+        }
+        .modal-actions { display: flex; gap: 14px; }
+        .modal-cancel {
+            flex: 1; padding: 14px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 2px; color: rgba(255,255,255,0.5);
+            cursor: pointer; font-family: 'DM Sans', sans-serif;
+            font-size: 11px; font-weight: 600;
+            letter-spacing: 2px; text-transform: uppercase;
+            transition: all 0.3s;
+        }
+        .modal-cancel:hover { color: var(--white); border-color: rgba(255,255,255,0.3); }
+        .modal-confirm {
+            flex: 1; padding: 14px;
+            background: var(--error-red);
+            border: none; border-radius: 2px;
+            color: white; cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 11px; font-weight: 700;
+            letter-spacing: 2px; text-transform: uppercase;
+            transition: all 0.3s;
+        }
+        .modal-confirm:hover {
+            background: #dc2626;
+            box-shadow: 0 0 30px rgba(239,68,68,0.4);
+        }
+
+        /* Loading state */
+        .loading-screen {
+            position: fixed; inset: 0;
+            background: var(--obsidian);
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 20px;
+            z-index: 5000;
+            transition: opacity 0.6s, visibility 0.6s;
+        }
+        .loading-screen.hidden { opacity: 0; visibility: hidden; }
+        .loading-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px; font-weight: 300;
+            letter-spacing: 8px; text-transform: uppercase;
+            color: var(--white);
+        }
+        .loading-logo span { color: var(--gold); }
+        .loading-bar {
+            width: 160px; height: 1px;
+            background: var(--border-subtle);
+            position: relative; overflow: hidden;
+        }
+        .loading-bar::after {
+            content: ''; position: absolute;
+            top: 0; left: -100%; height: 100%; width: 100%;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+            animation: loadScan 1.2s ease-in-out infinite;
+        }
+        @keyframes loadScan {
+            to { left: 100%; }
+        }
+
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--obsidian); }
+        ::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
+
+        @media (max-width: 900px) {
+            .page-wrapper { grid-template-columns: 1fr; padding: 110px 20px 60px; }
+            .profile-sidebar { position: static; }
+            .section-heading { font-size: 40px; }
+            .field-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="loading-screen" id="loadingScreen">
+    <div class="loading-logo">Luxe<span>_Estate</span></div>
+    <div class="loading-bar"></div>
+</div>
+
+<!-- Background -->
+<div class="bg-layer"></div>
+<div class="bg-overlay"></div>
+<div class="bg-grain"></div>
+
+<!-- Header -->
+<header>
+    <div class="header-content">
+        <a href="index.html" class="logo">Luxe<span>_Estate</span></a>
+        <a href="index.html" class="back-btn">
+            <i data-lucide="arrow-left"></i>
+            Return Home
+        </a>
+    </div>
+</header>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal-box">
+        <div class="modal-icon"><i data-lucide="alert-triangle"></i></div>
+        <h3 class="modal-title">Delete Profile</h3>
+        <p class="modal-text">This will permanently remove your account and all associated data from our records. This action cannot be undone.</p>
+        <div class="modal-actions">
+            <button class="modal-cancel" onclick="closeDeleteModal()">Cancel</button>
+            <button class="modal-confirm" onclick="confirmDelete()">Delete Account</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+    <i data-lucide="check-circle" id="toastIcon"></i>
+    <span id="toastMsg"></span>
+</div>
+
+<!-- Main Content -->
+<div class="page-wrapper">
+
+    <!-- SIDEBAR -->
+    <div class="profile-sidebar">
+        <div class="avatar-card">
+            <div class="avatar-ring">
+                <div class="avatar-circle-lg" id="avatarInitial">N</div>
+            </div>
+            <div class="avatar-name" id="sidebarName">Loading...</div>
+            <div class="avatar-badge">Verified Member</div>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="sidebar-stat">
+                <span class="sidebar-stat-label">Member ID</span>
+                <span class="sidebar-stat-value" id="sidebarId">#—</span>
+            </div>
+            <div class="sidebar-stat">
+                <span class="sidebar-stat-label">Interest</span>
+                <span class="sidebar-stat-value" id="sidebarInterest">—</span>
+            </div>
+            <div class="sidebar-stat">
+                <span class="sidebar-stat-label">Status</span>
+                <span class="sidebar-stat-value" style="color: var(--success-green);">Active</span>
+            </div>
+
+            <div class="danger-zone" style="margin-top: 32px;">
+                <div class="danger-label">Danger Zone</div>
+                <button class="btn-delete" onclick="openDeleteModal()">
+                    <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                    Delete Account
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN PANEL -->
+    <div class="profile-main">
+        <div class="section-eyebrow">Your Account</div>
+        <h1 class="section-heading">Profile<br><em>Details</em></h1>
+
+        <!-- Personal Info Card -->
+        <div class="glass-card">
+            <div class="card-title">
+                <i data-lucide="user"></i>
+                Personal Information
+            </div>
+
+            <!-- VIEW MODE -->
+            <div class="view-mode" id="viewMode">
+                <div class="field-grid">
+                    <div class="field-item">
+                        <div class="field-label">Full Name</div>
+                        <div class="field-value" id="viewName">—</div>
+                    </div>
+                    <div class="field-item">
+                        <div class="field-label">Email Address</div>
+                        <div class="field-value" id="viewEmail">—</div>
+                    </div>
+                    <div class="field-item">
+                        <div class="field-label">Phone Number</div>
+                        <div class="field-value" id="viewPhone">—</div>
+                    </div>
+                    <div class="field-item">
+                        <div class="field-label">Property Interest</div>
+                        <div class="field-value" id="viewPropertyType">—</div>
+                    </div>
+                    <div class="field-item full">
+                        <div class="field-label">Home Address</div>
+                        <div class="field-value" id="viewAddress">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EDIT MODE -->
+            <div class="edit-mode" id="editMode">
+                <div class="field-grid">
+                    <div class="input-group">
+                        <label class="input-label">Full Name</label>
+                        <input type="text" id="editName" placeholder="Your full name">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Email Address</label>
+                        <input type="email" id="editEmail" placeholder="your@email.com">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Phone Number</label>
+                        <input type="text" id="editPhone" placeholder="+94 xxx xxx xxx">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Property Interest</label>
+                        <div class="select-wrapper">
+                            <select id="editPropertyType">
+                                <option value="House">House</option>
+                                <option value="Apartment">Apartment</option>
+                                <option value="Land">Land</option>
+                                <option value="Commercial">Commercial</option>
+                                <option value="Industrial Building">Industrial Building</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group full">
+                        <label class="input-label">Home Address</label>
+                        <textarea id="editAddress" placeholder="Your residential address"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Bar -->
+            <div class="action-bar">
+                <button class="btn-edit-profile" id="editBtn" onclick="enterEditMode()">
+                    <i data-lucide="edit-3" style="width:14px;height:14px;"></i>
+                    Edit Profile
+                </button>
+                <button class="btn-save-profile" id="saveBtn" onclick="saveProfile()">
+                    <span>
+                        <i data-lucide="save" style="width:14px;height:14px;"></i>
+                        Save Changes
+                    </span>
+                </button>
+                <button class="btn-cancel-edit" id="cancelBtn" onclick="cancelEdit()">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    lucide.createIcons();
+
+    let userData = null;
+    let isEditing = false;
+
+    // ---- INIT ----
+    window.onload = async function () {
+        const storedId = localStorage.getItem('luxeUserId');
+        const storedData = localStorage.getItem('luxeUserData');
+
+        if (!storedId && !storedData) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        // Use stored data first for instant display
+        if (storedData) {
+            userData = JSON.parse(storedData);
+            renderProfile(userData);
+        }
+
+        // Then fetch fresh from server
+        try {
+            if (storedId) {
+                const res = await fetch(`http://localhost:8080/api/customers/${storedId}`);
+                if (res.ok) {
+                    userData = await res.json();
+                    localStorage.setItem('luxeUserData', JSON.stringify(userData));
+                    renderProfile(userData);
+                }
+            }
+        } catch (e) {
+            // Server unavailable, use stored data
+            console.warn('Could not refresh from server, using cached data.');
+        }
+
+        // Hide loader
+        setTimeout(() => {
+            document.getElementById('loadingScreen').classList.add('hidden');
+        }, 600);
+    };
+
+    function renderProfile(data) {
+        // Sidebar
+        const firstName = data.name ? data.name.split(' ')[0] : '?';
+        document.getElementById('avatarInitial').textContent = firstName.charAt(0).toUpperCase();
+        document.getElementById('sidebarName').textContent = data.name || '—';
+        document.getElementById('sidebarId').textContent = data.id ? `#${data.id}` : '—';
+        document.getElementById('sidebarInterest').textContent = data.propertyType || '—';
+
+        // View fields
+        document.getElementById('viewName').textContent = data.name || '—';
+        document.getElementById('viewEmail').textContent = data.email || '—';
+        document.getElementById('viewPhone').textContent = data.phone || '—';
+        document.getElementById('viewPropertyType').textContent = data.propertyType || '—';
+        document.getElementById('viewAddress').textContent = data.address || '—';
+
+        // Pre-fill edit fields
+        document.getElementById('editName').value = data.name || '';
+        document.getElementById('editEmail').value = data.email || '';
+        document.getElementById('editPhone').value = data.phone || '';
+        document.getElementById('editAddress').value = data.address || '';
+        if (data.propertyType) document.getElementById('editPropertyType').value = data.propertyType;
+
+        lucide.createIcons();
+    }
+
+    // ---- EDIT MODE ----
+    function enterEditMode() {
+        isEditing = true;
+        document.getElementById('viewMode').style.display = 'none';
+        document.getElementById('editMode').style.display = 'block';
+        document.getElementById('editBtn').style.display = 'none';
+        document.getElementById('saveBtn').style.display = 'flex';
+        document.getElementById('cancelBtn').style.display = 'block';
+    }
+
+    function cancelEdit() {
+        isEditing = false;
+        document.getElementById('viewMode').style.display = 'block';
+        document.getElementById('editMode').style.display = 'none';
+        document.getElementById('editBtn').style.display = 'flex';
+        document.getElementById('saveBtn').style.display = 'none';
+        document.getElementById('cancelBtn').style.display = 'none';
+        // Reset inputs
+        renderProfile(userData);
+    }
+
+    // ---- SAVE (PUT) ----
+    async function saveProfile() {
+        const saveBtn = document.getElementById('saveBtn');
+        saveBtn.querySelector('span').innerHTML = '<i data-lucide="loader" style="width:14px;height:14px;"></i> Saving...';
+        lucide.createIcons();
+
+        const updatedData = {
+            ...userData,
+            name: document.getElementById('editName').value,
+            email: document.getElementById('editEmail').value,
+            phone: document.getElementById('editPhone').value,
+            address: document.getElementById('editAddress').value,
+            propertyType: document.getElementById('editPropertyType').value,
+        };
+
+        try {
+            const res = await fetch(`http://localhost:8080/api/customers/${userData.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (res.ok) {
+                userData = await res.json();
+                localStorage.setItem('luxeUserData', JSON.stringify(userData));
+                localStorage.setItem('luxeUser', userData.name);
+                renderProfile(userData);
+                cancelEdit();
+                showToast('Profile updated successfully!', 'success');
+            } else {
+                showToast('Update failed. Please try again.', 'error');
+            }
+        } catch (e) {
+            showToast('Server unavailable. Check your connection.', 'error');
+        } finally {
+            saveBtn.querySelector('span').innerHTML = '<i data-lucide="save" style="width:14px;height:14px;"></i> Save Changes';
+            lucide.createIcons();
+        }
+    }
+
+    // ---- DELETE ----
+    function openDeleteModal() {
+        document.getElementById('deleteModal').classList.add('open');
+    }
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('open');
+    }
+
+    async function confirmDelete() {
+        try {
+            const res = await fetch(`http://localhost:8080/api/customers/${userData.id}`, {
+                method: 'DELETE'
+            });
+            if (res.ok) {
+                localStorage.removeItem('luxeUser');
+                localStorage.removeItem('luxeUserId');
+                localStorage.removeItem('luxeUserData');
+                closeDeleteModal();
+                showToast('Account deleted. Redirecting...', 'error');
+                setTimeout(() => { window.location.href = 'add-customer.html'; }, 1800);
+            } else {
+                showToast('Delete failed. Try again.', 'error');
+            }
+        } catch (e) {
+            showToast('Server unavailable.', 'error');
+        }
+    }
+
+    // ---- TOAST ----
+    function showToast(msg, type = 'success') {
+        const toast = document.getElementById('toast');
+        const icon = document.getElementById('toastIcon');
+        document.getElementById('toastMsg').textContent = msg;
+        toast.className = `toast ${type}`;
+        icon.setAttribute('data-lucide', type === 'success' ? 'check-circle' : 'x-circle');
+        lucide.createIcons();
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    // Close modal on backdrop click
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteModal();
+    });
+</script>
+
+</body>
+</html>
