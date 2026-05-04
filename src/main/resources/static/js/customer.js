@@ -21,7 +21,7 @@ function saveCustomer(event) {
         email: document.getElementById("email").value,
         phone: document.getElementById("phone").value,
         address: document.getElementById("address").value,
-        propertyType: document.getElementById("propertyType").value
+        propertyType: document.getElementById("propertyType").value,
         password: document.getElementById("password").value
     };
 
