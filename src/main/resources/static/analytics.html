@@ -1384,7 +1384,10 @@
 
         // Try to sync with API
         try {
-            fetch('http://localhost:8080/api/transactions', {
+            const url = editingId 
+                ? `http://localhost:8080/api/transactions/${editingId}` 
+                : 'http://localhost:8080/api/transactions';
+            fetch(url, {
                 method: editingId ? 'PUT' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ property, client, value, status })
@@ -1398,10 +1401,17 @@
     }
 
     function confirmDelete() {
-        transactions = transactions.filter(t => t.id !== deletingId);
+        const idToDelete = deletingId;
+        transactions = transactions.filter(t => t.id !== idToDelete);
         renderTable();
         closeConfirm();
         showToast('Record deleted.');
+
+        try {
+            fetch(`http://localhost:8080/api/transactions/${idToDelete}`, {
+                method: 'DELETE'
+            }).catch(() => {});
+        } catch(e) {}
     }
 
     function closeModal() {
@@ -1653,6 +1663,16 @@
        LIVE API FETCH
     =========================== */
     async function fetchDashboardData() {
+        try {
+            const tRes = await fetch('http://localhost:8080/api/transactions');
+            if (tRes.ok) {
+                const data = await tRes.json();
+                if (data && data.length > 0) {
+                    transactions = data;
+                    renderTable();
+                }
+            }
+        } catch(e) { console.warn('Could not fetch transactions:', e); }
         try {
             const cRes = await fetch('http://localhost:8080/api/customers');
             if (cRes.ok) {
