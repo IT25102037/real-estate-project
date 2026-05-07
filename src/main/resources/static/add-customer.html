@@ -389,10 +389,17 @@
                 <label class="input-label">Full Name</label>
                 <input type="text" id="name" placeholder="Enter your full name" required>
             </div>
+
+            <!-- ── CHANGED: added oninput reset + emailError div placed here under email field ── -->
             <div class="input-group">
                 <label class="input-label">Email Address</label>
-                <input type="email" id="email" placeholder="your@email.com" required>
+                <input type="email" id="email" placeholder="your@email.com" required
+                       oninput="this.style.borderColor='rgba(201,169,110,0.22)';
+                                document.getElementById('emailError').style.display='none';">
+                <div id="emailError" class="error-message">An account with this email already exists. Please sign in instead.</div>
             </div>
+            <!-- ── END CHANGE ── -->
+
             <div class="input-group">
                 <label class="input-label">Phone Number</label>
                 <input type="text" id="phone" placeholder="+94 xxx xxx xxx" required>
@@ -462,12 +469,22 @@
             password: document.getElementById("password").value
         };
 
+        // ── CHANGED: fetch chain now handles 409 (duplicate email) inline ──
         fetch('http://localhost:8080/api/customers/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(customerData)
         })
         .then(response => {
+            if (response.status === 409) {
+                // Duplicate email — show inline error under the email field
+                const emailInput = document.getElementById('email');
+                const emailError = document.getElementById('emailError');
+                emailInput.style.borderColor = 'var(--error-red)';
+                emailError.style.display = 'block';
+                emailInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                throw new Error('DUPLICATE');
+            }
             if (!response.ok) {
                 return response.text().then(text => { throw new Error(text || 'Registration failed') });
             }
@@ -484,9 +501,11 @@
             window.location.href = "index.html";
         })
         .catch(error => {
+            if (error.message === 'DUPLICATE') return; // already handled inline, skip alert
             console.error('Detailed Error:', error);
             alert("Registration failed. Make sure your Spring Boot server is running!");
         });
+        // ── END CHANGE ──
     });
 </script>
 

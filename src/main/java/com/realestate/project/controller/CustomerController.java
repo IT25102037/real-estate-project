@@ -22,12 +22,20 @@ public class CustomerController {
     // 1. SAVE TO DATABASE
     // This matches: fetch("http://localhost:8080/api/customers/register", ...)
     @PostMapping("/register")
-    public ResponseEntity<CustomerDto> register(@RequestBody CustomerDto customerDto) {
+    public ResponseEntity<?> register(@RequestBody CustomerDto customerDto) {
         System.out.println("Received : " + customerDto);
-        // This calls the service which saves to MySQL
-        customerService.saveCustomer(customerDto);
-        return ResponseEntity.ok(customerDto);
+        try {
+            CustomerEntity savedCustomer = customerService.saveCustomer(customerDto);
+            return ResponseEntity.ok(savedCustomer);
+        } catch (RuntimeException e) {
+            if ("EMAIL_ALREADY_EXISTS".equals(e.getMessage())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("EMAIL_ALREADY_EXISTS");
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Registration failed");
+        }
     }
+
+
 
     @PostMapping("/login")
     public ResponseEntity<?> signIn(@RequestBody SignInRequest signInRequest) {

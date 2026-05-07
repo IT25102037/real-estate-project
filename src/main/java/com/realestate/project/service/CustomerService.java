@@ -31,9 +31,13 @@ public class CustomerService {
 
     // Adding @Transactional ensures the data is "Committed" to MySQL
     @Transactional
-    public void saveCustomer(CustomerDto customerDto) {
+    public CustomerEntity saveCustomer(CustomerDto customerDto) {
+        // ── NEW: duplicate email validation ──
+        if (customerRepository.findByEmail(customerDto.getEmail()).isPresent()) {
+            throw new RuntimeException("EMAIL_ALREADY_EXISTS");
+        }
         CustomerEntity customerEntity = modelMapper.map(customerDto, CustomerEntity.class);
-        customerRepository.save(customerEntity);
+        return customerRepository.save(customerEntity);
     }
 
     @Transactional(readOnly = true)
@@ -64,6 +68,8 @@ public class CustomerService {
             if (details.getPhone() != null) customer.setPhone(details.getPhone());
             if (details.getPropertyType() != null) customer.setPropertyType(details.getPropertyType());
             if (details.getAddress() != null) customer.setAddress(details.getAddress());
+            if (details.getPassword() != null) customer.setPassword(details.getPassword());
+
             return customerRepository.save(customer);
         }).orElseThrow(() -> new RuntimeException("Customer not found"));
     }

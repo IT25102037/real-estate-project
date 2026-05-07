@@ -734,6 +734,21 @@
     let userData = null;
     let isEditing = false;
 
+    function getCustomerId() {
+    const id = localStorage.getItem('luxeUserId') || userData?.id;
+
+    if (!id || id === 'null' || id === 'undefined') {
+        showToast('User id missing. Please login again.', 'error');
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 1500);
+        return null;
+    }
+
+    return id;
+}
+
+
     // ---- INIT ----
     window.onload = async function () {
         const storedId = localStorage.getItem('luxeUserId');
@@ -819,43 +834,79 @@
 
     // ---- SAVE (PUT) ----
     async function saveProfile() {
-        const saveBtn = document.getElementById('saveBtn');
-        saveBtn.querySelector('span').innerHTML = '<i data-lucide="loader" style="width:14px;height:14px;"></i> Saving...';
-        lucide.createIcons();
+    const id = getCustomerId();
+    if (!id) return;
 
-        const updatedData = {
-            ...userData,
-            name: document.getElementById('editName').value,
-            email: document.getElementById('editEmail').value,
-            phone: document.getElementById('editPhone').value,
-            address: document.getElementById('editAddress').value,
-            propertyType: document.getElementById('editPropertyType').value,
-        };
+    const saveBtn = document.getElementById('saveBtn');
+    saveBtn.querySelector('span').innerHTML = '<i data-lucide="loader" style="width:14px;height:14px;"></i> Saving...';
+    lucide.createIcons();
 
-        try {
-            const res = await fetch(`http://localhost:8080/api/customers/${userData.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedData)
-            });
+    const updatedData = {
+        ...userData,
+        name: document.getElementById('editName').value,
+        email: document.getElementById('editEmail').value,
+        phone: document.getElementById('editPhone').value,
+        address: document.getElementById('editAddress').value,
+        propertyType: document.getElementById('editPropertyType').value,
+    };
 
-            if (res.ok) {
-                userData = await res.json();
-                localStorage.setItem('luxeUserData', JSON.stringify(userData));
-                localStorage.setItem('luxeUser', userData.name);
-                renderProfile(userData);
-                cancelEdit();
-                showToast('Profile updated successfully!', 'success');
-            } else {
-                showToast('Update failed. Please try again.', 'error');
-            }
-        } catch (e) {
-            showToast('Server unavailable. Check your connection.', 'error');
-        } finally {
-            saveBtn.querySelector('span').innerHTML = '<i data-lucide="save" style="width:14px;height:14px;"></i> Save Changes';
-            lucide.createIcons();
+    try {
+        const res = await fetch(`http://localhost:8080/api/customers/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedData)
+        });
+
+        if (res.ok) {
+            userData = await res.json();
+
+            localStorage.setItem('luxeUserData', JSON.stringify(userData));
+            localStorage.setItem('luxeUserId', userData.id);
+            localStorage.setItem('luxeUser', userData.name);
+
+            renderProfile(userData);
+            cancelEdit();
+            showToast('Profile updated successfully!', 'success');
+        } else {
+            showToast('Update failed. Please try again.', 'error');
         }
+    } catch (e) {
+        showToast('Server unavailable. Check your connection.', 'error');
+    } finally {
+        saveBtn.querySelector('span').innerHTML = '<i data-lucide="save" style="width:14px;height:14px;"></i> Save Changes';
+        lucide.createIcons();
     }
+}
+
+async function confirmDelete() {
+    const id = getCustomerId();
+    if (!id) return;
+
+    try {
+        const res = await fetch(`http://localhost:8080/api/customers/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (res.ok) {
+            localStorage.removeItem('luxeUser');
+            localStorage.removeItem('luxeUserId');
+            localStorage.removeItem('luxeUserData');
+
+            closeDeleteModal();
+            showToast('Account deleted. Redirecting...', 'error');
+
+            setTimeout(() => {
+                window.location.href = 'add-customer.html';
+            }, 1800);
+        } else {
+            showToast('Delete failed. Try again.', 'error');
+        }
+    } catch (e) {
+        showToast('Server unavailable.', 'error');
+    }
+}
+
+
 
     // ---- DELETE ----
     function openDeleteModal() {
