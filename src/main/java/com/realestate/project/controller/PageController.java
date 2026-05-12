@@ -6,33 +6,33 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PageController {
 
-    @GetMapping({"/", "/index", "/index.html"})
+    @GetMapping({"/", "/index"})
     public String showBuyPage() {
-        return "Index";
+        return "forward:/index.html";
     }
 
-    @GetMapping({"/rent", "/rent.html"})
+    @GetMapping("/rent")
     public String showRentPage() {
-        return "rent";
+        return "forward:/rent.html";
     }
 
-    @GetMapping({"/sell", "/sell.html"})
+    @GetMapping("/sell")
     public String showSellPage() {
-        return "sell";
+        return "forward:/sell.html";
     }
 
-    @GetMapping({"/agents", "/agents.html"})
+    @GetMapping("/agents")
     public String showAgentsPage() {
-        return "Agents";
+        return "forward:/agents.html";
     }
 
-    @GetMapping({"/contact", "/contact.html"})
-    public String showContactPage(){
-        return "Contact";
+    @GetMapping("/contact")
+    public String showContactPage() {
+        return "forward:/contact.html";
     }
 
-    @GetMapping({"/about" , "/about.html"})
-    public String showAboutPage(){
-        return "about";
+    @GetMapping("/about")
+    public String showAboutPage() {
+        return "forward:/about.html";
     }
 }

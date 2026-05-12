@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LuxeEstate | Sell Your Property</title>
+    <title>LuxeEstate | Rental Property Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,700;0,900;1,400&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -538,16 +538,16 @@
         <div class="logo"><h1>Luxe<span>_Estate</span></h1></div>
         <nav>
             <ul>
-                <li><a href="index.html">Buy</a></li>
-                <li><a href="#">Rent</a></li>
-                <li><a href="sell.html" class="active">Sell</a></li>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="rent.html" class="active">Rent</a></li>
+                <li><a href="sell.html">Sell</a></li>
                 <li><a href="agents.html">Agents</a></li>
                 <li><a href="contact.html">Contact</a></li>
                 <li><a href="about.html">About Us</a></li>
             </ul>
         </nav>
         <div id="userActions">
-            <a href="#propertyForm" class="sign-in-btn">Add Property</a>
+            <a href="#propertyForm" class="sign-in-btn">Add Rental</a>
         </div>
     </div>
 </header>
@@ -555,14 +555,14 @@
 <section class="sell-hero">
     <div class="container hero-layout">
         <div>
-            <div class="eyebrow"><i data-lucide="sparkles"></i> Seller Property Management</div>
-            <h2>Present your property with LuxeEstate polish.</h2>
-            <p>Add premium house and apartment listings, upload gallery images, update details, and remove sold listings from one focused management space.</p>
+            <div class="eyebrow"><i data-lucide="key-round"></i> Rental Property Management</div>
+            <h2>Manage rental homes with LuxeEstate polish.</h2>
+            <p>Add rental listings, set monthly rent, upload gallery images, update details, and remove unavailable rentals from one focused management space.</p>
         </div>
         <div class="hero-stats">
-            <div class="stat"><strong id="totalCount">0</strong><span>Total Listings</span></div>
-            <div class="stat"><strong id="houseCount">0</strong><span>Houses</span></div>
-            <div class="stat"><strong id="apartmentCount">0</strong><span>Apartments</span></div>
+            <div class="stat"><strong id="totalCount">0</strong><span>Total Rentals</span></div>
+            <div class="stat"><strong id="houseCount">0</strong><span>Available</span></div>
+            <div class="stat"><strong id="apartmentCount">0</strong><span>Avg. Rent</span></div>
         </div>
     </div>
 </section>
@@ -572,41 +572,39 @@
         <section class="panel form-panel" id="propertyForm">
             <div class="panel-header">
                 <div>
-                    <h3 id="formTitle">Add Property</h3>
-                    <p id="formSubtitle">Rental properties are excluded from this seller form.</p>
+                    <h3 id="formTitle">Add Rental</h3>
+                    <p id="formSubtitle">Create rental property listings with photos and monthly rent details.</p>
                 </div>
                 <button class="mode-chip" id="modeChip" type="button">Create</button>
             </div>
 
             <form id="listingForm">
                 <input type="hidden" id="propertyId">
+                <input type="hidden" id="propertyType" value="rental">
                 <div class="form-grid">
                     <div class="field">
-                        <label for="propertyType">Property Type</label>
-                        <select id="propertyType" required>
-                            <option value="house">House</option>
-                            <option value="apartment">Apartment</option>
-                        </select>
+                        <label for="typeSpecificInput" id="typeSpecificLabel">Monthly Rent (LKR)</label>
+                        <input type="number" id="typeSpecificInput" min="0" step="1000" placeholder="150000" required>
                     </div>
-                    <div class="field" id="typeSpecificField">
-                        <label for="typeSpecificInput" id="typeSpecificLabel">Number of Floors</label>
-                        <input type="number" id="typeSpecificInput" min="1" placeholder="2" required>
+                    <div class="field">
+                        <label for="duration">Lease Duration</label>
+                        <input type="text" id="duration" placeholder="12 months" required>
                     </div>
                     <div class="field full">
-                        <label for="title">Property Title</label>
-                        <input type="text" id="title" placeholder="Modern luxury villa in Colombo" required>
+                        <label for="title">Rental Title</label>
+                        <input type="text" id="title" placeholder="Luxury apartment for rent in Colombo" required>
                     </div>
                     <div class="field">
                         <label for="location">Location</label>
                         <input type="text" id="location" placeholder="Colombo 07" required>
                     </div>
                     <div class="field">
-                        <label for="price">Selling Price (LKR)</label>
-                        <input type="number" id="price" min="0" step="1000" placeholder="85000000" required>
+                        <label for="advanceAmount">Advance / Deposit (LKR)</label>
+                        <input type="number" id="advanceAmount" min="0" step="1000" placeholder="300000" required>
                     </div>
                     <div class="field full">
                         <label for="description">Description</label>
-                        <textarea id="description" placeholder="Describe rooms, finishes, neighborhood highlights, parking, and special features." required></textarea>
+                        <textarea id="description" placeholder="Describe rooms, lease terms, furnished status, parking, nearby places, and special features." required></textarea>
                     </div>
                     <div class="field full">
                         <label>Property Images</label>
@@ -625,7 +623,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="primary-action" id="submitBtn">Publish Property</button>
+                    <button type="submit" class="primary-action" id="submitBtn">Publish Rental</button>
                     <button type="button" class="secondary-action" id="resetBtn">Clear Form</button>
                     <button type="button" class="danger-action" id="cancelEditBtn" style="display:none;">Cancel Edit</button>
                 </div>
@@ -635,8 +633,8 @@
         <section class="panel list-panel">
             <div class="panel-header">
                 <div>
-                    <h3>Added Properties</h3>
-                    <p>Manage the sale listings already stored in the system.</p>
+                    <h3>Rental Listings</h3>
+                    <p>Manage the rental listings already stored in the system.</p>
                 </div>
             </div>
 
@@ -646,9 +644,8 @@
                     <input type="search" id="searchInput" placeholder="Search by title or location">
                 </div>
                 <select id="filterType">
-                    <option value="all">All Types</option>
-                    <option value="house">Houses</option>
-                    <option value="apartment">Apartments</option>
+                    <option value="all">All Rentals</option>
+                    <option value="rental">Rental Properties</option>
                 </select>
             </div>
 
@@ -691,7 +688,6 @@
 
     let listings = [];
 
-    propertyType.addEventListener('change', updateTypeSpecificField);
     imagesInput.addEventListener('change', renderImagePreview);
     form.addEventListener('submit', handleSubmit);
     searchInput.addEventListener('input', renderListings);
@@ -719,10 +715,8 @@
     });
 
     function updateTypeSpecificField() {
-        const isHouse = propertyType.value === 'house';
-        typeSpecificLabel.textContent = isHouse ? 'Number of Floors' : 'Apartment Floor Number';
-        typeSpecificInput.placeholder = isHouse ? '2' : '12';
-        typeSpecificInput.value = '';
+        typeSpecificLabel.textContent = 'Monthly Rent (LKR)';
+        typeSpecificInput.placeholder = '150000';
     }
 
     function renderImagePreview() {
@@ -738,7 +732,7 @@
     async function handleSubmit(event) {
         event.preventDefault();
         const editingId = propertyId.value;
-        const type = propertyType.value;
+        const type = 'rental';
 
         try {
             if (editingId) {
@@ -746,10 +740,10 @@
                 if (imagesInput.files.length > 0) {
                     await addImages(editingId);
                 }
-                showToast('Property updated successfully.', 'success');
+                showToast('Rental updated successfully.', 'success');
             } else {
                 await createProperty(type);
-                showToast('Property published successfully.', 'success');
+                showToast('Rental published successfully.', 'success');
             }
 
             resetForm();
@@ -764,15 +758,13 @@
             type,
             title: document.getElementById('title').value.trim(),
             location: document.getElementById('location').value.trim(),
-            price: Number(document.getElementById('price').value),
-            description: document.getElementById('description').value.trim()
+            price: 0,
+            description: document.getElementById('description').value.trim(),
+            duration: document.getElementById('duration').value.trim()
         };
 
-        if (type === 'house') {
-            payload.numOfFloors = Number(typeSpecificInput.value);
-        } else {
-            payload.floorNumber = Number(typeSpecificInput.value);
-        }
+        payload.monthlyRent = Number(typeSpecificInput.value);
+        payload.advanceAmount = Number(document.getElementById('advanceAmount').value);
 
         const response = await fetch('/api/properties', {
             method: 'POST',
@@ -781,7 +773,7 @@
         });
 
         if (!response.ok) {
-            throw new Error('Could not publish the property.');
+            throw new Error('Could not publish the rental property.');
         }
 
         const savedProperty = await response.json();
@@ -795,15 +787,13 @@
             type,
             title: document.getElementById('title').value.trim(),
             location: document.getElementById('location').value.trim(),
-            price: Number(document.getElementById('price').value),
-            description: document.getElementById('description').value.trim()
+            price: 0,
+            description: document.getElementById('description').value.trim(),
+            duration: document.getElementById('duration').value.trim()
         };
 
-        if (type === 'house') {
-            payload.numOfFloors = Number(typeSpecificInput.value);
-        } else {
-            payload.floorNumber = Number(typeSpecificInput.value);
-        }
+        payload.monthlyRent = Number(typeSpecificInput.value);
+        payload.advanceAmount = Number(document.getElementById('advanceAmount').value);
 
         const response = await fetch(`/api/properties/${id}`, {
             method: 'PUT',
@@ -812,7 +802,7 @@
         });
 
         if (!response.ok) {
-            throw new Error('Could not update the property. Make sure the property type matches the original listing.');
+            throw new Error('Could not update the rental property.');
         }
     }
 
@@ -836,7 +826,7 @@
             if (response.status === 413) {
                 throw new Error('One or more images are too large. Please keep each image under 10MB.');
             }
-            throw new Error('Property details were saved, but images could not be added.');
+            throw new Error('Rental details were saved, but images could not be added.');
         }
     }
 
@@ -845,11 +835,11 @@
             const response = await fetch('/api/properties');
             if (!response.ok) throw new Error('Could not load properties.');
             listings = await response.json();
-            listings = listings.filter(item => normalizeType(item) !== 'rental').reverse();
+            listings = listings.filter(item => isRental(item)).reverse();
             renderListings();
             updateStats();
         } catch (error) {
-            propertyList.innerHTML = `<div class="empty-state"><i data-lucide="wifi-off"></i><h3>Properties could not be loaded</h3><p>${error.message}</p></div>`;
+            propertyList.innerHTML = `<div class="empty-state"><i data-lucide="wifi-off"></i><h3>Rentals could not be loaded</h3><p>${error.message}</p></div>`;
             lucide.createIcons();
         }
     }
@@ -858,35 +848,36 @@
         const query = searchInput.value.toLowerCase().trim();
         const selectedType = filterType.value;
         const filtered = listings.filter(item => {
-            const type = normalizeType(item);
-            const matchesType = selectedType === 'all' || type === selectedType;
+            const type = 'rental';
+            const matchesType = selectedType === 'all' || selectedType === type;
             const matchesSearch = `${item.title || ''} ${item.location || ''}`.toLowerCase().includes(query);
             return matchesType && matchesSearch;
         });
 
         if (filtered.length === 0) {
-            propertyList.innerHTML = '<div class="empty-state"><i data-lucide="home"></i><h3>No sale properties found</h3><p>Add your first house or apartment listing using the form.</p></div>';
+            propertyList.innerHTML = '<div class="empty-state"><i data-lucide="key-round"></i><h3>No rental properties found</h3><p>Add your first rental listing using the form.</p></div>';
             lucide.createIcons();
             return;
         }
 
         propertyList.innerHTML = filtered.map(item => {
-            const type = normalizeType(item);
-            const special = type === 'house'
-                ? `${item.numOfFloors || 0} floor${Number(item.numOfFloors) === 1 ? '' : 's'}`
-                : `Floor ${item.floorNumber || 0}`;
+            const type = 'rental';
+            const advanceAmount = Number(item.advanceAmount || item.price || 0);
+            const special = `Advance ${formatPrice(advanceAmount)}`;
+            const duration = item.duration || 'Flexible';
 
             return `
                 <article class="seller-card">
-                    <div class="thumb"><i data-lucide="${type === 'house' ? 'home' : 'building-2'}"></i></div>
+                    <div class="thumb"><i data-lucide="key-round"></i></div>
                     <div>
                         <h4>${escapeHtml(item.title || 'Untitled property')}</h4>
                         <div class="meta-line">
-                            <span>${capitalize(type)}</span>
+                            <span>Rental Property</span>
                             <span>${escapeHtml(item.location || 'No location')}</span>
                             <span>${special}</span>
+                            <span>${escapeHtml(duration)}</span>
                         </div>
-                        <div class="price">${formatPrice(item.price || 0)}</div>
+                        <div class="price">${formatPrice(item.monthlyRent || 0)} / month</div>
                     </div>
                     <div class="card-actions">
                         <button class="icon-button" title="Edit property" onclick="editProperty(${item.id})"><i data-lucide="pencil"></i></button>
@@ -902,21 +893,19 @@
         const item = listings.find(property => Number(property.id) === Number(id));
         if (!item) return;
 
-        const type = normalizeType(item);
         propertyId.value = item.id;
-        propertyType.value = type;
-        propertyType.disabled = true;
         updateTypeSpecificField();
         document.getElementById('title').value = item.title || '';
         document.getElementById('location').value = item.location || '';
-        document.getElementById('price').value = item.price || '';
+        document.getElementById('advanceAmount').value = item.advanceAmount || item.price || '';
+        document.getElementById('duration').value = item.duration || '';
         document.getElementById('description').value = item.description || '';
-        typeSpecificInput.value = type === 'house' ? (item.numOfFloors || '') : (item.floorNumber || '');
+        typeSpecificInput.value = item.monthlyRent || '';
         preview.innerHTML = '';
         imagesInput.value = '';
         await loadExistingImages(item.id);
 
-        formTitle.textContent = 'Update Property';
+        formTitle.textContent = 'Update Rental';
         formSubtitle.textContent = 'Edit details, replace a single image, delete an image, or add more images.';
         submitBtn.textContent = 'Save Changes';
         cancelEditBtn.style.display = 'inline-block';
@@ -1008,7 +997,7 @@
         try {
             const response = await fetch(`/api/properties/${id}`, { method: 'DELETE' });
             if (!response.ok) throw new Error('Could not delete the property.');
-            showToast('Property deleted successfully.', 'success');
+            showToast('Rental deleted successfully.', 'success');
             if (propertyId.value === String(id)) resetForm();
             await loadListings();
         } catch (error) {
@@ -1019,30 +1008,37 @@
     function resetForm() {
         form.reset();
         propertyId.value = '';
-        propertyType.disabled = false;
+        document.getElementById('advanceAmount').value = '';
+        document.getElementById('duration').value = '';
         preview.innerHTML = '';
         existingImages.innerHTML = '';
         existingImagesSection.style.display = 'none';
-        propertyType.value = 'house';
         updateTypeSpecificField();
-        formTitle.textContent = 'Add Property';
-        formSubtitle.textContent = 'Rental properties are excluded from this seller form.';
-        submitBtn.textContent = 'Publish Property';
+        typeSpecificInput.value = '';
+        formTitle.textContent = 'Add Rental';
+        formSubtitle.textContent = 'Create rental property listings with photos and monthly rent details.';
+        submitBtn.textContent = 'Publish Rental';
         cancelEditBtn.style.display = 'none';
         modeChip.textContent = 'Create';
     }
 
     function updateStats() {
-        const houses = listings.filter(item => normalizeType(item) === 'house').length;
-        const apartments = listings.filter(item => normalizeType(item) === 'apartment').length;
+        const availableRentals = listings.length;
+        const averageRent = listings.length
+            ? listings.reduce((total, item) => total + Number(item.monthlyRent || 0), 0) / listings.length
+            : 0;
         document.getElementById('totalCount').textContent = listings.length;
-        document.getElementById('houseCount').textContent = houses;
-        document.getElementById('apartmentCount').textContent = apartments;
+        document.getElementById('houseCount').textContent = availableRentals;
+        document.getElementById('apartmentCount').textContent = formatCompactPrice(averageRent);
     }
 
     function normalizeType(item) {
         const raw = item.type || item.propertyCategory || '';
         return raw.toLowerCase();
+    }
+
+    function isRental(item) {
+        return normalizeType(item).includes('rental');
     }
 
     function formatPrice(value) {
@@ -1051,6 +1047,13 @@
             currency: 'LKR',
             maximumFractionDigits: 0
         }).format(Number(value || 0)).replace('LKR', 'Rs.');
+    }
+
+    function formatCompactPrice(value) {
+        const amount = Number(value || 0);
+        if (amount >= 1000000) return `Rs.${(amount / 1000000).toFixed(1)}M`;
+        if (amount >= 1000) return `Rs.${Math.round(amount / 1000)}K`;
+        return `Rs.${Math.round(amount)}`;
     }
 
     function capitalize(value) {
