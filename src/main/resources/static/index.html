@@ -2251,6 +2251,7 @@
                     <option value="Apartment">Penthouse</option>
                     <option value="House">House</option>
                     <option value="Apartment">Apartment</option>
+                    <option value="Rental">Rental</option>
                 </select>
             </div>
             <button class="search-btn-vibrant" onclick="applyHeroSearch()">Find Home</button>
@@ -2559,6 +2560,7 @@
                     <option value="all">All Types</option>
                     <option value="house">House</option>
                     <option value="apartment">Apartment</option>
+                    <option value="rental">Rental</option>
                 </select>
 
                 <select class="filter-select" id="filterSort" onchange="applyFilters()">
@@ -2895,9 +2897,7 @@
             const res = await fetch('/api/properties');
             if (!res.ok) throw new Error('API error');
             const data = await res.json();
-            allListings = data
-                .filter(p => normalizeType(p) !== 'rental')
-                .reverse();
+            allListings = data.reverse();
         } catch (e) {
             allListings = [];
         }
@@ -2980,6 +2980,20 @@
         slice.forEach((prop, idx) => {
             const el = buildCard(prop, start + idx);
             grid.appendChild(el);
+            
+            if (!prop.imagesLoaded) {
+                fetch(`/images/property/${prop.id}`)
+                    .then(res => res.ok ? res.json() : [])
+                    .then(imgs => {
+                        prop.images = imgs;
+                        prop.imagesLoaded = true;
+                        if (imgs && imgs.length > 0 && imgs[0].url) {
+                            const imgEl = el.querySelector(`.property-img-${prop.id}`);
+                            if (imgEl) imgEl.src = imgs[0].url;
+                        }
+                    })
+                    .catch(e => console.error(e));
+            }
         });
 
         lucide.createIcons();
@@ -3001,9 +3015,14 @@
         const imgSrc = (prop.images && prop.images[0] && prop.images[0].url)
             ? prop.images[0].url
             : FALLBACK_IMAGES[globalIdx % FALLBACK_IMAGES.length];
-        const special = type === 'house'
-            ? `${prop.numOfFloors || 1} Floor${Number(prop.numOfFloors) !== 1 ? 's' : ''}`
-            : `Floor ${prop.floorNumber || 'N/A'}`;
+        let special = '';
+        if (type === 'house') special = `${prop.numOfFloors || 1} Floor${Number(prop.numOfFloors) !== 1 ? 's' : ''}`;
+        else if (type === 'apartment') special = `Floor ${prop.floorNumber || 'N/A'}`;
+        else if (type === 'rental') special = prop.duration ? `${prop.duration}` : 'Flexible';
+
+        const displayPrice = type === 'rental' ? `${formatPrice(prop.monthlyRent || prop.price)} / mo` : formatPrice(prop.price);
+        const badgeLabel = type === 'rental' ? 'For Rent' : (type === 'house' ? 'For Sale' : 'Listing');
+        const iconType = type === 'rental' ? 'key-round' : (type === 'house' ? 'home' : 'building-2');
 
         const article = document.createElement('article');
         article.className = `property-card ${accent}`;
@@ -3011,12 +3030,12 @@
 
         article.innerHTML = `
             <div class="property-img-wrapper">
-                <img class="property-img" src="${imgSrc}" alt="${escapeHtml(prop.title||'Property')}" loading="lazy">
-                <span class="badge">${type === 'house' ? 'For Sale' : 'Listing'}</span>
+                <img class="property-img property-img-${prop.id}" src="${imgSrc}" alt="${escapeHtml(prop.title||'Property')}" loading="lazy">
+                <span class="badge">${badgeLabel}</span>
                 <span class="badge-type">${capitalize(type)}</span>
                 <div class="img-price-overlay">
-                    <small>Price</small>
-                    ${formatPrice(prop.price)}
+                    <small>${type === 'rental' ? 'Rent' : 'Price'}</small>
+                    ${displayPrice}
                 </div>
                 ${isAdmin ? `
                 <div class="card-admin-actions visible">
@@ -3029,9 +3048,9 @@
                 <h3 class="property-title">${escapeHtml(prop.title || 'Untitled Property')}</h3>
                 <p class="card-desc-preview">${escapeHtml(prop.description || 'No description provided.')}</p>
                 <div class="meta-tags">
-                    <span><i data-lucide="${type === 'house' ? 'home' : 'building-2'}"></i>${capitalize(type)}</span>
+                    <span><i data-lucide="${iconType}"></i>${capitalize(type)}</span>
                     <span><i data-lucide="layers"></i>${escapeHtml(special)}</span>
-                    <span><i data-lucide="tag"></i>${formatPrice(prop.price)}</span>
+                    <span><i data-lucide="tag"></i>${displayPrice}</span>
                 </div>
                 <div class="card-footer">
                     <button class="view-detail-btn" onclick="openModal(${prop.id})">View Details <i data-lucide="arrow-right"></i></button>
@@ -3055,21 +3074,25 @@
         const type = normalizeType(prop);
         const special = type === 'house'
             ? `${prop.numOfFloors || 1} Floor${Number(prop.numOfFloors) !== 1 ? 's' : ''}`
-            : `Floor ${prop.floorNumber || 'N/A'}`;
+            : (type === 'rental' ? (prop.duration ? `${prop.duration}` : 'Flexible') : `Floor ${prop.floorNumber || 'N/A'}`);
+
+        const displayPrice = type === 'rental' ? `${formatPrice(prop.monthlyRent || prop.price)} / mo` : formatPrice(prop.price);
+        const iconType = type === 'rental' ? 'key-round' : (type === 'house' ? 'home' : 'building-2');
+        const floorLabel = type === 'rental' ? 'Duration' : (type === 'house' ? 'Floors' : 'Floor No.');
 
         document.getElementById('modalTitle').textContent = prop.title || 'Untitled Property';
         document.getElementById('modalLocation').textContent = prop.location || 'Location TBC';
-        document.getElementById('modalPrice').textContent = formatPrice(prop.price);
+        document.getElementById('modalPrice').textContent = displayPrice;
         document.getElementById('modalDesc').textContent = prop.description || 'No description available.';
 
         document.getElementById('modalMeta').innerHTML = `
             <div class="modal-meta-item">
-                <div class="modal-meta-icon"><i data-lucide="${type === 'house' ? 'home' : 'building-2'}"></i></div>
+                <div class="modal-meta-icon"><i data-lucide="${iconType}"></i></div>
                 <div class="modal-meta-text"><small>Type</small><strong>${capitalize(type)}</strong></div>
             </div>
             <div class="modal-meta-item">
-                <div class="modal-meta-icon"><i data-lucide="layers"></i></div>
-                <div class="modal-meta-text"><small>${type === 'house' ? 'Floors' : 'Floor No.'}</small><strong>${escapeHtml(special)}</strong></div>
+                <div class="modal-meta-icon"><i data-lucide="${type === 'rental' ? 'clock' : 'layers'}"></i></div>
+                <div class="modal-meta-text"><small>${floorLabel}</small><strong>${escapeHtml(special)}</strong></div>
             </div>
             <div class="modal-meta-item">
                 <div class="modal-meta-icon"><i data-lucide="map-pin"></i></div>

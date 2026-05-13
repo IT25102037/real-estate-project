@@ -1026,7 +1026,7 @@
                     <h3>Listings</h3>
                     <div class="stat-icon"><i data-lucide="palmtree"></i></div>
                 </div>
-                <div class="stat-value">42</div>
+                <div class="stat-value" id="totalListingsCount">0</div>
                 <div class="stat-sub">Properties available</div>
             </div>
 
@@ -1227,10 +1227,17 @@
                 document.getElementById('totalMessageCount').innerText = messages.length.toLocaleString();
             }
 
+            const propertyResponse = await fetch('http://localhost:8080/api/properties');
+            if (propertyResponse.ok) {
+                const properties = await propertyResponse.json();
+                document.getElementById('totalListingsCount').innerText = properties.length.toLocaleString();
+            }
+
         } catch (error) {
             console.error('Connection Error:', error);
             document.getElementById('totalCustomerCount').innerText = "Error";
             document.getElementById('totalMessageCount').innerText = "Error";
+            document.getElementById('totalListingsCount').innerText = "Error";
         }
     }
 
