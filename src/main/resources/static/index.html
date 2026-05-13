@@ -24,12 +24,12 @@
             --shadow-gold: 0 0 60px rgba(201,169,110,0.08);
             --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
             --transition-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --danger: #ef4444;
+            --success: #10b981;
         }
 
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
         html { scroll-behavior: smooth; }
-
         body {
             font-family: 'DM Sans', sans-serif;
             background-color: var(--cream);
@@ -37,8 +37,6 @@
             overflow-x: hidden;
             cursor: default;
         }
-
-        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--obsidian); }
         ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
@@ -56,14 +54,12 @@
             z-index: 1000;
             transition: all 0.5s var(--transition-smooth);
         }
-
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
             height: 80px;
         }
-
         .logo h1 {
             font-family: 'Cormorant Garamond', serif;
             font-size: 28px;
@@ -73,9 +69,7 @@
             color: var(--white);
             transition: color 0.3s;
         }
-        .logo h1 span {
-            color: var(--gold);
-        }
+        .logo h1 span { color: var(--gold); }
 
         nav ul { display: flex; gap: 40px; list-style: none; }
         nav a {
@@ -100,7 +94,6 @@
         nav a:hover { color: var(--gold); }
         nav a:hover::after { width: 100%; }
 
-        /* User Actions */
         #userActions { display: flex; align-items: center; gap: 16px; }
 
         .sign-in-btn {
@@ -138,6 +131,11 @@
             padding: 6px 16px 6px 8px;
             border-radius: 2px;
             border: 1px solid var(--border-subtle);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .profile-status:hover {
+            border-color: var(--border-gold);
+            box-shadow: 0 0 20px rgba(201,169,110,0.15);
         }
         .avatar-circle {
             width: 32px; height: 32px;
@@ -147,7 +145,6 @@
             color: var(--obsidian); font-weight: 700; font-size: 13px;
             font-family: 'Cormorant Garamond', serif;
         }
-
         .sign-out-link {
             color: rgba(255,255,255,0.4);
             font-size: 10px;
@@ -172,7 +169,6 @@
             overflow: hidden;
             background: var(--obsidian);
         }
-
         .hero-bg {
             position: absolute; inset: 0;
             background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
@@ -180,13 +176,10 @@
             animation: heroZoom 20s ease-in-out infinite alternate;
             filter: brightness(0.35) saturate(0.8);
         }
-
         @keyframes heroZoom {
             0% { transform: scale(1.05); }
             100% { transform: scale(1.12); }
         }
-
-        /* Grain overlay */
         .hero::before {
             content: '';
             position: absolute; inset: 0;
@@ -195,8 +188,6 @@
             z-index: 1;
             pointer-events: none;
         }
-
-        /* Gold line accents */
         .hero::after {
             content: '';
             position: absolute;
@@ -207,19 +198,16 @@
             z-index: 2;
             opacity: 0.6;
         }
-
         .hero-content {
             position: relative; z-index: 3;
             text-align: center;
             padding: 0 20px;
             animation: heroFadeIn 1.2s var(--transition-smooth) both;
         }
-
         @keyframes heroFadeIn {
             from { opacity: 0; transform: translateY(40px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         .hero-eyebrow {
             display: inline-flex;
             align-items: center;
@@ -233,14 +221,12 @@
             opacity: 0;
             animation: heroFadeIn 1s 0.3s var(--transition-smooth) forwards;
         }
-        .hero-eyebrow::before,
-        .hero-eyebrow::after {
+        .hero-eyebrow::before, .hero-eyebrow::after {
             content: '';
             width: 40px; height: 1px;
             background: var(--gold);
             opacity: 0.6;
         }
-
         .hero h2 {
             font-family: 'Cormorant Garamond', serif;
             font-size: clamp(56px, 7vw, 96px);
@@ -252,13 +238,7 @@
             opacity: 0;
             animation: heroFadeIn 1s 0.5s var(--transition-smooth) forwards;
         }
-
-        .hero h2 em {
-            font-style: italic;
-            color: var(--gold);
-            font-weight: 400;
-        }
-
+        .hero h2 em { font-style: italic; color: var(--gold); font-weight: 400; }
         .hero p {
             color: rgba(255,255,255,0.55);
             font-size: 15px;
@@ -271,8 +251,6 @@
             opacity: 0;
             animation: heroFadeIn 1s 0.7s var(--transition-smooth) forwards;
         }
-
-        /* Search Bar */
         .search-bar-modern {
             background: rgba(10,10,10,0.7);
             backdrop-filter: blur(30px);
@@ -287,7 +265,6 @@
             opacity: 0;
             animation: heroFadeIn 1s 0.9s var(--transition-smooth) forwards;
         }
-
         .search-input-group {
             flex: 1;
             display: flex;
@@ -298,9 +275,7 @@
             color: rgba(255,255,255,0.4);
         }
         .search-input-group:last-of-type { border-right: none; }
-
         .search-input-group i { flex-shrink: 0; width: 16px; height: 16px; color: var(--gold); opacity: 0.8; }
-
         .search-input-group input,
         .search-input-group select {
             background: transparent;
@@ -316,7 +291,6 @@
         .search-input-group input::placeholder { color: rgba(255,255,255,0.35); }
         .search-input-group select { cursor: pointer; }
         .search-input-group select option { background: #1a1a1a; color: white; }
-
         .search-btn-vibrant {
             background: var(--gold);
             color: var(--obsidian);
@@ -334,11 +308,8 @@
         }
         .search-btn-vibrant:hover {
             background: var(--gold-light);
-            transform: none;
             box-shadow: 0 0 40px rgba(201,169,110,0.4);
         }
-
-        /* Scroll indicator */
         .scroll-indicator {
             position: absolute;
             bottom: 48px; left: 50%;
@@ -366,7 +337,7 @@
             background: linear-gradient(to bottom, var(--gold), transparent);
         }
 
-        /* ======== STATS SECTION ======== */
+        /* ======== STATS ======== */
         .stats-section {
             background: var(--obsidian);
             padding: 80px 0;
@@ -379,7 +350,6 @@
             position: absolute; inset: 0;
             background: radial-gradient(ellipse at center, rgba(201,169,110,0.04) 0%, transparent 70%);
         }
-
         .stats-inner {
             display: grid;
             grid-template-columns: 1fr 1px 1fr 1px 1fr;
@@ -387,14 +357,11 @@
             max-width: 900px;
             margin: 0 auto;
         }
-
         .stat-divider {
             width: 1px; height: 60px;
             background: linear-gradient(to bottom, transparent, var(--border-gold), transparent);
         }
-
         .stat-item { text-align: center; position: relative; }
-
         .stat-number {
             font-family: 'Cormorant Garamond', serif;
             font-size: 64px;
@@ -405,7 +372,6 @@
             letter-spacing: -2px;
         }
         .stat-number span { color: var(--gold); font-weight: 400; }
-
         .stat-label {
             font-size: 9px;
             font-weight: 500;
@@ -414,19 +380,51 @@
             color: var(--text-muted);
         }
 
+        /* ======== MARQUEE ======== */
+        .marquee-strip {
+            background: var(--gold);
+            padding: 14px 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .marquee-inner {
+            display: inline-flex;
+            gap: 0;
+            animation: marquee 25s linear infinite;
+        }
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+        .marquee-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 20px;
+            padding: 0 30px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--obsidian);
+        }
+        .marquee-dot {
+            width: 4px; height: 4px;
+            border-radius: 50%;
+            background: rgba(10,10,10,0.4);
+            flex-shrink: 0;
+        }
+
         /* ======== FEATURED PROPERTIES ======== */
         .featured-properties {
             padding: 120px 0;
             background: var(--cream);
         }
-
         .section-header {
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
-            margin-bottom: 80px;
+            margin-bottom: 60px;
         }
-
         .section-title {
             font-family: 'Cormorant Garamond', serif;
             font-size: clamp(40px, 5vw, 64px);
@@ -436,8 +434,6 @@
             color: var(--obsidian);
         }
         .section-title em { font-style: italic; color: var(--gold); }
-        .section-title strong { font-weight: 700; }
-
         .section-subtitle {
             color: var(--text-muted);
             font-size: 13px;
@@ -448,68 +444,400 @@
             font-weight: 300;
         }
 
-        /* Property Grid */
+        /* ======== FILTER BAR ======== */
+        .filter-bar {
+            background: var(--white);
+            border: 1px solid rgba(26,26,26,0.08);
+            border-radius: 3px;
+            padding: 22px 28px;
+            margin-bottom: 48px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+        }
+        .filter-bar-top {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .filter-label {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--gold);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .filter-label::after {
+            content: '';
+            width: 24px; height: 1px;
+            background: var(--border-gold);
+        }
+        .filter-select {
+            flex: 1;
+            min-width: 160px;
+            max-width: 220px;
+            background: #fbfaf8;
+            border: 1px solid rgba(26,26,26,0.1);
+            border-radius: 2px;
+            padding: 11px 16px;
+            color: var(--charcoal);
+            font-size: 12px;
+            font-family: 'DM Sans', sans-serif;
+            letter-spacing: 0.4px;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a96e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+        }
+        .filter-select:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201,169,110,0.1);
+        }
+        .filter-search {
+            flex: 2;
+            min-width: 200px;
+            background: #fbfaf8;
+            border: 1px solid rgba(26,26,26,0.1);
+            border-radius: 2px;
+            padding: 11px 16px 11px 42px;
+            color: var(--charcoal);
+            font-size: 12px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+        .filter-search:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201,169,110,0.1);
+        }
+        .filter-search-wrap {
+            position: relative;
+            flex: 2;
+            min-width: 200px;
+        }
+        .filter-search-wrap i {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold);
+            width: 15px; height: 15px;
+            pointer-events: none;
+        }
+        .filter-search-wrap input {
+            width: 100%;
+            background: #fbfaf8;
+            border: 1px solid rgba(26,26,26,0.1);
+            border-radius: 2px;
+            padding: 11px 16px 11px 42px;
+            color: var(--charcoal);
+            font-size: 12px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .filter-search-wrap input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201,169,110,0.1);
+        }
+        .filter-search-wrap input::placeholder { color: rgba(26,26,26,0.35); }
+        .filter-reset {
+            background: transparent;
+            border: 1px solid var(--border-gold);
+            border-radius: 2px;
+            color: var(--gold);
+            padding: 10px 20px;
+            font-size: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        .filter-reset:hover {
+            background: var(--gold);
+            color: var(--obsidian);
+        }
+
+        /* Price Range Section */
+        .price-range-section {
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .price-range-label {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .price-range-inputs {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 260px;
+        }
+        .price-range-inputs input[type="number"] {
+            flex: 1;
+            background: #fbfaf8;
+            border: 1px solid rgba(26,26,26,0.1);
+            border-radius: 2px;
+            padding: 10px 14px;
+            color: var(--charcoal);
+            font-size: 12px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .price-range-inputs input[type="number"]:focus { border-color: var(--gold); }
+        .price-range-inputs input[type="number"]::placeholder { color: rgba(26,26,26,0.3); }
+        .price-range-sep {
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .price-range-slider-wrap {
+            flex: 2;
+            min-width: 200px;
+            position: relative;
+            height: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .price-range-track {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: rgba(26,26,26,0.12);
+            border-radius: 2px;
+        }
+        .price-range-fill {
+            position: absolute;
+            height: 2px;
+            background: var(--gold);
+            border-radius: 2px;
+        }
+        .price-slider {
+            position: absolute;
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            outline: none;
+            cursor: pointer;
+            pointer-events: none;
+        }
+        .price-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: 2px solid var(--white);
+            box-shadow: 0 2px 8px rgba(201,169,110,0.4);
+            cursor: pointer;
+            pointer-events: all;
+            transition: transform 0.2s;
+        }
+        .price-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        .price-slider::-moz-range-thumb {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: 2px solid var(--white);
+            box-shadow: 0 2px 8px rgba(201,169,110,0.4);
+            cursor: pointer;
+        }
+        .price-display {
+            font-size: 11px;
+            color: var(--obsidian);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .filter-result-count {
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-left: auto;
+        }
+        .filter-result-count span { color: var(--gold); font-weight: 600; }
+
+        /* ======== PROPERTY CARDS ======== */
         .property-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 2px;
-            background: #e8e2da;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
         }
 
         .property-card {
             background: var(--white);
+            border-radius: 4px;
             overflow: hidden;
-            transition: all 0.6s var(--transition-smooth);
             cursor: pointer;
             position: relative;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+            transition: box-shadow 0.5s var(--transition-smooth), transform 0.5s var(--transition-smooth);
+            animation: cardFadeIn 0.55s var(--transition-smooth) both;
+        }
+        @keyframes cardFadeIn {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .property-card:hover {
-            transform: none;
-            box-shadow: 0 60px 80px rgba(0,0,0,0.12);
-            z-index: 2;
+            transform: translateY(-6px);
+            box-shadow: 0 32px 80px rgba(0,0,0,0.14), 0 0 0 1px var(--border-gold);
+        }
+
+        .property-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--card-accent, var(--gold));
+            z-index: 4;
         }
 
         .property-img-wrapper {
             position: relative;
             overflow: hidden;
-            height: 280px;
+            height: 270px;
         }
         .property-img {
             width: 100%; height: 100%;
             object-fit: cover;
-            transition: transform 0.8s var(--transition-smooth);
-            filter: saturate(0.9) brightness(0.95);
+            transition: transform 0.9s var(--transition-smooth), filter 0.5s;
+            filter: saturate(0.85) brightness(0.92);
         }
         .property-card:hover .property-img {
-            transform: scale(1.06);
-            filter: saturate(1) brightness(1);
+            transform: scale(1.08);
+            filter: saturate(1.05) brightness(0.98);
         }
-
-        /* Overlay on hover */
         .property-img-wrapper::after {
             content: '';
             position: absolute; inset: 0;
-            background: linear-gradient(to top, rgba(10,10,10,0.8) 0%, rgba(10,10,10,0.1) 50%, transparent 100%);
-            opacity: 0.5;
+            background: linear-gradient(to top, rgba(10,10,10,0.82) 0%, rgba(10,10,10,0.2) 45%, transparent 100%);
             transition: opacity 0.5s;
         }
-        .property-card:hover .property-img-wrapper::after { opacity: 0.7; }
+        .property-card:hover .property-img-wrapper::after { opacity: 0.9; }
 
         .badge {
-            position: absolute; top: 24px; left: 24px;
-            padding: 6px 16px;
+            position: absolute; top: 20px; left: 20px;
+            padding: 6px 14px;
             font-size: 9px;
             color: var(--obsidian);
             font-weight: 700;
             letter-spacing: 2px;
             text-transform: uppercase;
             background: var(--gold);
-            z-index: 3;
+            z-index: 5;
             border-radius: 1px;
         }
+        .badge-type {
+            position: absolute; top: 20px; right: 20px;
+            padding: 6px 14px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: rgba(10,10,10,0.7);
+            backdrop-filter: blur(8px);
+            color: var(--white);
+            z-index: 5;
+            border-radius: 1px;
+            border: 1px solid var(--border-gold);
+        }
 
-        .card-details { padding: 32px; }
+        .card-admin-actions {
+            position: absolute;
+            bottom: 16px; right: 16px;
+            z-index: 6;
+            display: none;
+            gap: 8px;
+        }
+        .card-admin-actions.visible { display: flex; }
+        .admin-btn {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s var(--transition-spring);
+        }
+        .admin-btn.edit {
+            background: rgba(201,169,110,0.9);
+            color: var(--obsidian);
+        }
+        .admin-btn.delete {
+            background: rgba(239,68,68,0.85);
+            color: white;
+        }
+        .admin-btn:hover { transform: scale(1.15); }
+        .admin-btn i { width: 14px; height: 14px; }
 
+        .img-price-overlay {
+            position: absolute;
+            bottom: 20px; left: 20px;
+            z-index: 5;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 30px;
+            font-weight: 600;
+            color: var(--white);
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+            line-height: 1;
+        }
+        .img-price-overlay small {
+            display: block;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            text-shadow: none;
+        }
+
+        .card-details {
+            padding: 26px 28px 24px;
+            background: linear-gradient(145deg, #1a1410 0%, #0f0d0a 60%, #1c1508 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .card-details::before {
+            content: '';
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 140px; height: 140px;
+            background: radial-gradient(circle, rgba(201,169,110,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .card-details::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(201,169,110,0.3), transparent);
+        }
         .loc-text {
             color: var(--gold);
             font-size: 10px;
@@ -521,82 +849,80 @@
             align-items: center;
             gap: 6px;
         }
-        .loc-text::before {
-            content: '';
-            width: 20px; height: 1px;
-            background: var(--gold);
-            opacity: 0.6;
-        }
-
+        .loc-text i { width: 12px; height: 12px; }
         .property-title {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 500;
             line-height: 1.3;
-            margin-bottom: 20px;
-            color: var(--obsidian);
-            letter-spacing: -0.3px;
+            margin-bottom: 16px;
+            color: var(--white);
+            letter-spacing: -0.2px;
         }
-
         .meta-tags {
             display: flex;
-            gap: 20px;
+            flex-wrap: wrap;
+            gap: 16px;
             font-size: 11px;
             font-weight: 500;
-            color: var(--text-muted);
-            margin-bottom: 28px;
-            letter-spacing: 0.5px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-subtle);
+            color: rgba(255,255,255,0.45);
+            margin-bottom: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(201,169,110,0.12);
         }
         .meta-tags span {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
-        .meta-tags span::before {
-            content: '—';
-            color: var(--gold);
-            opacity: 0.6;
-        }
+        .meta-tags span i { width: 12px; height: 12px; color: var(--gold); opacity: 0.8; }
 
         .card-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid rgba(201,169,110,0.12);
         }
-
-        .property-price {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 30px;
-            font-weight: 600;
-            color: var(--obsidian);
-            letter-spacing: -0.5px;
+        .card-desc-preview {
+            font-size: 12px;
+            color: rgba(255,255,255,0.38);
+            line-height: 1.7;
+            margin-bottom: 20px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
-
-        .card-cta {
-            width: 44px; height: 44px;
-            border: 1px solid var(--border-gold);
-            border-radius: 50%;
-            display: flex;
+        .view-detail-btn {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            color: var(--gold);
-            transition: all 0.4s var(--transition-smooth);
+            gap: 8px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.55);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: color 0.3s, gap 0.3s;
         }
-        .property-card:hover .card-cta {
-            background: var(--gold);
-            color: var(--obsidian);
-            border-color: var(--gold);
-            transform: rotate(45deg);
-        }
+        .view-detail-btn:hover { color: var(--gold); gap: 12px; }
+        .view-detail-btn i { width: 14px; height: 14px; }
 
-        /* Load More */
+        .card-accent-gold  { --card-accent: #c9a96e; }
+        .card-accent-teal  { --card-accent: #0d9488; }
+        .card-accent-rose  { --card-accent: #e11d48; }
+        .card-accent-indigo{ --card-accent: #4f46e5; }
+        .card-accent-amber { --card-accent: #d97706; }
+
+        /* ======== LOAD MORE ======== */
         .load-more-container {
             text-align: center;
             margin-top: 80px;
         }
-
         #loadMoreBtn {
             background: transparent;
             color: var(--obsidian);
@@ -624,6 +950,1077 @@
         #loadMoreBtn:hover { color: var(--white); border-color: var(--obsidian); }
         #loadMoreBtn:hover::before { transform: scaleX(1); }
         #loadMoreBtn span { position: relative; z-index: 1; }
+        #loadMoreBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+        #loadMoreBtn:disabled::before { display: none; }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-muted);
+            grid-column: 1/-1;
+        }
+        .empty-state i { color: var(--gold); margin-bottom: 16px; }
+        .empty-state h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-weight: 400;
+            color: var(--obsidian);
+            margin-bottom: 8px;
+        }
+
+        /* ======== PROPERTY DETAIL MODAL ======== */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(10,10,10,0.88);
+            backdrop-filter: blur(12px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s var(--transition-smooth);
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal {
+            background: var(--cream);
+            border-radius: 4px;
+            width: 100%;
+            max-width: 1020px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(40px) scale(0.97);
+            transition: transform 0.4s var(--transition-spring);
+            box-shadow: 0 60px 120px rgba(0,0,0,0.5);
+        }
+        .modal-overlay.open .modal {
+            transform: translateY(0) scale(1);
+        }
+        .modal-close {
+            position: absolute;
+            top: 20px; right: 20px;
+            width: 40px; height: 40px;
+            background: var(--obsidian);
+            border: 1px solid var(--border-subtle);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--white);
+            z-index: 10;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .modal-close:hover { background: var(--danger); transform: rotate(90deg); }
+        .modal-close i { width: 16px; height: 16px; }
+
+        .modal-gallery {
+            position: relative;
+            height: 380px;
+            overflow: hidden;
+            background: var(--obsidian);
+            border-radius: 4px 4px 0 0;
+        }
+        .modal-gallery-img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            filter: brightness(0.85);
+            transition: opacity 0.5s;
+        }
+        .gallery-nav {
+            position: absolute;
+            top: 50%; transform: translateY(-50%);
+            display: flex; justify-content: space-between;
+            width: 100%;
+            padding: 0 20px;
+            z-index: 3;
+        }
+        .gallery-btn {
+            width: 42px; height: 42px;
+            background: rgba(10,10,10,0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-gold);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--gold);
+            transition: all 0.3s;
+        }
+        .gallery-btn:hover { background: var(--gold); color: var(--obsidian); }
+        .gallery-btn i { width: 16px; height: 16px; }
+        .gallery-counter {
+            position: absolute;
+            bottom: 16px; right: 20px;
+            background: rgba(10,10,10,0.7);
+            backdrop-filter: blur(8px);
+            color: var(--gold);
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            padding: 6px 14px;
+            border-radius: 2px;
+            z-index: 3;
+        }
+        .modal-gallery::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(to bottom, transparent 50%, rgba(10,10,10,0.5) 100%);
+            pointer-events: none;
+        }
+
+        .modal-body { padding: 40px; }
+        .modal-top {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 24px;
+            align-items: start;
+            margin-bottom: 32px;
+        }
+        .modal-eyebrow {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 10px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .modal-eyebrow i { width: 12px; height: 12px; }
+        .modal-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 40px;
+            font-weight: 400;
+            line-height: 1.1;
+            color: var(--obsidian);
+            letter-spacing: -0.5px;
+        }
+        .modal-price-box {
+            background: var(--obsidian);
+            padding: 20px 28px;
+            border-radius: 3px;
+            text-align: right;
+            min-width: 200px;
+            border: 1px solid var(--border-subtle);
+        }
+        .modal-price-box .label {
+            font-size: 9px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 6px;
+        }
+        .modal-price-box .amount {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px;
+            font-weight: 600;
+            color: var(--white);
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        .modal-meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        .modal-meta-item {
+            background: var(--white);
+            border: 1px solid var(--border-subtle);
+            border-radius: 2px;
+            padding: 16px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .modal-meta-icon {
+            width: 36px; height: 36px;
+            background: rgba(201,169,110,0.1);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--gold);
+            flex-shrink: 0;
+        }
+        .modal-meta-icon i { width: 16px; height: 16px; }
+        .modal-meta-text small {
+            display: block;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 3px;
+        }
+        .modal-meta-text strong {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--obsidian);
+        }
+
+        .modal-desc {
+            background: var(--white);
+            border: 1px solid var(--border-subtle);
+            border-radius: 2px;
+            padding: 28px;
+            margin-bottom: 28px;
+        }
+        .modal-desc h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--obsidian);
+            margin-bottom: 14px;
+        }
+        .modal-desc p {
+            font-size: 14px;
+            line-height: 1.85;
+            color: var(--ash);
+        }
+
+        .modal-agent-section {
+            background: var(--obsidian);
+            border-radius: 3px;
+            padding: 32px;
+            border: 1px solid var(--border-subtle);
+        }
+        .modal-agent-section h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            font-weight: 400;
+            color: var(--white);
+            margin-bottom: 6px;
+        }
+        .modal-agent-section p {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+        .agent-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+        .agent-field input,
+        .agent-field textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-subtle);
+            border-radius: 2px;
+            padding: 13px 16px;
+            color: var(--white);
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .agent-field input::placeholder,
+        .agent-field textarea::placeholder { color: rgba(255,255,255,0.25); }
+        .agent-field input:focus,
+        .agent-field textarea:focus { border-color: var(--gold); }
+        .agent-field.full { grid-column: 1/-1; }
+        .agent-field textarea { min-height: 90px; resize: vertical; }
+        .agent-submit {
+            background: var(--gold);
+            color: var(--obsidian);
+            border: none;
+            border-radius: 2px;
+            padding: 14px 36px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .agent-submit:hover {
+            background: var(--gold-light);
+            box-shadow: 0 0 30px rgba(201,169,110,0.4);
+        }
+        .agent-sent-msg {
+            display: none;
+            color: var(--gold);
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ======== WHY CHOOSE US ======== */
+        .why-section {
+            background: var(--obsidian);
+            padding: 110px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .why-section::before {
+            content: '';
+            position: absolute;
+            top: -200px; left: 50%;
+            transform: translateX(-50%);
+            width: 800px; height: 800px;
+            background: radial-gradient(ellipse, rgba(201,169,110,0.05) 0%, transparent 65%);
+            pointer-events: none;
+        }
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2px;
+            background: var(--border-subtle);
+            border: 1px solid var(--border-subtle);
+            margin-top: 70px;
+        }
+        .why-card {
+            background: var(--charcoal);
+            padding: 48px 36px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.5s var(--transition-smooth);
+            cursor: default;
+        }
+        .why-card::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 2px;
+            background: var(--gold);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s var(--transition-smooth);
+        }
+        .why-card:hover { background: #1e1b15; }
+        .why-card:hover::before { transform: scaleX(1); }
+        .why-icon {
+            width: 68px; height: 68px;
+            border-radius: 50%;
+            background: rgba(201,169,110,0.08);
+            border: 1px solid var(--border-gold);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 28px;
+            color: var(--gold);
+            transition: all 0.4s var(--transition-smooth);
+        }
+        .why-icon i { width: 28px; height: 28px; }
+        .why-card:hover .why-icon {
+            background: var(--gold);
+            color: var(--obsidian);
+            box-shadow: 0 0 40px rgba(201,169,110,0.35);
+        }
+        .why-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            font-weight: 500;
+            color: var(--white);
+            margin-bottom: 14px;
+            letter-spacing: -0.2px;
+        }
+        .why-card p {
+            font-size: 13px;
+            color: rgba(255,255,255,0.4);
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
+        /* ======== LIFESTYLE SHOWCASE ======== */
+        .lifestyle-section {
+            padding: 0;
+            background: var(--cream);
+        }
+        .lifestyle-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 600px;
+        }
+        .lifestyle-panel {
+            position: relative;
+            overflow: hidden;
+            min-height: 420px;
+        }
+        .lifestyle-panel-bg {
+            position: absolute; inset: 0;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.9s var(--transition-smooth);
+            filter: brightness(0.45) saturate(0.8);
+        }
+        .lifestyle-panel:hover .lifestyle-panel-bg {
+            transform: scale(1.06);
+            filter: brightness(0.55) saturate(1);
+        }
+        .lifestyle-panel-content {
+            position: relative; z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 52px 48px;
+        }
+        .lifestyle-tag {
+            display: inline-block;
+            background: var(--gold);
+            color: var(--obsidian);
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            padding: 6px 14px;
+            border-radius: 1px;
+            margin-bottom: 16px;
+            align-self: flex-start;
+        }
+        .lifestyle-panel h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 38px;
+            font-weight: 300;
+            color: var(--white);
+            line-height: 1.15;
+            margin-bottom: 14px;
+        }
+        .lifestyle-panel h3 em { font-style: italic; color: var(--gold); }
+        .lifestyle-panel p {
+            font-size: 13px;
+            color: rgba(255,255,255,0.55);
+            line-height: 1.8;
+            font-weight: 300;
+            max-width: 340px;
+        }
+        .lifestyle-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 24px;
+            color: var(--gold);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(201,169,110,0.3);
+            padding-bottom: 4px;
+            transition: gap 0.3s, border-color 0.3s;
+        }
+        .lifestyle-link:hover { gap: 16px; border-color: var(--gold); }
+        .lifestyle-link i { width: 14px; height: 14px; }
+
+        /* ======== TESTIMONIALS ======== */
+        /* CHANGE 1: Reduced padding-bottom from 110px to 60px to close the gap */
+        .testimonials-section {
+            background: var(--cream);
+            padding: 110px 0 60px;
+            position: relative;
+            overflow: hidden;
+        }
+        .testimonials-section::before {
+            content: '"';
+            position: absolute;
+            top: 60px; left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 320px;
+            color: rgba(201,169,110,0.05);
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+        .testimonial-track {
+            display: flex;
+            gap: 28px;
+            transition: transform 0.6s var(--transition-smooth);
+        }
+        .testimonial-viewport {
+            overflow: hidden;
+            position: relative;
+            margin-top: 60px;
+        }
+        .testimonial-card {
+            min-width: calc(33.333% - 19px);
+            background: var(--white);
+            border: 1px solid var(--border-subtle);
+            border-radius: 3px;
+            padding: 44px 40px;
+            position: relative;
+            flex-shrink: 0;
+            transition: box-shadow 0.4s, border-color 0.4s;
+        }
+        .testimonial-card:hover {
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            border-color: var(--border-gold);
+        }
+        .testimonial-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 40px;
+            width: 40px; height: 3px;
+            background: var(--gold);
+        }
+        .testimonial-stars {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 22px;
+        }
+        .star { color: var(--gold); font-size: 14px; }
+        .testimonial-card blockquote {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 19px;
+            font-weight: 400;
+            font-style: italic;
+            line-height: 1.7;
+            color: var(--obsidian);
+            margin-bottom: 28px;
+        }
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .author-avatar {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--obsidian);
+            flex-shrink: 0;
+        }
+        .author-info strong {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--obsidian);
+            margin-bottom: 3px;
+        }
+        .author-info span {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+        .testimonial-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin-top: 44px;
+        }
+        .t-nav-btn {
+            width: 46px; height: 46px;
+            border-radius: 50%;
+            background: transparent;
+            border: 1px solid var(--border-gold);
+            color: var(--gold);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s var(--transition-smooth);
+        }
+        .t-nav-btn:hover { background: var(--gold); color: var(--obsidian); }
+        .t-nav-btn i { width: 16px; height: 16px; }
+        .t-dots {
+            display: flex; gap: 8px;
+        }
+        .t-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--border-gold);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .t-dot.active { background: var(--gold); width: 20px; border-radius: 3px; }
+
+        /* ======== HOW IT WORKS ======== */
+        .how-section {
+            background: var(--obsidian);
+            padding: 110px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .how-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-gold), transparent);
+        }
+        .how-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            margin-top: 70px;
+            position: relative;
+        }
+        .how-steps::before {
+            content: '';
+            position: absolute;
+            top: 40px; left: 12.5%; right: 12.5%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-gold) 20%, var(--border-gold) 80%, transparent);
+        }
+        .how-step {
+            padding: 0 28px;
+            text-align: center;
+            position: relative;
+        }
+        .step-number-wrap {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 28px;
+        }
+        .step-number {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: var(--charcoal);
+            border: 1px solid var(--border-gold);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto;
+            position: relative;
+            transition: all 0.4s var(--transition-smooth);
+        }
+        .step-number i { width: 28px; height: 28px; color: var(--gold); }
+        .how-step:hover .step-number {
+            background: var(--gold);
+            box-shadow: 0 0 50px rgba(201,169,110,0.4);
+        }
+        .how-step:hover .step-number i { color: var(--obsidian); }
+        .step-num-badge {
+            position: absolute;
+            top: -6px; right: -6px;
+            width: 24px; height: 24px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--obsidian);
+            border: 2px solid var(--obsidian);
+        }
+        .how-step h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--white);
+            margin-bottom: 12px;
+        }
+        .how-step p {
+            font-size: 12px;
+            color: rgba(255,255,255,0.38);
+            line-height: 1.85;
+            font-weight: 300;
+        }
+
+        /* ======== MORTGAGE CALCULATOR ======== */
+        /* CHANGE 3: New mortgage calculator section */
+        .mortgage-section {
+            background: var(--cream);
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .mortgage-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-gold), transparent);
+        }
+        .mortgage-inner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+        .mortgage-info {
+            padding-top: 16px;
+        }
+        .mortgage-info .section-title { margin-bottom: 20px; }
+        .mortgage-info p {
+            font-size: 14px;
+            color: var(--ash);
+            line-height: 1.9;
+            font-weight: 300;
+            margin-bottom: 32px;
+        }
+        .mortgage-feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .mortgage-feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--charcoal);
+            font-weight: 400;
+        }
+        .mortgage-feature-list li::before {
+            content: '';
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: rgba(201,169,110,0.15);
+            border: 1px solid var(--border-gold);
+            flex-shrink: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c9a96e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+            background-size: 12px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .mortgage-calculator {
+            background: var(--white);
+            border: 1px solid rgba(26,26,26,0.08);
+            border-radius: 4px;
+            padding: 40px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.07);
+            position: relative;
+            overflow: hidden;
+        }
+        .mortgage-calculator::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(to right, var(--gold-dark), var(--gold), var(--gold-light));
+        }
+        .calc-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 26px;
+            font-weight: 500;
+            color: var(--obsidian);
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+        .calc-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+        }
+        .calc-field {
+            margin-bottom: 22px;
+        }
+        .calc-field label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--charcoal);
+            margin-bottom: 10px;
+        }
+        .calc-field label span {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0;
+            text-transform: none;
+            color: var(--gold);
+        }
+        .calc-slider {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 3px;
+            background: rgba(26,26,26,0.1);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+        .calc-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: 3px solid var(--white);
+            box-shadow: 0 2px 10px rgba(201,169,110,0.45);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .calc-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        .calc-slider::-moz-range-thumb {
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: 3px solid var(--white);
+            box-shadow: 0 2px 10px rgba(201,169,110,0.45);
+            cursor: pointer;
+        }
+        .calc-result-box {
+            background: var(--obsidian);
+            border-radius: 3px;
+            padding: 28px;
+            margin-top: 28px;
+            border: 1px solid var(--border-subtle);
+            position: relative;
+            overflow: hidden;
+        }
+        .calc-result-box::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-gold), transparent);
+        }
+        .calc-result-label {
+            font-size: 9px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+        .calc-result-amount {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 48px;
+            font-weight: 300;
+            color: var(--white);
+            letter-spacing: -1.5px;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .calc-result-sub {
+            font-size: 11px;
+            color: rgba(255,255,255,0.35);
+            letter-spacing: 0.5px;
+        }
+        .calc-breakdown {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1px;
+            background: rgba(201,169,110,0.1);
+            margin-top: 20px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .calc-breakdown-item {
+            background: rgba(255,255,255,0.03);
+            padding: 14px 16px;
+            text-align: center;
+        }
+        .calc-breakdown-item .b-label {
+            font-size: 8px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 5px;
+        }
+        .calc-breakdown-item .b-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.8);
+        }
+        .calc-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            background: var(--gold);
+            color: var(--obsidian);
+            padding: 13px 28px;
+            border: none;
+            border-radius: 2px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            justify-content: center;
+        }
+        .calc-cta:hover {
+            background: var(--gold-light);
+            box-shadow: 0 0 30px rgba(201,169,110,0.35);
+        }
+
+        /* ======== HEADQUARTERS MAP ======== */
+        /* CHANGE 2: New map section above footer */
+        .hq-map-section {
+            background: var(--obsidian);
+            position: relative;
+            overflow: hidden;
+        }
+        .hq-map-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-gold), transparent);
+            z-index: 2;
+        }
+        .hq-map-top {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            position: relative;
+        }
+        .hq-map-info {
+            padding: 72px 60px;
+            position: relative;
+            z-index: 2;
+        }
+        .hq-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--gold);
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+        .hq-eyebrow::before {
+            content: '';
+            width: 30px; height: 1px;
+            background: var(--gold);
+            opacity: 0.5;
+        }
+        .hq-map-info h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(32px, 3.5vw, 50px);
+            font-weight: 300;
+            color: var(--white);
+            line-height: 1.15;
+            letter-spacing: -0.5px;
+            margin-bottom: 28px;
+        }
+        .hq-map-info h2 em { font-style: italic; color: var(--gold); }
+        .hq-contact-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 32px;
+        }
+        .hq-contact-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: 2px;
+            padding: 16px 20px;
+            transition: border-color 0.3s, background 0.3s;
+        }
+        .hq-contact-card:hover {
+            border-color: var(--border-gold);
+            background: rgba(201,169,110,0.04);
+        }
+        .hq-contact-icon {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: rgba(201,169,110,0.1);
+            border: 1px solid var(--border-gold);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--gold);
+            flex-shrink: 0;
+        }
+        .hq-contact-icon i { width: 16px; height: 16px; }
+        .hq-contact-text small {
+            display: block;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 3px;
+        }
+        .hq-contact-text span {
+            font-size: 13px;
+            color: rgba(255,255,255,0.75);
+            font-weight: 400;
+        }
+        .hq-map-embed {
+            position: relative;
+            min-height: 480px;
+            overflow: hidden;
+        }
+        .hq-map-embed iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            filter: grayscale(20%) contrast(1.05);
+            min-height: 480px;
+        }
+        .hq-map-embed::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            box-shadow: inset 0 0 0 1px var(--border-subtle);
+        }
+
+        /* ======== BACK TO TOP ======== */
+        .back-to-top {
+            position: fixed;
+            bottom: 36px; right: 36px;
+            width: 50px; height: 50px;
+            background: var(--obsidian);
+            border: 1px solid var(--border-gold);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--gold);
+            cursor: pointer;
+            z-index: 999;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s var(--transition-smooth);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .back-to-top:hover {
+            background: var(--gold);
+            color: var(--obsidian);
+            box-shadow: 0 0 30px rgba(201,169,110,0.4);
+            transform: translateY(-4px);
+        }
+        .back-to-top i { width: 18px; height: 18px; }
+
+        /* ======== FLOATING CTA RIBBON ======== */
+        .floating-cta {
+            position: fixed;
+            left: 0; top: 50%;
+            transform: translateY(-50%);
+            z-index: 990;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .fcta-btn {
+            background: var(--obsidian);
+            border: 1px solid var(--border-subtle);
+            border-left: none;
+            color: rgba(255,255,255,0.5);
+            padding: 14px 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-decoration: none;
+            writing-mode: horizontal-tb;
+            transition: all 0.3s;
+            width: 42px;
+        }
+        .fcta-btn i { width: 14px; height: 14px; }
+        .fcta-btn:hover {
+            background: var(--gold);
+            color: var(--obsidian);
+            border-color: var(--gold);
+            width: 52px;
+        }
 
         /* ======== FOOTER ======== */
         footer {
@@ -633,7 +2030,6 @@
             font-size: 13px;
             border-top: 1px solid var(--border-subtle);
         }
-
         .footer-logo-section {
             text-align: center;
             margin-bottom: 80px;
@@ -649,7 +2045,6 @@
             width: 80px; height: 1px;
             background: var(--gold);
         }
-
         .footer-logo-section h1 {
             font-family: 'Cormorant Garamond', serif;
             font-size: 48px;
@@ -659,7 +2054,6 @@
             margin-bottom: 12px;
             color: var(--white);
         }
-
         .footer-logo-section p {
             font-size: 9px;
             text-transform: uppercase;
@@ -667,14 +2061,12 @@
             color: var(--gold);
             opacity: 0.8;
         }
-
         .footer-grid {
             display: grid;
             grid-template-columns: 1fr 1.5fr 1.5fr 1.5fr;
             gap: 60px;
             margin-bottom: 80px;
         }
-
         .footer-col h4 {
             font-size: 9px;
             font-weight: 600;
@@ -683,7 +2075,6 @@
             letter-spacing: 3px;
             color: var(--gold);
         }
-
         .footer-col ul { list-style: none; }
         .footer-col ul li { margin-bottom: 14px; }
         .footer-col ul li a {
@@ -705,9 +2096,8 @@
             transform: translateX(-5px);
             transition: all 0.3s;
         }
-        .footer-col ul li a:hover { color: var(--white); padding-left: 0; }
+        .footer-col ul li a:hover { color: var(--white); }
         .footer-col ul li a:hover::before { opacity: 1; transform: translateX(0); }
-
         .contact-item {
             display: flex;
             gap: 16px;
@@ -717,13 +2107,7 @@
             line-height: 1.6;
             align-items: flex-start;
         }
-        .contact-item i {
-            color: var(--gold);
-            width: 16px; height: 16px;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
+        .contact-item i { color: var(--gold); width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; }
         .newsletter-box {
             display: flex;
             margin-top: 16px;
@@ -756,7 +2140,6 @@
             transition: background 0.3s;
         }
         .newsletter-btn:hover { background: var(--gold-light); }
-
         .footer-bottom {
             border-top: 1px solid var(--border-subtle);
             padding: 28px 0;
@@ -775,55 +2158,53 @@
         .footer-bottom a:hover { color: var(--gold); }
         .footer-bottom div { display: flex; gap: 32px; }
 
-        /* Page Load Animation */
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
+        /* Toast */
+        .toast {
+            position: fixed;
+            right: 24px; bottom: 24px;
+            display: none;
+            min-width: 260px;
+            padding: 16px 18px;
+            border-radius: 2px;
+            background: var(--obsidian);
+            color: white;
+            border: 1px solid var(--border-gold);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.24);
+            z-index: 3000;
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            animation: fadeInUp 0.3s ease;
+        }
+        .toast.show { display: block; }
+        .toast.success { background: var(--success); border-color: rgba(16,185,129,0.4); }
+        .toast.error { background: var(--danger); border-color: rgba(239,68,68,0.4); }
+
+        .anim-ready {
+            opacity: 0; transform: translateY(30px);
+            transition: opacity 0.7s var(--transition-smooth), transform 0.7s var(--transition-smooth);
+        }
+        .anim-ready.in-view { opacity: 1; transform: translateY(0); }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(14px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Entrance animations for elements in view */
-        .anim-ready {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.7s var(--transition-smooth), transform 0.7s var(--transition-smooth);
+        @media (max-width: 900px) {
+            .property-grid { grid-template-columns: 1fr; }
+            .filter-bar-top { flex-direction: column; align-items: stretch; }
+            .filter-select, .filter-reset { max-width: none; }
+            .mortgage-inner { grid-template-columns: 1fr; }
+            .hq-map-top { grid-template-columns: 1fr; }
+            .hq-map-embed { min-height: 320px; }
         }
-        .anim-ready.in-view {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* ======== MARQUEE STRIP ======== */
-        .marquee-strip {
-            background: var(--gold);
-            padding: 14px 0;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-        .marquee-inner {
-            display: inline-flex;
-            gap: 0;
-            animation: marquee 25s linear infinite;
-        }
-        @keyframes marquee {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); }
-        }
-        .marquee-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 20px;
-            padding: 0 30px;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--obsidian);
-        }
-        .marquee-dot {
-            width: 4px; height: 4px;
-            border-radius: 50%;
-            background: rgba(10,10,10,0.4);
-            flex-shrink: 0;
+        @media (max-width: 720px) {
+            .container { padding: 0 20px; }
+            .modal-body { padding: 20px; }
+            .modal-top { grid-template-columns: 1fr; }
+            .agent-form-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; gap: 32px; }
         }
     </style>
 </head>
@@ -870,9 +2251,10 @@
                     <option value="Apartment">Penthouse</option>
                     <option value="House">House</option>
                     <option value="Apartment">Apartment</option>
+                    <option value="Rental">Rental</option>
                 </select>
             </div>
-            <button class="search-btn-vibrant">Find Home</button>
+            <button class="search-btn-vibrant" onclick="applyHeroSearch()">Find Home</button>
         </div>
     </div>
     <div class="scroll-indicator">Scroll</div>
@@ -920,17 +2302,353 @@
     </div>
 </section>
 
+<!-- WHY CHOOSE US -->
+<section class="why-section">
+    <div class="container">
+        <div class="section-header anim-ready" style="border-bottom:none;margin-bottom:0;">
+            <h2 class="section-title" style="color:var(--white);">Why Choose<br><em>LuxeEstate</em></h2>
+            <p class="section-subtitle">Four pillars that make us Sri Lanka's most trusted luxury real estate partner</p>
+        </div>
+        <div class="why-grid anim-ready">
+            <div class="why-card">
+                <div class="why-icon"><i data-lucide="shield-check"></i></div>
+                <h3>Verified Listings</h3>
+                <p>Every property is personally inspected and legally verified by our expert team before being listed.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon"><i data-lucide="gem"></i></div>
+                <h3>Ultra-Premium Portfolio</h3>
+                <p>Access an exclusive collection of Sri Lanka's finest residences, from beachfront villas to sky penthouses.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon"><i data-lucide="users"></i></div>
+                <h3>Dedicated Agents</h3>
+                <p>A private concierge team available around the clock to guide every step of your buying journey.</p>
+            </div>
+            <div class="why-card">
+                <div class="why-icon"><i data-lucide="trending-up"></i></div>
+                <h3>Smart Investment</h3>
+                <p>Data-driven insights and market intelligence to ensure your property investment grows in value.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- LIFESTYLE SHOWCASE -->
+<section class="lifestyle-section">
+    <div class="lifestyle-grid">
+        <div class="lifestyle-panel">
+            <div class="lifestyle-panel-bg" style="background-image:url('https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=900&q=80');"></div>
+            <div class="lifestyle-panel-content">
+                <span class="lifestyle-tag">Colombo Residences</span>
+                <h3>Urban <em>Grandeur</em><br>Above the Skyline</h3>
+                <p>Discover penthouses and sky residences with breathtaking panoramic views of the city and Indian Ocean.</p>
+                <a href="sell.html" class="lifestyle-link">Explore Listings <i data-lucide="arrow-right"></i></a>
+            </div>
+        </div>
+        <div class="lifestyle-panel">
+            <div class="lifestyle-panel-bg" style="background-image:url('https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=900&q=80');"></div>
+            <div class="lifestyle-panel-content">
+                <span class="lifestyle-tag">Coastal Estates</span>
+                <h3>Beachfront <em>Serenity</em><br>For the Discerning</h3>
+                <p>Private beach-access villas and heritage mansions nestled along Sri Lanka's most coveted coastlines.</p>
+                <a href="sell.html" class="lifestyle-link">Explore Listings <i data-lucide="arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+    <div class="container">
+        <div class="section-header anim-ready" style="border-bottom:none;margin-bottom:0;">
+            <h2 class="section-title" style="color:var(--white);">How It <em>Works</em></h2>
+            <p class="section-subtitle" style="color:rgba(255,255,255,0.35);">From first browse to handing over the keys — four elegant steps</p>
+        </div>
+        <div class="how-steps anim-ready">
+            <div class="how-step">
+                <div class="step-number-wrap">
+                    <div class="step-number"><i data-lucide="search"></i></div>
+                    <span class="step-num-badge">1</span>
+                </div>
+                <h4>Browse & Filter</h4>
+                <p>Use our powerful search and filters to find properties that match your exact lifestyle and budget.</p>
+            </div>
+            <div class="how-step">
+                <div class="step-number-wrap">
+                    <div class="step-number"><i data-lucide="calendar"></i></div>
+                    <span class="step-num-badge">2</span>
+                </div>
+                <h4>Schedule a Viewing</h4>
+                <p>Contact our dedicated agents directly through any property card to arrange a private showing.</p>
+            </div>
+            <div class="how-step">
+                <div class="step-number-wrap">
+                    <div class="step-number"><i data-lucide="file-text"></i></div>
+                    <span class="step-num-badge">3</span>
+                </div>
+                <h4>Legal & Finance</h4>
+                <p>Our team handles documentation, title verification and connects you with premium financial partners.</p>
+            </div>
+            <div class="how-step">
+                <div class="step-number-wrap">
+                    <div class="step-number"><i data-lucide="key"></i></div>
+                    <span class="step-num-badge">4</span>
+                </div>
+                <h4>Move In</h4>
+                <p>Collect your keys and step into your new world. Welcome to the LuxeEstate family.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+    <div class="container">
+        <div class="section-header anim-ready" style="border-bottom:none;margin-bottom:0;">
+            <h2 class="section-title">Voices of<br><em>Excellence</em></h2>
+            <p class="section-subtitle">Stories from homeowners who found their perfect world with LuxeEstate</p>
+        </div>
+        <div class="testimonial-viewport anim-ready">
+            <div class="testimonial-track" id="testimonialTrack">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <blockquote>"LuxeEstate didn't just find us a home — they found us a lifestyle. The penthouse in Colombo 07 surpassed every expectation we had."</blockquote>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">A</div>
+                        <div class="author-info">
+                            <strong>Arjun Wijeratne</strong>
+                            <span>CEO, Oceanview Holdings</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <blockquote>"The team's attention to detail and discretion throughout our property acquisition was truly world-class. Exceptional in every sense."</blockquote>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">S</div>
+                        <div class="author-info">
+                            <strong>Samantha De Silva</strong>
+                            <span>Architect & Property Investor</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <blockquote>"From the first viewing to signing, LuxeEstate handled everything with grace and expertise. Our villa in Galle is beyond breathtaking."</blockquote>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">M</div>
+                        <div class="author-info">
+                            <strong>Marcus Fernandez</strong>
+                            <span>International Consultant</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <blockquote>"An unparalleled level of service. They understood exactly what we were looking for before we even knew ourselves. Truly remarkable."</blockquote>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">N</div>
+                        <div class="author-info">
+                            <strong>Nimesha Perera</strong>
+                            <span>Director, Apex Ventures</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <blockquote>"The property listings are stunning and the process seamless. I found my dream home in Colombo within two visits. Highly recommend."</blockquote>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">R</div>
+                        <div class="author-info">
+                            <strong>Rohan Jayawardena</strong>
+                            <span>Entrepreneur</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="testimonial-nav">
+            <button class="t-nav-btn" onclick="moveTestimonials(-1)"><i data-lucide="chevron-left"></i></button>
+            <div class="t-dots" id="tDots"></div>
+            <button class="t-nav-btn" onclick="moveTestimonials(1)"><i data-lucide="chevron-right"></i></button>
+        </div>
+    </div>
+</section>
+
+<!-- MORTGAGE CALCULATOR — new feature -->
+<section class="mortgage-section">
+    <div class="container">
+        <div class="mortgage-inner">
+            <div class="mortgage-info anim-ready">
+                <h2 class="section-title">Finance Your<br><em>Dream Home</em></h2>
+                <p>Use our instant mortgage estimator to understand your monthly commitment before you even step through the door. Enter your figures and let the numbers guide you.</p>
+                <ul class="mortgage-feature-list">
+                    <li>Instant monthly repayment estimate</li>
+                    <li>Adjustable loan tenure up to 30 years</li>
+                    <li>Supports LKR-denominated calculations</li>
+                    <li>Connect with our partner banks for pre-approval</li>
+                </ul>
+            </div>
+            <div class="mortgage-calculator anim-ready">
+                <div class="calc-title">Mortgage Calculator</div>
+                <div class="calc-subtitle">Estimate your monthly repayments</div>
+
+                <div class="calc-field">
+                    <label>Property Price <span id="calcPriceLabel">Rs. 50M</span></label>
+                    <input type="range" class="calc-slider" id="calcPrice" min="5000000" max="500000000" step="1000000" value="50000000" oninput="updateCalc()">
+                </div>
+                <div class="calc-field">
+                    <label>Down Payment <span id="calcDownLabel">20% — Rs. 10M</span></label>
+                    <input type="range" class="calc-slider" id="calcDown" min="10" max="50" step="1" value="20" oninput="updateCalc()">
+                </div>
+                <div class="calc-field">
+                    <label>Loan Tenure <span id="calcTermLabel">20 Years</span></label>
+                    <input type="range" class="calc-slider" id="calcTerm" min="5" max="30" step="1" value="20" oninput="updateCalc()">
+                </div>
+                <div class="calc-field">
+                    <label>Interest Rate <span id="calcRateLabel">9.5% p.a.</span></label>
+                    <input type="range" class="calc-slider" id="calcRate" min="5" max="20" step="0.1" value="9.5" oninput="updateCalc()">
+                </div>
+
+                <div class="calc-result-box">
+                    <div class="calc-result-label">Estimated Monthly Repayment</div>
+                    <div class="calc-result-amount" id="calcMonthly">Rs. 0</div>
+                    <div class="calc-result-sub">Based on a standard reducing balance mortgage</div>
+                    <div class="calc-breakdown">
+                        <div class="calc-breakdown-item">
+                            <div class="b-label">Loan Amount</div>
+                            <div class="b-value" id="calcLoanAmt">—</div>
+                        </div>
+                        <div class="calc-breakdown-item">
+                            <div class="b-label">Total Interest</div>
+                            <div class="b-value" id="calcTotalInt">—</div>
+                        </div>
+                        <div class="calc-breakdown-item">
+                            <div class="b-label">Total Payable</div>
+                            <div class="b-value" id="calcTotalPay">—</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="calc-cta" onclick="showToast('Our finance team will contact you shortly.', 'success')">
+                    Get Pre-Approved &nbsp;→
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- PROPERTIES -->
-//To add property details
 <section class="featured-properties" id="properties-section">
     <div class="container">
         <div class="section-header anim-ready">
             <h2 class="section-title">Exclusive<br><em>Collections</em></h2>
             <p class="section-subtitle">Handpicked properties for the most discerning of tastes</p>
         </div>
+
+        <!-- FILTER BAR -->
+        <div class="filter-bar anim-ready">
+            <div class="filter-bar-top">
+                <span class="filter-label"><i data-lucide="sliders-horizontal" style="width:13px;height:13px;"></i> Filter</span>
+
+                <div class="filter-search-wrap">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="filterSearch" placeholder="Search by title or location…" oninput="applyFilters()">
+                </div>
+
+                <select class="filter-select" id="filterType" onchange="applyFilters()">
+                    <option value="all">All Types</option>
+                    <option value="house">House</option>
+                    <option value="apartment">Apartment</option>
+                    <option value="rental">Rental</option>
+                </select>
+
+                <select class="filter-select" id="filterSort" onchange="applyFilters()">
+                    <option value="default">Sort: Default</option>
+                    <option value="price_asc">Price: Low → High</option>
+                    <option value="price_desc">Price: High → Low</option>
+                    <option value="name_asc">Name: A → Z</option>
+                </select>
+
+                <button class="filter-reset" onclick="resetFilters()">Clear</button>
+                <span class="filter-result-count" id="resultCount"><span>0</span> results</span>
+            </div>
+
+            <!-- Price Range -->
+            <div class="price-range-section">
+                <span class="price-range-label">Price Range</span>
+                <div class="price-range-inputs">
+                    <input type="number" id="priceMin" placeholder="Min (Rs.)" oninput="applyFilters()" step="1000000">
+                    <span class="price-range-sep">—</span>
+                    <input type="number" id="priceMax" placeholder="Max (Rs.)" oninput="applyFilters()" step="1000000">
+                </div>
+                <div class="price-range-slider-wrap" id="sliderWrap">
+                    <div class="price-range-track"></div>
+                    <div class="price-range-fill" id="sliderFill"></div>
+                    <input type="range" class="price-slider" id="sliderMin" min="0" max="500000000" step="1000000" value="0" oninput="syncSliders('min')">
+                    <input type="range" class="price-slider" id="sliderMax" min="0" max="500000000" step="1000000" value="500000000" oninput="syncSliders('max')">
+                </div>
+                <span class="price-display" id="priceDisplay">Any price</span>
+            </div>
+        </div>
+
         <div class="property-grid" id="propertyGrid"></div>
+
         <div class="load-more-container anim-ready">
             <button id="loadMoreBtn" onclick="renderNextBatch()"><span>Discover More</span></button>
+        </div>
+    </div>
+</section>
+
+<!-- HEADQUARTERS MAP — between properties and footer -->
+<section class="hq-map-section">
+    <div class="hq-map-top">
+        <div class="hq-map-info">
+            <div class="hq-eyebrow">Our Location</div>
+            <h2>Visit Our<br><em>Headquarters</em></h2>
+            <p style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.9;font-weight:300;max-width:380px;">
+                Step into our flagship office on Galle Road, Kollupitiya — in the heart of Colombo's most prestigious commercial district. Our team is ready to welcome you.
+            </p>
+            <div class="hq-contact-cards">
+                <div class="hq-contact-card">
+                    <div class="hq-contact-icon"><i data-lucide="map-pin"></i></div>
+                    <div class="hq-contact-text">
+                        <small>Address</small>
+                        <span>45/2, Galle Road, Kollupitiya, Colombo 03</span>
+                    </div>
+                </div>
+                <div class="hq-contact-card">
+                    <div class="hq-contact-icon"><i data-lucide="clock"></i></div>
+                    <div class="hq-contact-text">
+                        <small>Office Hours</small>
+                        <span>Mon – Sat: 9:00 AM – 6:00 PM</span>
+                    </div>
+                </div>
+                <div class="hq-contact-card">
+                    <div class="hq-contact-icon"><i data-lucide="phone"></i></div>
+                    <div class="hq-contact-text">
+                        <small>Phone</small>
+                        <span>+94 764 533 567</span>
+                    </div>
+                </div>
+                <div class="hq-contact-card">
+                    <div class="hq-contact-icon"><i data-lucide="mail"></i></div>
+                    <div class="hq-contact-text">
+                        <small>Email</small>
+                        <span>luxeestate@gmail.com</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hq-map-embed">
+            <!-- Kollupitiya, Colombo 03 embedded map -->
+            <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.8486!2d79.8486!3d6.9022!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae2591614bfb30d%3A0x7e63a3c3f3a3a3a3!2sKollupitiya%2C%20Colombo%2003%2C%20Sri%20Lanka!5e0!3m2!1sen!2slk!4v1700000000000!5m2!1sen!2slk"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="LuxeEstate Headquarters — Kollupitiya, Colombo 03">
+            </iframe>
         </div>
     </div>
 </section>
@@ -942,7 +2660,6 @@
             <h1>Luxe_Estate</h1>
             <p>Creating New Worlds</p>
         </div>
-
         <div class="footer-grid">
             <div class="footer-col">
                 <ul>
@@ -954,7 +2671,6 @@
                     <li><a href="#">Careers</a></li>
                 </ul>
             </div>
-
             <div class="footer-col">
                 <h4>Top Searched Projects</h4>
                 <ul>
@@ -965,7 +2681,6 @@
                     <li><a href="#">Sunrise Ridge Villas</a></li>
                 </ul>
             </div>
-
             <div class="footer-col">
                 <h4>Trending Searches</h4>
                 <ul>
@@ -980,7 +2695,6 @@
                     <button class="newsletter-btn">→</button>
                 </div>
             </div>
-
             <div class="footer-col">
                 <h4>Contact Details</h4>
                 <div class="contact-item">
@@ -997,7 +2711,6 @@
                 </div>
             </div>
         </div>
-
         <div class="footer-bottom">
             <p>© 2026 LuxeEstate Properties. All Rights Reserved.</p>
             <div>
@@ -1008,54 +2721,500 @@
     </div>
 </footer>
 
+<!-- PROPERTY DETAIL MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnBg(event)">
+    <div class="modal" id="propertyModal">
+        <button class="modal-close" onclick="closeModal()"><i data-lucide="x"></i></button>
+
+        <div class="modal-gallery">
+            <img class="modal-gallery-img" id="modalGalleryImg" src="" alt="">
+            <div class="gallery-nav">
+                <button class="gallery-btn" onclick="galleryPrev()"><i data-lucide="chevron-left"></i></button>
+                <button class="gallery-btn" onclick="galleryNext()"><i data-lucide="chevron-right"></i></button>
+            </div>
+            <div class="gallery-counter" id="galleryCounter">1 / 1</div>
+        </div>
+
+        <div class="modal-body">
+            <div class="modal-top">
+                <div>
+                    <div class="modal-eyebrow" id="modalEyebrow"><i data-lucide="map-pin"></i> <span id="modalLocation"></span></div>
+                    <h2 class="modal-title" id="modalTitle"></h2>
+                </div>
+                <div class="modal-price-box">
+                    <div class="label">Selling Price</div>
+                    <div class="amount" id="modalPrice"></div>
+                </div>
+            </div>
+
+            <div class="modal-meta-grid" id="modalMeta"></div>
+
+            <div class="modal-desc">
+                <h4>About This Property</h4>
+                <p id="modalDesc"></p>
+            </div>
+
+            <!-- Ask an Agent -->
+            <div class="modal-agent-section">
+                <h4>Ask an Agent</h4>
+                <p>Have questions about this property? Our specialists will respond within 24 hours.</p>
+                <div class="agent-form-grid">
+                    <div class="agent-field"><input type="text" placeholder="Your Name" id="agentName"></div>
+                    <div class="agent-field"><input type="email" placeholder="Email Address" id="agentEmail"></div>
+                    <div class="agent-field"><input type="tel" placeholder="Phone Number" id="agentPhone"></div>
+                    <div class="agent-field"><input type="text" placeholder="Preferred Viewing Time" id="agentTime"></div>
+                    <div class="agent-field full"><textarea placeholder="Your message or enquiry…" id="agentMessage"></textarea></div>
+                </div>
+                <button class="agent-submit" onclick="submitAgentEnquiry()">Send Enquiry</button>
+                <p class="agent-sent-msg" id="agentSentMsg">✓ Your enquiry has been sent. Our team will be in touch shortly.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- BACK TO TOP -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <i data-lucide="chevron-up"></i>
+</button>
+
+<!-- FLOATING CTA RIBBON -->
+<div class="floating-cta">
+    <a href="sell.html" class="fcta-btn"><i data-lucide="plus-circle"></i></a>
+    <a href="agents.html" class="fcta-btn"><i data-lucide="user"></i></a>
+    <a href="contact.html" class="fcta-btn"><i data-lucide="phone"></i></a>
+</div>
+
 <script>
     lucide.createIcons();
 
-    // Scroll Effect
-    window.addEventListener('scroll', () => {
-        const header = document.getElementById('mainHeader');
-        if (window.scrollY > 50) {
-            header.style.background = 'rgba(10, 10, 10, 0.97)';
-            header.style.boxShadow = '0 1px 0 rgba(201,169,110,0.15)';
-        } else {
-            header.style.background = 'rgba(10, 10, 10, 0.92)';
-            header.style.boxShadow = 'none';
-        }
-    });
+    /* ── Config ── */
+    const BATCH_SIZE = 6;
+    const CARD_ACCENTS = ['card-accent-gold','card-accent-teal','card-accent-rose','card-accent-indigo','card-accent-amber'];
+    const FALLBACK_IMAGES = [
+        'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80',
+        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
+        'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80',
+        'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
+        'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80',
+    ];
 
-    // Intersection Observer for animations
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, i) => {
-            if (entry.isIntersecting) {
-                setTimeout(() => {
-                    entry.target.classList.add('in-view');
-                }, i * 80);
-                observer.unobserve(entry.target);
+    /* ── State ── */
+    let allListings = [];
+    let filteredListings = [];
+    let currentBatch = 0;
+    let isAdmin = false;
+
+    // Modal gallery state
+    let modalImages = [];
+    let modalImageIndex = 0;
+
+    /* ── Price slider ── */
+    let globalMinPrice = 0;
+    let globalMaxPrice = 500000000;
+
+    function syncSliders(changed) {
+        const minSlider = document.getElementById('sliderMin');
+        const maxSlider = document.getElementById('sliderMax');
+        let minVal = parseInt(minSlider.value);
+        let maxVal = parseInt(maxSlider.value);
+        if (minVal > maxVal - 1000000) {
+            if (changed === 'min') minSlider.value = maxVal - 1000000;
+            else maxSlider.value = minVal + 1000000;
+        }
+        updateSliderFill();
+        document.getElementById('priceMin').value = parseInt(minSlider.value) || '';
+        document.getElementById('priceMax').value = parseInt(maxSlider.value) || '';
+        updatePriceDisplay();
+        applyFilters();
+    }
+
+    function updateSliderFill() {
+        const minSlider = document.getElementById('sliderMin');
+        const maxSlider = document.getElementById('sliderMax');
+        const fill = document.getElementById('sliderFill');
+        const range = parseInt(maxSlider.max) - parseInt(maxSlider.min);
+        const leftPct = ((parseInt(minSlider.value) - parseInt(minSlider.min)) / range) * 100;
+        const rightPct = ((parseInt(maxSlider.max) - parseInt(maxSlider.value)) / range) * 100;
+        fill.style.left = leftPct + '%';
+        fill.style.right = rightPct + '%';
+    }
+
+    function updatePriceDisplay() {
+        const minSlider = document.getElementById('sliderMin');
+        const maxSlider = document.getElementById('sliderMax');
+        const minV = parseInt(minSlider.value);
+        const maxV = parseInt(maxSlider.value);
+        const isDefault = minV === 0 && maxV === 500000000;
+        document.getElementById('priceDisplay').textContent = isDefault
+            ? 'Any price'
+            : `${formatPriceShort(minV)} – ${formatPriceShort(maxV)}`;
+    }
+
+    function formatPriceShort(v) {
+        if (v >= 1000000) return 'Rs. ' + (v / 1000000).toFixed(1) + 'M';
+        if (v >= 1000) return 'Rs. ' + (v / 1000).toFixed(0) + 'K';
+        return 'Rs. ' + v;
+    }
+
+    /* ── Mortgage Calculator ── */
+    function updateCalc() {
+        const price = parseInt(document.getElementById('calcPrice').value);
+        const downPct = parseInt(document.getElementById('calcDown').value);
+        const term = parseInt(document.getElementById('calcTerm').value);
+        const rate = parseFloat(document.getElementById('calcRate').value);
+
+        const downAmt = price * (downPct / 100);
+        const loanAmt = price - downAmt;
+        const monthlyRate = (rate / 100) / 12;
+        const numPayments = term * 12;
+
+        let monthly;
+        if (monthlyRate === 0) {
+            monthly = loanAmt / numPayments;
+        } else {
+            monthly = loanAmt * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+        }
+
+        const totalPay = monthly * numPayments;
+        const totalInt = totalPay - loanAmt;
+
+        document.getElementById('calcPriceLabel').textContent = formatPriceShort(price);
+        document.getElementById('calcDownLabel').textContent = `${downPct}% — ${formatPriceShort(downAmt)}`;
+        document.getElementById('calcTermLabel').textContent = `${term} Year${term !== 1 ? 's' : ''}`;
+        document.getElementById('calcRateLabel').textContent = `${rate.toFixed(1)}% p.a.`;
+
+        document.getElementById('calcMonthly').textContent = formatPriceShort(Math.round(monthly));
+        document.getElementById('calcLoanAmt').textContent = formatPriceShort(Math.round(loanAmt));
+        document.getElementById('calcTotalInt').textContent = formatPriceShort(Math.round(totalInt));
+        document.getElementById('calcTotalPay').textContent = formatPriceShort(Math.round(totalPay));
+    }
+
+    /* ── Load listings from API ── */
+    async function loadListings() {
+        try {
+            const res = await fetch('/api/properties');
+            if (!res.ok) throw new Error('API error');
+            const data = await res.json();
+            allListings = data.reverse();
+        } catch (e) {
+            allListings = [];
+        }
+        applyFilters();
+    }
+
+    /* ── Filter / sort ── */
+    function applyFilters() {
+        const search = (document.getElementById('filterSearch').value || '').toLowerCase().trim();
+        const type = document.getElementById('filterType').value;
+        const sort = document.getElementById('filterSort').value;
+
+        const rawMin = document.getElementById('priceMin').value;
+        const rawMax = document.getElementById('priceMax').value;
+        const minPrice = rawMin !== '' ? parseFloat(rawMin) : parseInt(document.getElementById('sliderMin').value);
+        const maxPrice = rawMax !== '' ? parseFloat(rawMax) : parseInt(document.getElementById('sliderMax').value);
+
+        let list = allListings.filter(p => {
+            const t = normalizeType(p);
+            const matchType = type === 'all' || t === type;
+            const matchSearch = !search || `${p.title||''} ${p.location||''}`.toLowerCase().includes(search);
+            const price = parseFloat(p.price) || 0;
+            const matchPrice = price >= minPrice && price <= maxPrice;
+            return matchType && matchSearch && matchPrice;
+        });
+
+        if (sort === 'price_asc')  list.sort((a,b) => (a.price||0) - (b.price||0));
+        if (sort === 'price_desc') list.sort((a,b) => (b.price||0) - (a.price||0));
+        if (sort === 'name_asc')   list.sort((a,b) => (a.title||'').localeCompare(b.title||''));
+
+        filteredListings = list;
+        currentBatch = 0;
+        document.getElementById('propertyGrid').innerHTML = '';
+        document.getElementById('resultCount').innerHTML = `<span>${list.length}</span> result${list.length !== 1 ? 's' : ''}`;
+        renderNextBatch();
+    }
+
+    function resetFilters() {
+        document.getElementById('filterSearch').value = '';
+        document.getElementById('filterType').value = 'all';
+        document.getElementById('filterSort').value = 'default';
+        document.getElementById('priceMin').value = '';
+        document.getElementById('priceMax').value = '';
+        document.getElementById('sliderMin').value = 0;
+        document.getElementById('sliderMax').value = 500000000;
+        updateSliderFill();
+        updatePriceDisplay();
+        applyFilters();
+    }
+
+    function applyHeroSearch() {
+        const loc = document.getElementById('searchInput').value;
+        const type = document.getElementById('propertyTypeSelect').value.toLowerCase();
+        if (loc) document.getElementById('filterSearch').value = loc;
+        if (type !== 'all') document.getElementById('filterType').value = type;
+        document.getElementById('properties-section').scrollIntoView({ behavior: 'smooth' });
+        applyFilters();
+    }
+
+    /* ── Render cards in batches ── */
+    function renderNextBatch() {
+        const grid = document.getElementById('propertyGrid');
+        const btn = document.getElementById('loadMoreBtn');
+
+        if (filteredListings.length === 0 && currentBatch === 0) {
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <i data-lucide="home" style="width:48px;height:48px;"></i>
+                    <h3>No properties found</h3>
+                    <p>Try adjusting your filters or check back soon for new listings.</p>
+                </div>`;
+            lucide.createIcons();
+            btn.disabled = true;
+            return;
+        }
+
+        const start = currentBatch * BATCH_SIZE;
+        const slice = filteredListings.slice(start, start + BATCH_SIZE);
+
+        slice.forEach((prop, idx) => {
+            const el = buildCard(prop, start + idx);
+            grid.appendChild(el);
+            
+            if (!prop.imagesLoaded) {
+                fetch(`/images/property/${prop.id}`)
+                    .then(res => res.ok ? res.json() : [])
+                    .then(imgs => {
+                        prop.images = imgs;
+                        prop.imagesLoaded = true;
+                        if (imgs && imgs.length > 0 && imgs[0].url) {
+                            const imgEl = el.querySelector(`.property-img-${prop.id}`);
+                            if (imgEl) imgEl.src = imgs[0].url;
+                        }
+                    })
+                    .catch(e => console.error(e));
             }
         });
-    }, { threshold: 0.1 });
 
-    document.querySelectorAll('.anim-ready').forEach(el => observer.observe(el));
+        lucide.createIcons();
+        currentBatch++;
 
-    // Handle Login Display
+        const shown = currentBatch * BATCH_SIZE;
+        if (shown >= filteredListings.length) {
+            btn.disabled = true;
+            btn.querySelector('span').textContent = 'All Properties Shown';
+        } else {
+            btn.disabled = false;
+            btn.querySelector('span').textContent = 'Discover More';
+        }
+    }
+
+    function buildCard(prop, globalIdx) {
+        const type = normalizeType(prop);
+        const accent = CARD_ACCENTS[globalIdx % CARD_ACCENTS.length];
+        const imgSrc = (prop.images && prop.images[0] && prop.images[0].url)
+            ? prop.images[0].url
+            : FALLBACK_IMAGES[globalIdx % FALLBACK_IMAGES.length];
+        let special = '';
+        if (type === 'house') special = `${prop.numOfFloors || 1} Floor${Number(prop.numOfFloors) !== 1 ? 's' : ''}`;
+        else if (type === 'apartment') special = `Floor ${prop.floorNumber || 'N/A'}`;
+        else if (type === 'rental') special = prop.duration ? `${prop.duration}` : 'Flexible';
+
+        const displayPrice = type === 'rental' ? `${formatPrice(prop.monthlyRent || prop.price)} / mo` : formatPrice(prop.price);
+        const badgeLabel = type === 'rental' ? 'For Rent' : (type === 'house' ? 'For Sale' : 'Listing');
+        const iconType = type === 'rental' ? 'key-round' : (type === 'house' ? 'home' : 'building-2');
+
+        const article = document.createElement('article');
+        article.className = `property-card ${accent}`;
+        article.style.animationDelay = `${(globalIdx % BATCH_SIZE) * 0.08}s`;
+
+        article.innerHTML = `
+            <div class="property-img-wrapper">
+                <img class="property-img property-img-${prop.id}" src="${imgSrc}" alt="${escapeHtml(prop.title||'Property')}" loading="lazy">
+                <span class="badge">${badgeLabel}</span>
+                <span class="badge-type">${capitalize(type)}</span>
+                <div class="img-price-overlay">
+                    <small>${type === 'rental' ? 'Rent' : 'Price'}</small>
+                    ${displayPrice}
+                </div>
+                ${isAdmin ? `
+                <div class="card-admin-actions visible">
+                    <button class="admin-btn edit" title="Edit property" onclick="event.stopPropagation(); editProp(${prop.id})"><i data-lucide="pencil"></i></button>
+                    <button class="admin-btn delete" title="Delete property" onclick="event.stopPropagation(); deleteProp(${prop.id})"><i data-lucide="trash-2"></i></button>
+                </div>` : ''}
+            </div>
+            <div class="card-details">
+                <div class="loc-text"><i data-lucide="map-pin"></i>${escapeHtml(prop.location || 'Location TBC')}</div>
+                <h3 class="property-title">${escapeHtml(prop.title || 'Untitled Property')}</h3>
+                <p class="card-desc-preview">${escapeHtml(prop.description || 'No description provided.')}</p>
+                <div class="meta-tags">
+                    <span><i data-lucide="${iconType}"></i>${capitalize(type)}</span>
+                    <span><i data-lucide="layers"></i>${escapeHtml(special)}</span>
+                    <span><i data-lucide="tag"></i>${displayPrice}</span>
+                </div>
+                <div class="card-footer">
+                    <button class="view-detail-btn" onclick="openModal(${prop.id})">View Details <i data-lucide="arrow-right"></i></button>
+                </div>
+            </div>
+        `;
+
+        article.addEventListener('click', (e) => {
+            if (e.target.closest('.admin-btn')) return;
+            openModal(prop.id);
+        });
+
+        return article;
+    }
+
+    /* ── Modal ── */
+    async function openModal(id) {
+        const prop = allListings.find(p => Number(p.id) === Number(id));
+        if (!prop) return;
+
+        const type = normalizeType(prop);
+        const special = type === 'house'
+            ? `${prop.numOfFloors || 1} Floor${Number(prop.numOfFloors) !== 1 ? 's' : ''}`
+            : (type === 'rental' ? (prop.duration ? `${prop.duration}` : 'Flexible') : `Floor ${prop.floorNumber || 'N/A'}`);
+
+        const displayPrice = type === 'rental' ? `${formatPrice(prop.monthlyRent || prop.price)} / mo` : formatPrice(prop.price);
+        const iconType = type === 'rental' ? 'key-round' : (type === 'house' ? 'home' : 'building-2');
+        const floorLabel = type === 'rental' ? 'Duration' : (type === 'house' ? 'Floors' : 'Floor No.');
+
+        document.getElementById('modalTitle').textContent = prop.title || 'Untitled Property';
+        document.getElementById('modalLocation').textContent = prop.location || 'Location TBC';
+        document.getElementById('modalPrice').textContent = displayPrice;
+        document.getElementById('modalDesc').textContent = prop.description || 'No description available.';
+
+        document.getElementById('modalMeta').innerHTML = `
+            <div class="modal-meta-item">
+                <div class="modal-meta-icon"><i data-lucide="${iconType}"></i></div>
+                <div class="modal-meta-text"><small>Type</small><strong>${capitalize(type)}</strong></div>
+            </div>
+            <div class="modal-meta-item">
+                <div class="modal-meta-icon"><i data-lucide="${type === 'rental' ? 'clock' : 'layers'}"></i></div>
+                <div class="modal-meta-text"><small>${floorLabel}</small><strong>${escapeHtml(special)}</strong></div>
+            </div>
+            <div class="modal-meta-item">
+                <div class="modal-meta-icon"><i data-lucide="map-pin"></i></div>
+                <div class="modal-meta-text"><small>Location</small><strong>${escapeHtml(prop.location || 'TBC')}</strong></div>
+            </div>
+            <div class="modal-meta-item">
+                <div class="modal-meta-icon"><i data-lucide="tag"></i></div>
+                <div class="modal-meta-text"><small>Listing ID</small><strong>#${prop.id}</strong></div>
+            </div>
+        `;
+
+        modalImages = [];
+        if (prop.images && prop.images.length > 0) {
+            modalImages = prop.images.map(img => img.url);
+        } else {
+            try {
+                const res = await fetch(`/images/property/${id}`);
+                if (res.ok) {
+                    const imgs = await res.json();
+                    modalImages = imgs.map(i => i.url);
+                }
+            } catch(e) {}
+        }
+        if (modalImages.length === 0) {
+            const fallback = FALLBACK_IMAGES[Number(id) % FALLBACK_IMAGES.length];
+            modalImages = [fallback];
+        }
+
+        modalImageIndex = 0;
+        updateGalleryView();
+        lucide.createIcons();
+
+        ['agentName','agentEmail','agentPhone','agentTime','agentMessage'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        document.getElementById('agentSentMsg').style.display = 'none';
+
+        document.getElementById('modalOverlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function updateGalleryView() {
+        const img = document.getElementById('modalGalleryImg');
+        img.style.opacity = '0';
+        setTimeout(() => {
+            img.src = modalImages[modalImageIndex] || '';
+            img.style.opacity = '1';
+        }, 150);
+        document.getElementById('galleryCounter').textContent = `${modalImageIndex + 1} / ${modalImages.length}`;
+    }
+
+    function galleryPrev() {
+        modalImageIndex = (modalImageIndex - 1 + modalImages.length) % modalImages.length;
+        updateGalleryView();
+    }
+    function galleryNext() {
+        modalImageIndex = (modalImageIndex + 1) % modalImages.length;
+        updateGalleryView();
+    }
+
+    function closeModal() {
+        document.getElementById('modalOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+    function closeModalOnBg(e) {
+        if (e.target === document.getElementById('modalOverlay')) closeModal();
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    /* ── Agent enquiry ── */
+    function submitAgentEnquiry() {
+        const name = document.getElementById('agentName').value.trim();
+        const email = document.getElementById('agentEmail').value.trim();
+        if (!name || !email) {
+            showToast('Please enter your name and email.', 'error');
+            return;
+        }
+        document.getElementById('agentSentMsg').style.display = 'block';
+        showToast('Enquiry sent! Our team will be in touch.', 'success');
+    }
+
+    /* ── Admin actions ── */
+    function editProp(id) {
+        window.location.href = `sell.html?edit=${id}`;
+    }
+
+    async function deleteProp(id) {
+        const prop = allListings.find(p => Number(p.id) === Number(id));
+        const name = prop ? prop.title : 'this property';
+        if (!confirm(`Delete "${name}" permanently?`)) return;
+        try {
+            const res = await fetch(`/api/properties/${id}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error('Delete failed');
+            showToast('Property deleted.', 'success');
+            await loadListings();
+        } catch(e) {
+            showToast(e.message, 'error');
+        }
+    }
+
+    /* ── Auth ── */
     function checkLoginStatus() {
         const savedName = localStorage.getItem('luxeUser');
         const userActions = document.getElementById('userActions');
-
         if (savedName) {
             const firstName = savedName.split(' ')[0];
             const initial = firstName.charAt(0).toUpperCase();
-
+            isAdmin = true;
             userActions.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 20px;">
                     <a href="javascript:void(0)" onclick="logout()" class="sign-out-link">Sign Out</a>
-                    <div class="profile-status">
-                        <div class="avatar-circle">${initial}</div>
-                        <div class="user-info">
-                            <span style="font-weight: 600; display: block; font-size: 13px; color: white; letter-spacing: 0.5px;">${firstName}</span>
-                            <span style="color: #c9a96e; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px;">Verified</span>
+                    <a href="profile.html" style="text-decoration: none;">
+                        <div class="profile-status">
+                            <div class="avatar-circle">${initial}</div>
+                            <div class="user-info">
+                                <span style="font-weight:600;display:block;font-size:13px;color:white;letter-spacing:0.5px;">${firstName}</span>
+                                <span style="color:#c9a96e;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;">Verified</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>`;
         }
     }
@@ -1063,12 +3222,107 @@
     function logout() {
         if (confirm("Sign out from LuxeEstate?")) {
             localStorage.removeItem('luxeUser');
+            localStorage.removeItem('luxeUserId');
+            localStorage.removeItem('luxeUserData');
             window.location.href = "add-customer.html";
         }
     }
 
-    window.onload = checkLoginStatus;
-</script>
+    /* ── Scroll header ── */
+    window.addEventListener('scroll', () => {
+        const header = document.getElementById('mainHeader');
+        if (window.scrollY > 50) {
+            header.style.background = 'rgba(10,10,10,0.97)';
+            header.style.boxShadow = '0 1px 0 rgba(201,169,110,0.15)';
+        } else {
+            header.style.background = 'rgba(10,10,10,0.92)';
+            header.style.boxShadow = 'none';
+        }
+    });
 
+    /* ── Intersection observer ── */
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => entry.target.classList.add('in-view'), i * 80);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.anim-ready').forEach(el => observer.observe(el));
+
+    /* ── Helpers ── */
+    function normalizeType(item) {
+        return (item.type || item.propertyCategory || '').toLowerCase();
+    }
+    function formatPrice(value) {
+        return new Intl.NumberFormat('en-LK', {
+            style: 'currency',
+            currency: 'LKR',
+            maximumFractionDigits: 0
+        }).format(Number(value || 0)).replace('LKR', 'Rs.');
+    }
+    function capitalize(v) {
+        return v ? v.charAt(0).toUpperCase() + v.slice(1) : '';
+    }
+    function escapeHtml(v) {
+        return String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+    }
+    function showToast(message, type) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `toast show ${type || ''}`;
+        setTimeout(() => toast.className = 'toast', 3200);
+    }
+
+    /* ── Testimonial Carousel ── */
+    let tIndex = 0;
+    const tVisible = 3;
+    const tCards = document.querySelectorAll('.testimonial-card');
+    const tTotal = Math.ceil(tCards.length - tVisible + 1);
+    const tDotsContainer = document.getElementById('tDots');
+
+    function buildTDots() {
+        tDotsContainer.innerHTML = '';
+        for (let i = 0; i < tTotal; i++) {
+            const d = document.createElement('div');
+            d.className = 't-dot' + (i === 0 ? ' active' : '');
+            d.onclick = () => goTestimonial(i);
+            tDotsContainer.appendChild(d);
+        }
+    }
+
+    function goTestimonial(i) {
+        tIndex = Math.max(0, Math.min(i, tTotal - 1));
+        const cardWidth = tCards[0].offsetWidth + 28;
+        document.getElementById('testimonialTrack').style.transform = `translateX(-${tIndex * cardWidth}px)`;
+        document.querySelectorAll('.t-dot').forEach((d, idx) => {
+            d.classList.toggle('active', idx === tIndex);
+        });
+    }
+
+    function moveTestimonials(dir) {
+        goTestimonial(tIndex + dir);
+    }
+
+    setInterval(() => moveTestimonials(1), 5000);
+
+    /* ── Back to Top ── */
+    const btt = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+        btt.classList.toggle('visible', window.scrollY > 600);
+    });
+
+    /* ── Init ── */
+    window.onload = () => {
+        checkLoginStatus();
+        updateSliderFill();
+        updatePriceDisplay();
+        loadListings();
+        buildTDots();
+        updateCalc();
+        lucide.createIcons();
+    };
+</script>
 </body>
 </html>

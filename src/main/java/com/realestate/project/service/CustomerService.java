@@ -6,9 +6,10 @@ import com.realestate.project.repository.CustomerRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // Import this
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -23,11 +24,20 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
+    // ── NEW: get a single customer by ID (used by profile.html) ──
+    public Optional<CustomerEntity> getCustomerById(Long id) {
+        return customerRepository.findById(id);
+    }
+
     // Adding @Transactional ensures the data is "Committed" to MySQL
     @Transactional
-    public void saveCustomer(CustomerDto customerDto) {
+    public CustomerEntity saveCustomer(CustomerDto customerDto) {
+        // ── NEW: duplicate email validation ──
+        if (customerRepository.findByEmail(customerDto.getEmail()).isPresent()) {
+            throw new RuntimeException("EMAIL_ALREADY_EXISTS");
+        }
         CustomerEntity customerEntity = modelMapper.map(customerDto, CustomerEntity.class);
-        customerRepository.save(customerEntity);
+        return customerRepository.save(customerEntity);
     }
 
     @Transactional(readOnly = true)
@@ -58,6 +68,8 @@ public class CustomerService {
             if (details.getPhone() != null) customer.setPhone(details.getPhone());
             if (details.getPropertyType() != null) customer.setPropertyType(details.getPropertyType());
             if (details.getAddress() != null) customer.setAddress(details.getAddress());
+            if (details.getPassword() != null) customer.setPassword(details.getPassword());
+
             return customerRepository.save(customer);
         }).orElseThrow(() -> new RuntimeException("Customer not found"));
     }

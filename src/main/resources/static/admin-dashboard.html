@@ -663,6 +663,198 @@
             border-radius: 10px;
         }
 
+        /* --- Listings Modal Styles --- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 9999; /* Increased z-index to stay above everything */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--card-glass);
+            backdrop-filter: blur(24px) saturate(1.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 48px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.4s var(--transition);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--gold);
+            background: rgba(201, 169, 110, 0.1);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .modal-header h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 42px;
+            font-weight: 300;
+            color: var(--text-main);
+        }
+
+        .modal-header h2 em {
+            color: var(--gold);
+            font-style: italic;
+        }
+
+        .modal-header p {
+            color: var(--text-muted);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 8px;
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .listing-card {
+            background: rgba(10, 10, 10, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 32px 24px;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .listing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+            transition: width 0.4s var(--transition);
+        }
+
+        .listing-card:hover {
+            background: var(--card-hover);
+            border-color: var(--gold-border);
+            transform: translateY(-5px);
+        }
+
+        .listing-card:hover::before {
+            width: 80%;
+        }
+
+        .listing-icon {
+            width: 54px;
+            height: 54px;
+            margin: 0 auto 20px;
+            background: rgba(201, 169, 110, 0.08);
+            border: 1px solid var(--gold-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            transition: transform 0.3s ease;
+        }
+
+        .listing-card:hover .listing-icon {
+            transform: scale(1.1);
+            background: rgba(201, 169, 110, 0.15);
+        }
+
+        .listing-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 26px;
+            font-weight: 400;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .listing-card p {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        /* --- Topbar Notification Bell & Clock Additions --- */
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+            margin-right: 18px;
+            color: var(--text-muted);
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-bell:hover {
+            color: var(--gold);
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background: var(--danger);
+            border-radius: 50%;
+            border: 2px solid rgba(10,10,10,0.9);
+        }
+
+        .live-clock {
+            color: var(--text-dim);
+            font-size: 13px;
+            letter-spacing: 0.8px;
+            margin-right: 18px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
         @media (max-width: 1200px) {
             .stats-row,
             .stats-row-2,
@@ -697,6 +889,7 @@
                 flex-direction: column;
                 height: auto;
                 padding: 28px;
+                gap: 16px;
             }
 
             .hero-strip h2 {
@@ -711,6 +904,10 @@
             .stats-row,
             .stats-row-2,
             .mini-row {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -732,7 +929,7 @@
         <a href="view-customer.html" class="nav-item"><i data-lucide="users-2"></i> Customers</a>
         <a href="#" class="nav-item"><i data-lucide="contact-2"></i> Agents</a>
         <a href="#" class="nav-item"><i data-lucide="landmark"></i> Transactions</a>
-        <a href="#" class="nav-item"><i data-lucide="palmtree"></i> Listings</a>
+        <a href="#" class="nav-item" id="listingsBtn"><i data-lucide="palmtree"></i> Listings</a>
         <a href="view-messages.html" class="nav-item"><i data-lucide="mail"></i> Messages</a>
     </nav>
 
@@ -750,6 +947,16 @@
         </div>
 
         <div class="topbar-right">
+            <div class="live-clock" id="liveClockDisplay">
+                <i data-lucide="clock" style="width: 14px; height: 14px;"></i>
+                <span>--:--</span>
+            </div>
+
+            <div class="notification-bell" title="Notifications">
+                <i data-lucide="bell"></i>
+                <span class="notification-dot"></span>
+            </div>
+
             <div class="live-chip">Live Data</div>
             <div class="admin-badge">
                 <div class="admin-avatar">A</div>
@@ -819,7 +1026,7 @@
                     <h3>Listings</h3>
                     <div class="stat-icon"><i data-lucide="palmtree"></i></div>
                 </div>
-                <div class="stat-value">42</div>
+                <div class="stat-value" id="totalListingsCount">0</div>
                 <div class="stat-sub">Properties available</div>
             </div>
 
@@ -908,6 +1115,37 @@
     </div>
 </main>
 
+<div class="modal-overlay" id="listingsModal">
+    <div class="modal-content">
+        <button class="modal-close" id="closeModalBtn"><i data-lucide="x"></i></button>
+
+        <div class="modal-header">
+            <h2>Manage <em>Listings</em></h2>
+            <p>Select a property category to view or edit</p>
+        </div>
+
+        <div class="modal-grid">
+            <a href="buy-properties.html" class="listing-card">
+                <div class="listing-icon"><i data-lucide="key"></i></div>
+                <h3>Buy</h3>
+                <p>Properties available for sale</p>
+            </a>
+
+            <a href="sell-properties.html" class="listing-card">
+                <div class="listing-icon"><i data-lucide="tag"></i></div>
+                <h3>Sell</h3>
+                <p>Manage vendor listings</p>
+            </a>
+
+            <a href="rent-properties.html" class="listing-card">
+                <div class="listing-icon"><i data-lucide="calendar-clock"></i></div>
+                <h3>Rent</h3>
+                <p>Lease and rental properties</p>
+            </a>
+        </div>
+    </div>
+</div>
+
 <script>
     lucide.createIcons();
 
@@ -989,14 +1227,53 @@
                 document.getElementById('totalMessageCount').innerText = messages.length.toLocaleString();
             }
 
+            const propertyResponse = await fetch('http://localhost:8080/api/properties');
+            if (propertyResponse.ok) {
+                const properties = await propertyResponse.json();
+                document.getElementById('totalListingsCount').innerText = properties.length.toLocaleString();
+            }
+
         } catch (error) {
             console.error('Connection Error:', error);
             document.getElementById('totalCustomerCount').innerText = "Error";
             document.getElementById('totalMessageCount').innerText = "Error";
+            document.getElementById('totalListingsCount').innerText = "Error";
         }
     }
 
     window.onload = updateDashboardStats;
+
+    function updateClock() {
+        const clockDisplay = document.querySelector('#liveClockDisplay span');
+        const now = new Date();
+        const options = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        clockDisplay.innerText = now.toLocaleDateString('en-US', options);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    const listingsBtn = document.getElementById('listingsBtn');
+    const listingsModal = document.getElementById('listingsModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    listingsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        listingsModal.classList.add('active');
+
+        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        listingsBtn.classList.add('active');
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+        listingsModal.classList.remove('active');
+    });
+
+    listingsModal.addEventListener('click', (e) => {
+        if (e.target === listingsModal) {
+            listingsModal.classList.remove('active');
+        }
+    });
+
 </script>
 </body>
 </html>
