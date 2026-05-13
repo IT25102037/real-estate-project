@@ -705,7 +705,6 @@
             box-shadow: 0 32px 80px rgba(0,0,0,0.14), 0 0 0 1px var(--border-gold);
         }
 
-        /* Colour accent stripe per card (rotates through a palette) */
         .property-card::before {
             content: '';
             position: absolute;
@@ -738,7 +737,6 @@
         }
         .property-card:hover .property-img-wrapper::after { opacity: 0.9; }
 
-        /* Badges */
         .badge {
             position: absolute; top: 20px; left: 20px;
             padding: 6px 14px;
@@ -766,7 +764,6 @@
             border: 1px solid var(--border-gold);
         }
 
-        /* Admin controls – only visible to logged-in admin */
         .card-admin-actions {
             position: absolute;
             bottom: 16px; right: 16px;
@@ -796,7 +793,6 @@
         .admin-btn:hover { transform: scale(1.15); }
         .admin-btn i { width: 14px; height: 14px; }
 
-        /* Overlay price on image */
         .img-price-overlay {
             position: absolute;
             bottom: 20px; left: 20px;
@@ -821,7 +817,6 @@
             text-shadow: none;
         }
 
-        /* Card body */
         .card-details {
             padding: 26px 28px 24px;
             background: linear-gradient(145deg, #1a1410 0%, #0f0d0a 60%, #1c1508 100%);
@@ -917,7 +912,6 @@
         .view-detail-btn:hover { color: var(--gold); gap: 12px; }
         .view-detail-btn i { width: 14px; height: 14px; }
 
-        /* Colour accents per card type */
         .card-accent-gold  { --card-accent: #c9a96e; }
         .card-accent-teal  { --card-accent: #0d9488; }
         .card-accent-rose  { --card-accent: #e11d48; }
@@ -959,7 +953,6 @@
         #loadMoreBtn:disabled { opacity: 0.4; cursor: not-allowed; }
         #loadMoreBtn:disabled::before { display: none; }
 
-        /* Empty / loading states */
         .empty-state {
             text-align: center;
             padding: 80px 20px;
@@ -1186,7 +1179,6 @@
             color: var(--ash);
         }
 
-        /* Ask agent */
         .modal-agent-section {
             background: var(--obsidian);
             border-radius: 3px;
@@ -1416,9 +1408,10 @@
         .lifestyle-link i { width: 14px; height: 14px; }
 
         /* ======== TESTIMONIALS ======== */
+        /* CHANGE 1: Reduced padding-bottom from 110px to 60px to close the gap */
         .testimonials-section {
             background: var(--cream);
-            padding: 110px 0;
+            padding: 110px 0 60px;
             position: relative;
             overflow: hidden;
         }
@@ -1617,6 +1610,349 @@
             color: rgba(255,255,255,0.38);
             line-height: 1.85;
             font-weight: 300;
+        }
+
+        /* ======== MORTGAGE CALCULATOR ======== */
+        /* CHANGE 3: New mortgage calculator section */
+        .mortgage-section {
+            background: var(--cream);
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .mortgage-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-gold), transparent);
+        }
+        .mortgage-inner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+        .mortgage-info {
+            padding-top: 16px;
+        }
+        .mortgage-info .section-title { margin-bottom: 20px; }
+        .mortgage-info p {
+            font-size: 14px;
+            color: var(--ash);
+            line-height: 1.9;
+            font-weight: 300;
+            margin-bottom: 32px;
+        }
+        .mortgage-feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .mortgage-feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--charcoal);
+            font-weight: 400;
+        }
+        .mortgage-feature-list li::before {
+            content: '';
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: rgba(201,169,110,0.15);
+            border: 1px solid var(--border-gold);
+            flex-shrink: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c9a96e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+            background-size: 12px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .mortgage-calculator {
+            background: var(--white);
+            border: 1px solid rgba(26,26,26,0.08);
+            border-radius: 4px;
+            padding: 40px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.07);
+            position: relative;
+            overflow: hidden;
+        }
+        .mortgage-calculator::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(to right, var(--gold-dark), var(--gold), var(--gold-light));
+        }
+        .calc-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 26px;
+            font-weight: 500;
+            color: var(--obsidian);
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+        .calc-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+        }
+        .calc-field {
+            margin-bottom: 22px;
+        }
+        .calc-field label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--charcoal);
+            margin-bottom: 10px;
+        }
+        .calc-field label span {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0;
+            text-transform: none;
+            color: var(--gold);
+        }
+        .calc-slider {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 3px;
+            background: rgba(26,26,26,0.1);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+        .calc-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: 3px solid var(--white);
+            box-shadow: 0 2px 10px rgba(201,169,110,0.45);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .calc-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        .calc-slider::-moz-range-thumb {
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: 3px solid var(--white);
+            box-shadow: 0 2px 10px rgba(201,169,110,0.45);
+            cursor: pointer;
+        }
+        .calc-result-box {
+            background: var(--obsidian);
+            border-radius: 3px;
+            padding: 28px;
+            margin-top: 28px;
+            border: 1px solid var(--border-subtle);
+            position: relative;
+            overflow: hidden;
+        }
+        .calc-result-box::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-gold), transparent);
+        }
+        .calc-result-label {
+            font-size: 9px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+        .calc-result-amount {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 48px;
+            font-weight: 300;
+            color: var(--white);
+            letter-spacing: -1.5px;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+        .calc-result-sub {
+            font-size: 11px;
+            color: rgba(255,255,255,0.35);
+            letter-spacing: 0.5px;
+        }
+        .calc-breakdown {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1px;
+            background: rgba(201,169,110,0.1);
+            margin-top: 20px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .calc-breakdown-item {
+            background: rgba(255,255,255,0.03);
+            padding: 14px 16px;
+            text-align: center;
+        }
+        .calc-breakdown-item .b-label {
+            font-size: 8px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 5px;
+        }
+        .calc-breakdown-item .b-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.8);
+        }
+        .calc-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            background: var(--gold);
+            color: var(--obsidian);
+            padding: 13px 28px;
+            border: none;
+            border-radius: 2px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            justify-content: center;
+        }
+        .calc-cta:hover {
+            background: var(--gold-light);
+            box-shadow: 0 0 30px rgba(201,169,110,0.35);
+        }
+
+        /* ======== HEADQUARTERS MAP ======== */
+        /* CHANGE 2: New map section above footer */
+        .hq-map-section {
+            background: var(--obsidian);
+            position: relative;
+            overflow: hidden;
+        }
+        .hq-map-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--border-gold), transparent);
+            z-index: 2;
+        }
+        .hq-map-top {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            position: relative;
+        }
+        .hq-map-info {
+            padding: 72px 60px;
+            position: relative;
+            z-index: 2;
+        }
+        .hq-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--gold);
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+        .hq-eyebrow::before {
+            content: '';
+            width: 30px; height: 1px;
+            background: var(--gold);
+            opacity: 0.5;
+        }
+        .hq-map-info h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(32px, 3.5vw, 50px);
+            font-weight: 300;
+            color: var(--white);
+            line-height: 1.15;
+            letter-spacing: -0.5px;
+            margin-bottom: 28px;
+        }
+        .hq-map-info h2 em { font-style: italic; color: var(--gold); }
+        .hq-contact-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 32px;
+        }
+        .hq-contact-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: 2px;
+            padding: 16px 20px;
+            transition: border-color 0.3s, background 0.3s;
+        }
+        .hq-contact-card:hover {
+            border-color: var(--border-gold);
+            background: rgba(201,169,110,0.04);
+        }
+        .hq-contact-icon {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: rgba(201,169,110,0.1);
+            border: 1px solid var(--border-gold);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--gold);
+            flex-shrink: 0;
+        }
+        .hq-contact-icon i { width: 16px; height: 16px; }
+        .hq-contact-text small {
+            display: block;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 3px;
+        }
+        .hq-contact-text span {
+            font-size: 13px;
+            color: rgba(255,255,255,0.75);
+            font-weight: 400;
+        }
+        .hq-map-embed {
+            position: relative;
+            min-height: 480px;
+            overflow: hidden;
+        }
+        .hq-map-embed iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            filter: grayscale(20%) contrast(1.05);
+            min-height: 480px;
+        }
+        .hq-map-embed::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            box-shadow: inset 0 0 0 1px var(--border-subtle);
         }
 
         /* ======== BACK TO TOP ======== */
@@ -1859,6 +2195,9 @@
             .property-grid { grid-template-columns: 1fr; }
             .filter-bar-top { flex-direction: column; align-items: stretch; }
             .filter-select, .filter-reset { max-width: none; }
+            .mortgage-inner { grid-template-columns: 1fr; }
+            .hq-map-top { grid-template-columns: 1fr; }
+            .hq-map-embed { min-height: 320px; }
         }
         @media (max-width: 720px) {
             .container { padding: 0 20px; }
@@ -2136,6 +2475,68 @@
     </div>
 </section>
 
+<!-- MORTGAGE CALCULATOR — new feature -->
+<section class="mortgage-section">
+    <div class="container">
+        <div class="mortgage-inner">
+            <div class="mortgage-info anim-ready">
+                <h2 class="section-title">Finance Your<br><em>Dream Home</em></h2>
+                <p>Use our instant mortgage estimator to understand your monthly commitment before you even step through the door. Enter your figures and let the numbers guide you.</p>
+                <ul class="mortgage-feature-list">
+                    <li>Instant monthly repayment estimate</li>
+                    <li>Adjustable loan tenure up to 30 years</li>
+                    <li>Supports LKR-denominated calculations</li>
+                    <li>Connect with our partner banks for pre-approval</li>
+                </ul>
+            </div>
+            <div class="mortgage-calculator anim-ready">
+                <div class="calc-title">Mortgage Calculator</div>
+                <div class="calc-subtitle">Estimate your monthly repayments</div>
+
+                <div class="calc-field">
+                    <label>Property Price <span id="calcPriceLabel">Rs. 50M</span></label>
+                    <input type="range" class="calc-slider" id="calcPrice" min="5000000" max="500000000" step="1000000" value="50000000" oninput="updateCalc()">
+                </div>
+                <div class="calc-field">
+                    <label>Down Payment <span id="calcDownLabel">20% — Rs. 10M</span></label>
+                    <input type="range" class="calc-slider" id="calcDown" min="10" max="50" step="1" value="20" oninput="updateCalc()">
+                </div>
+                <div class="calc-field">
+                    <label>Loan Tenure <span id="calcTermLabel">20 Years</span></label>
+                    <input type="range" class="calc-slider" id="calcTerm" min="5" max="30" step="1" value="20" oninput="updateCalc()">
+                </div>
+                <div class="calc-field">
+                    <label>Interest Rate <span id="calcRateLabel">9.5% p.a.</span></label>
+                    <input type="range" class="calc-slider" id="calcRate" min="5" max="20" step="0.1" value="9.5" oninput="updateCalc()">
+                </div>
+
+                <div class="calc-result-box">
+                    <div class="calc-result-label">Estimated Monthly Repayment</div>
+                    <div class="calc-result-amount" id="calcMonthly">Rs. 0</div>
+                    <div class="calc-result-sub">Based on a standard reducing balance mortgage</div>
+                    <div class="calc-breakdown">
+                        <div class="calc-breakdown-item">
+                            <div class="b-label">Loan Amount</div>
+                            <div class="b-value" id="calcLoanAmt">—</div>
+                        </div>
+                        <div class="calc-breakdown-item">
+                            <div class="b-label">Total Interest</div>
+                            <div class="b-value" id="calcTotalInt">—</div>
+                        </div>
+                        <div class="calc-breakdown-item">
+                            <div class="b-label">Total Payable</div>
+                            <div class="b-value" id="calcTotalPay">—</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="calc-cta" onclick="showToast('Our finance team will contact you shortly.', 'success')">
+                    Get Pre-Approved &nbsp;→
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- PROPERTIES -->
 <section class="featured-properties" id="properties-section">
     <div class="container">
@@ -2193,6 +2594,59 @@
 
         <div class="load-more-container anim-ready">
             <button id="loadMoreBtn" onclick="renderNextBatch()"><span>Discover More</span></button>
+        </div>
+    </div>
+</section>
+
+<!-- HEADQUARTERS MAP — between properties and footer -->
+<section class="hq-map-section">
+    <div class="hq-map-top">
+        <div class="hq-map-info">
+            <div class="hq-eyebrow">Our Location</div>
+            <h2>Visit Our<br><em>Headquarters</em></h2>
+            <p style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.9;font-weight:300;max-width:380px;">
+                Step into our flagship office on Galle Road, Kollupitiya — in the heart of Colombo's most prestigious commercial district. Our team is ready to welcome you.
+            </p>
+            <div class="hq-contact-cards">
+                <div class="hq-contact-card">
+                    <div class="hq-contact-icon"><i data-lucide="map-pin"></i></div>
+                    <div class="hq-contact-text">
+                        <small>Address</small>
+                        <span>45/2, Galle Road, Kollupitiya, Colombo 03</span>
+                    </div>
+                </div>
+                <div class="hq-contact-card">
+                    <div class="hq-contact-icon"><i data-lucide="clock"></i></div>
+                    <div class="hq-contact-text">
+                        <small>Office Hours</small>
+                        <span>Mon – Sat: 9:00 AM – 6:00 PM</span>
+                    </div>
+                </div>
+                <div class="hq-contact-card">
+                    <div class="hq-contact-icon"><i data-lucide="phone"></i></div>
+                    <div class="hq-contact-text">
+                        <small>Phone</small>
+                        <span>+94 764 533 567</span>
+                    </div>
+                </div>
+                <div class="hq-contact-card">
+                    <div class="hq-contact-icon"><i data-lucide="mail"></i></div>
+                    <div class="hq-contact-text">
+                        <small>Email</small>
+                        <span>luxeestate@gmail.com</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hq-map-embed">
+            <!-- Kollupitiya, Colombo 03 embedded map -->
+            <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.8486!2d79.8486!3d6.9022!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae2591614bfb30d%3A0x7e63a3c3f3a3a3a3!2sKollupitiya%2C%20Colombo%2003%2C%20Sri%20Lanka!5e0!3m2!1sen!2slk!4v1700000000000!5m2!1sen!2slk"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="LuxeEstate Headquarters — Kollupitiya, Colombo 03">
+            </iframe>
         </div>
     </div>
 </section>
@@ -2402,6 +2856,39 @@
         return 'Rs. ' + v;
     }
 
+    /* ── Mortgage Calculator ── */
+    function updateCalc() {
+        const price = parseInt(document.getElementById('calcPrice').value);
+        const downPct = parseInt(document.getElementById('calcDown').value);
+        const term = parseInt(document.getElementById('calcTerm').value);
+        const rate = parseFloat(document.getElementById('calcRate').value);
+
+        const downAmt = price * (downPct / 100);
+        const loanAmt = price - downAmt;
+        const monthlyRate = (rate / 100) / 12;
+        const numPayments = term * 12;
+
+        let monthly;
+        if (monthlyRate === 0) {
+            monthly = loanAmt / numPayments;
+        } else {
+            monthly = loanAmt * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+        }
+
+        const totalPay = monthly * numPayments;
+        const totalInt = totalPay - loanAmt;
+
+        document.getElementById('calcPriceLabel').textContent = formatPriceShort(price);
+        document.getElementById('calcDownLabel').textContent = `${downPct}% — ${formatPriceShort(downAmt)}`;
+        document.getElementById('calcTermLabel').textContent = `${term} Year${term !== 1 ? 's' : ''}`;
+        document.getElementById('calcRateLabel').textContent = `${rate.toFixed(1)}% p.a.`;
+
+        document.getElementById('calcMonthly').textContent = formatPriceShort(Math.round(monthly));
+        document.getElementById('calcLoanAmt').textContent = formatPriceShort(Math.round(loanAmt));
+        document.getElementById('calcTotalInt').textContent = formatPriceShort(Math.round(totalInt));
+        document.getElementById('calcTotalPay').textContent = formatPriceShort(Math.round(totalPay));
+    }
+
     /* ── Load listings from API ── */
     async function loadListings() {
         try {
@@ -2412,7 +2899,6 @@
                 .filter(p => normalizeType(p) !== 'rental')
                 .reverse();
         } catch (e) {
-            // Graceful fallback for offline / demo
             allListings = [];
         }
         applyFilters();
@@ -2424,7 +2910,6 @@
         const type = document.getElementById('filterType').value;
         const sort = document.getElementById('filterSort').value;
 
-        // Price bounds: prefer typed inputs, fall back to sliders
         const rawMin = document.getElementById('priceMin').value;
         const rawMax = document.getElementById('priceMax').value;
         const minPrice = rawMin !== '' ? parseFloat(rawMin) : parseInt(document.getElementById('sliderMin').value);
@@ -2554,7 +3039,6 @@
             </div>
         `;
 
-        // Click anywhere on card to open modal (except admin buttons)
         article.addEventListener('click', (e) => {
             if (e.target.closest('.admin-btn')) return;
             openModal(prop.id);
@@ -2597,12 +3081,10 @@
             </div>
         `;
 
-        // Load gallery
         modalImages = [];
         if (prop.images && prop.images.length > 0) {
             modalImages = prop.images.map(img => img.url);
         } else {
-            // Fetch from images endpoint
             try {
                 const res = await fetch(`/images/property/${id}`);
                 if (res.ok) {
@@ -2620,7 +3102,6 @@
         updateGalleryView();
         lucide.createIcons();
 
-        // Reset agent form
         ['agentName','agentEmail','agentPhone','agentTime','agentMessage'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.value = '';
@@ -2672,7 +3153,7 @@
         showToast('Enquiry sent! Our team will be in touch.', 'success');
     }
 
-    /* ── Admin actions (visible when logged in) ── */
+    /* ── Admin actions ── */
     function editProp(id) {
         window.location.href = `sell.html?edit=${id}`;
     }
@@ -2698,7 +3179,7 @@
         if (savedName) {
             const firstName = savedName.split(' ')[0];
             const initial = firstName.charAt(0).toUpperCase();
-            isAdmin = true; // show admin controls for logged-in users
+            isAdmin = true;
             userActions.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 20px;">
                     <a href="javascript:void(0)" onclick="logout()" class="sign-out-link">Sign Out</a>
@@ -2801,7 +3282,6 @@
         goTestimonial(tIndex + dir);
     }
 
-    /* Auto-advance testimonials */
     setInterval(() => moveTestimonials(1), 5000);
 
     /* ── Back to Top ── */
@@ -2817,6 +3297,7 @@
         updatePriceDisplay();
         loadListings();
         buildTDots();
+        updateCalc();
         lucide.createIcons();
     };
 </script>
