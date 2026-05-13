@@ -877,9 +877,13 @@
                 ? `${item.numOfFloors || 0} floor${Number(item.numOfFloors) === 1 ? '' : 's'}`
                 : `Floor ${item.floorNumber || 0}`;
 
+            const thumbContent = (item.images && item.images.length > 0) 
+                ? `<img src="${item.images[0].url}" style="width:100%;height:100%;object-fit:cover;border-radius:2px;">` 
+                : `<i data-lucide="${type === 'house' ? 'home' : 'building-2'}"></i>`;
+
             return `
                 <article class="seller-card">
-                    <div class="thumb"><i data-lucide="${type === 'house' ? 'home' : 'building-2'}"></i></div>
+                    <div class="thumb" id="thumb-${item.id}">${thumbContent}</div>
                     <div>
                         <h4>${escapeHtml(item.title || 'Untitled property')}</h4>
                         <div class="meta-line">
@@ -896,6 +900,22 @@
                 </article>
             `;
         }).join('');
+
+        filtered.forEach(item => {
+            if (!item.imagesLoaded) {
+                fetch(`/images/property/${item.id}`)
+                    .then(res => res.ok ? res.json() : [])
+                    .then(imgs => {
+                        item.images = imgs;
+                        item.imagesLoaded = true;
+                        if (imgs && imgs.length > 0 && imgs[0].url) {
+                            const thumb = document.getElementById(`thumb-${item.id}`);
+                            if (thumb) thumb.innerHTML = `<img src="${imgs[0].url}" style="width:100%;height:100%;object-fit:cover;border-radius:2px;">`;
+                        }
+                    })
+                    .catch(e => console.error(e));
+            }
+        });
         lucide.createIcons();
     }
 

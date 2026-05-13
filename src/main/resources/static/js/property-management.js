@@ -397,3 +397,70 @@ const propertyApp = (() => {
 })();
 
 window.addEventListener("DOMContentLoaded", propertyApp.init);
+
+// 1. Updated renderInventory Function
+function renderInventory(searchTerm = "") {
+    const list = document.querySelector("#inventoryList");
+    if (!list) return;
+
+    // Filter for Houses/Apartments and match search input
+    const filtered = state.properties
+        .filter(property => property.type === "house" || property.type === "apartment")
+        .filter(property =>
+            property.id.toString().includes(searchTerm) ||
+            property.title.toLowerCase().includes(searchTerm) ||
+            property.location.toLowerCase().includes(searchTerm)
+        )
+        .sort((a, b) => (b.id || 0) - (a.id || 0));
+
+    // Update the Sale count in the dashboard header
+    const saleCountNode = document.querySelector(selectors.sell.saleCount);
+    if (saleCountNode) saleCountNode.textContent = String(filtered.length);
+
+    if (filtered.length === 0) {
+        list.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 50px; opacity: 0.5;">No sale properties found.</td></tr>`;
+        return;
+    }
+
+    list.innerHTML = filtered.map(property => `
+        <tr>
+            <td style="color: #c9a96e; font-weight: bold;">#${property.id}</td>
+            <td><span class="tag">${property.type}</span></td>
+            <td><strong>${property.title}</strong></td>
+            <td>${property.location}</td>
+            <td style="font-weight: 600;">${formatCurrency(property.price)}</td>
+            <td>
+                <div class="action-gap">
+                    <button class="btn-icon btn-edit-gold" data-action="edit" data-id="${property.id}">
+                        <i data-lucide="edit-3" style="width:14px; height:14px;"></i> Edit
+                    </button>
+                    <button class="btn-icon btn-delete-red" data-action="delete" data-id="${property.id}">
+                        <i data-lucide="trash-2" style="width:14px; height:14px;"></i> Delete
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join("");
+
+    if (window.lucide) window.lucide.createIcons();
+
+    // Add event listeners back to the newly created buttons
+    list.querySelectorAll("[data-action='edit']").forEach(btn => {
+        btn.onclick = () => {
+            const prop = state.properties.find(p => p.id === Number(btn.dataset.id));
+            if (prop) fillForm(prop);
+        };
+    });
+
+    list.querySelectorAll("[data-action='delete']").forEach(btn => {
+        btn.onclick = () => deleteProperty(Number(btn.dataset.id)).catch(err => showToast(err.message, true));
+    });
+}
+
+// 2. Add Search Listener (Place inside setupSellPage function)
+const searchInput = document.getElementById('inventorySearch');
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        renderInventory(e.target.value.toLowerCase());
+    });
+}
