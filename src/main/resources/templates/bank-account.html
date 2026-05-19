@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bank Accounts</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <button type="button" onclick="window.location.href='/dashboard'">
+        Back to Dashboard
+    </button>
+
+    <h1>Bank Accounts</h1>
+
+    <form id="bankAccountForm">
+
+        <input type="text" id="bankName" placeholder="Bank Name" required>
+
+        <input type="text" id="accountHolderName" placeholder="Account Holder Name" required>
+
+        <input type="text" id="accountNumber" placeholder="Account Number" required>
+
+        <input type="text" id="branchName" placeholder="Branch Name" required>
+
+        <input type="number" id="userId" placeholder="User ID" required>
+
+        <button type="submit">Save Bank Account</button>
+
+    </form>
+
+    <h3 id="message"></h3>
+
+    <button type="button" onclick="loadBankAccounts()">
+        Load Bank Accounts
+    </button>
+
+    <div id="bankAccountList"></div>
+
+</div>
+
+<script src="/static/js/bank-account.js"></script>
+</body>
+</html>

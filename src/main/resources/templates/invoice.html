@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invoices</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <button type="button" onclick="window.location.href='/dashboard'">
+        Back to Dashboard
+    </button>
+
+    <h1>Invoices</h1>
+
+    <button type="button" onclick="loadInvoices()">
+        Load Invoices
+    </button>
+
+    <div id="invoiceList"></div>
+
+</div>
+
+<script src="/static/js/invoice.js"></script>
+</body>
+</html>

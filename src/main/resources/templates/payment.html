@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Page</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <button type="button" onclick="window.location.href='/dashboard'">
+        Back to Dashboard
+    </button>
+
+    <h1>Create Payment</h1>
+
+    <form id="paymentForm">
+
+        <input type="number" id="userId" placeholder="User ID" required>
+
+        <input type="number" id="propertyId" placeholder="Property ID" required>
+
+        <input type="number" id="amount" placeholder="Amount" required>
+
+        <select id="paymentMethod">
+            <option value="BANK_TRANSFER">BANK_TRANSFER</option>
+            <option value="CREDIT_CARD">CREDIT_CARD</option>
+            <option value="DEBIT_CARD">DEBIT_CARD</option>
+            <option value="CASH">CASH</option>
+        </select>
+
+        <select id="paymentType">
+            <option value="POST_BOOST">POST_BOOST</option>
+            <option value="MONTHLY_RENT">MONTHLY_RENT</option>
+            <option value="PROPERTY_PURCHASE">PROPERTY_PURCHASE</option>
+        </select>
+
+        <button type="submit">Submit Payment</button>
+
+    </form>
+
+    <h3 id="message"></h3>
+
+</div>
+
+<script src="/static/js/payment.js"></script>
+</body>
+</html>
