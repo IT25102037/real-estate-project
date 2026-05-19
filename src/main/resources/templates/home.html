@@ -1,43 +1,146 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Finance Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Overview</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
 
-<div class="dashboard-container">
-    <h1>Finance Dashboard</h1>
-    <p class="subtitle">Real Estate Finance & Payment Module</p>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"></div>
+            <div class="brand">
+                <h2>RealEstate</h2>
+                <span>Finance Suite</span>
+            </div>
+        </div>
 
-    <div class="dashboard-grid">
-
-        <button type="button" onclick="window.location.href='/payment-page'">
-            Make Payment
-        </button>
-
-        <button type="button" onclick="window.location.href='/invoice-page'">
-            View Invoices
-        </button>
-
-        <button type="button" onclick="window.location.href='/payment-history-page'">
-            Payment History
-        </button>
-
-        <button type="button" onclick="window.location.href='/bank-account-page'">
-            Bank Accounts
-        </button>
-
-        <button type="button" onclick="window.location.href='/rent-payment-page'">
-            Rent Payments
-        </button>
-
-        <button type="button" onclick="window.location.href='/boost-payment-page'">
-            Boost Payments
-        </button>
-
+        <div class="nav-links">
+            <a href="/dashboard" class="nav-link active">
+                <div class="dot"></div>
+                <span>Dashboard</span>
+            </a>
+            <a href="/payment-page" class="nav-link">
+                <div class="dot"></div>
+                <span>New Payment</span>
+            </a>
+            <a href="/invoice-page" class="nav-link">
+                <div class="dot"></div>
+                <span>Invoices</span>
+            </a>
+            <a href="/payment-history-page" class="nav-link">
+                <div class="dot"></div>
+                <span>Payment History</span>
+            </a>
+            <a href="/bank-account-page" class="nav-link">
+                <div class="dot"></div>
+                <span>Bank Accounts</span>
+            </a>
+        </div>
     </div>
-</div>
 
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-section">
+            <div class="header-text">
+                <h1>Finance Overview</h1>
+                <p>Live snapshot of payments, invoices and bank activity.</p>
+            </div>
+            <div class="header-actions">
+                <a href="/payment-page" class="btn btn-primary">+ New Payment</a>
+                <a href="/invoice-page" class="btn btn-secondary">View Invoices</a>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">Total Collected</div>
+                <div class="stat-value" id="stat-total-collected">$0.00</div>
+                <div class="stat-subtitle text-success">▲ Updated in real time</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Pending Invoices</div>
+                <div class="stat-value" id="stat-pending-invoices">0</div>
+                <div class="stat-subtitle text-warning">Awaiting payment</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Bank Accounts</div>
+                <div class="stat-value" id="stat-bank-accounts">0</div>
+                <div class="stat-subtitle text-info">Active accounts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Overdue</div>
+                <div class="stat-value" id="stat-overdue">0</div>
+                <div class="stat-subtitle text-danger">Needs follow-up</div>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <div class="table-header">
+                <h3>Recent Payments</h3>
+                <a href="/payment-history-page" class="view-all">View all →</a>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Property</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="recent-payments-tbody">
+                    <tr><td colspan="5" class="text-center">No recent payments yet.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async function() {
+            try {
+                const summaryRes = await fetch('/api/finance/summary');
+                if (summaryRes.ok) {
+                    const data = await summaryRes.json();
+                    document.getElementById('stat-total-collected').textContent = '$' + (data.totalRevenue || 0).toLocaleString(undefined, {minimumFractionDigits: 2});
+                    document.getElementById('stat-pending-invoices').textContent = data.pendingInvoices || 0;
+                    document.getElementById('stat-bank-accounts').textContent = data.totalBankAccounts || 0;
+                    document.getElementById('stat-overdue').textContent = data.overdueInvoices || 0;
+                }
+
+                const paymentsRes = await fetch('/api/payments');
+                if (paymentsRes.ok) {
+                    let payments = await paymentsRes.json();
+                    const tbody = document.getElementById('recent-payments-tbody');
+                    
+                    if (payments && payments.length > 0) {
+                        tbody.innerHTML = '';
+                        payments.slice(0, 5).forEach(payment => {
+                            const tr = document.createElement('tr');
+                            
+                            let statusClass = 'badge-pending';
+                            if (payment.paymentStatus === 'COMPLETED' || payment.paymentStatus === 'PAID') statusClass = 'badge-success';
+                            if (payment.paymentStatus === 'FAILED') statusClass = 'badge-danger';
+
+                            tr.innerHTML = `
+                                <td>${new Date().toISOString().split('T')[0]}</td>
+                                <td>Property #${payment.propertyId || '-'}</td>
+                                <td>${(payment.paymentMethod || '-').replace('_', ' ')}</td>
+                                <td><span class="badge ${statusClass}">${payment.paymentStatus || 'UNKNOWN'}</span></td>
+                                <td>$${(payment.amount || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to load dashboard data", err);
+            }
+        });
+    </script>
 </body>
 </html>

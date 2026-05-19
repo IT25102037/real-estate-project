@@ -1,27 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment History</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
 
-<div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"></div>
+            <div class="brand">
+                <h2>RealEstate</h2>
+                <span>Finance Suite</span>
+            </div>
+        </div>
 
-    <button type="button" onclick="window.location.href='/dashboard'">
-        Back to Dashboard
-    </button>
+        <div class="nav-links">
+            <a href="/dashboard" class="nav-link">
+                <div class="dot"></div>
+                <span>Dashboard</span>
+            </a>
+            <a href="/payment-page" class="nav-link">
+                <div class="dot"></div>
+                <span>New Payment</span>
+            </a>
+            <a href="/invoice-page" class="nav-link">
+                <div class="dot"></div>
+                <span>Invoices</span>
+            </a>
+            <a href="/payment-history-page" class="nav-link active">
+                <div class="dot"></div>
+                <span>Payment History</span>
+            </a>
+            <a href="/bank-account-page" class="nav-link">
+                <div class="dot"></div>
+                <span>Bank Accounts</span>
+            </a>
+        </div>
+    </div>
 
-    <h1>Payment History</h1>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-section">
+            <div class="header-text">
+                <h1>Payment History</h1>
+                <p>View the comprehensive log of all payment transactions.</p>
+            </div>
+            <div class="header-actions">
+                <button type="button" class="btn btn-secondary" onclick="loadPaymentHistory()">Refresh History</button>
+            </div>
+        </div>
 
-    <button type="button" onclick="loadPaymentHistory()">
-        Load Payment History
-    </button>
+        <div class="table-section">
+            <div id="historyList">
+                <p class="text-center text-secondary">Loading history...</p>
+            </div>
+        </div>
+    </div>
 
-    <div id="historyList"></div>
-
-</div>
-
-<script src="/static/js/payment-history.js"></script>
+    <script src="/static/js/payment-history.js"></script>
 </body>
 </html>
