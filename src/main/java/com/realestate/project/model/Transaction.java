@@ -25,7 +25,7 @@ public class Transaction {
     private String client;     // e.g. "Amara Silva"
 
     @Column(nullable = false)
-    private String value;      // e.g. "$2.4M"  (stored as string to match frontend format)
+    private String value;      // e.g. "Rs 2.4M"  (stored as string to match frontend format)
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

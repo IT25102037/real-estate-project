@@ -869,23 +869,21 @@
 
         .msg-body { flex: 1; }
         .msg-sender {
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 500;
             color: var(--text-main);
             margin-bottom: 2px;
         }
         .msg-preview {
-            font-size: 11px;
-            color: rgba(255,255,255,0.3);
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 160px;
         }
         .msg-time {
-            font-size: 9px;
-            color: rgba(255,255,255,0.2);
-            letter-spacing: 1px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
             white-space: nowrap;
             margin-top: 2px;
         }
@@ -970,7 +968,16 @@
             transition: border-color 0.2s;
         }
         .form-input:focus { border-color: var(--gold-border); }
+        .form-input.invalid { border-color: rgba(239, 68, 68, 0.65); }
         .form-input option { background: #1a1a1a; }
+        .form-error {
+            min-height: 14px;
+            margin-top: 6px;
+            color: #fca5a5;
+            font-size: 10px;
+            line-height: 1.4;
+            letter-spacing: 0.4px;
+        }
 
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
@@ -1089,7 +1096,7 @@
             <div class="kpi-change up"><i data-lucide="trending-up"></i> +12% this month</div>
         </div>
         <div class="kpi-card">
-            <div class="kpi-icon"><i data-lucide="dollar-sign"></i></div>
+                <div class="kpi-icon"><i data-lucide="banknote"></i></div>
             <div class="kpi-label">Total Revenue</div>
             <div class="kpi-value" id="kpiRevenue">—</div>
             <div class="kpi-change up"><i data-lucide="trending-up"></i> +8.3% vs last</div>
@@ -1156,17 +1163,19 @@
         </div>
     </div>
 
-    <!-- Bottom Row: Table + Agents -->
-    <div class="bottom-row">
+    <!-- Recent Transactions one by one -->
+    <div class="stacked-row">
         <!-- Transaction Table -->
         <div class="table-card">
             <div class="table-header">
                 <div>
                     <h3>Recent <em>Transactions</em></h3>
                 </div>
-                <div class="table-actions">
-                    <button class="icon-btn" title="Search" onclick="alert('Search transactions...')"><i data-lucide="search"></i></button>
-                    <button class="icon-btn" title="Filter" onclick="alert('Filter options...')"><i data-lucide="filter"></i></button>
+                <div class="table-actions" style="display:flex; align-items:center; gap:8px;">
+                    <div id="txSearchContainer" style="display:none; align-items:center; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:20px; padding:2px 10px;">
+                        <input type="text" id="txSearchInput" placeholder="Search..." oninput="filterTransactions(this.value)" style="background:transparent; border:none; color:var(--text-main); font-size:12px; outline:none; width:120px;" />
+                    </div>
+                    <button class="icon-btn" title="Search" onclick="toggleTxSearch()"><i data-lucide="search"></i></button>
                     <button class="icon-btn" title="Add" onclick="openAddModal()"><i data-lucide="plus"></i></button>
                 </div>
             </div>
@@ -1185,12 +1194,21 @@
                 </tbody>
             </table>
         </div>
+    </div>
 
+    <!-- Top Agents one by one -->
+    <div class="stacked-row">
         <!-- Agent Leaderboard -->
         <div class="agents-card">
-            <div class="agents-header">
+            <div class="agents-header" style="display:flex; justify-content:space-between; align-items:center;">
                 <h3>Top <em>Agents</em></h3>
-                <button class="icon-btn" onclick="openAddAgentModal()"><i data-lucide="plus"></i></button>
+                <div class="agent-actions" style="display:flex; align-items:center; gap:8px;">
+                    <div id="agentSearchContainer" style="display:none; align-items:center; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:20px; padding:2px 10px;">
+                        <input type="text" id="agentSearchInput" placeholder="Search..." oninput="filterAgents(this.value)" style="background:transparent; border:none; color:var(--text-main); font-size:12px; outline:none; width:120px;" />
+                    </div>
+                    <button class="icon-btn" title="Search" onclick="toggleAgentSearch()"><i data-lucide="search"></i></button>
+                    <button class="icon-btn" onclick="openAddAgentModal()"><i data-lucide="plus"></i></button>
+                </div>
             </div>
             <div id="agentList">
                 <!-- Injected by JS -->
@@ -1198,19 +1216,27 @@
         </div>
     </div>
 
-    <!-- Third Row: Activity + Geo + Messages -->
-    <div class="third-row">
-        <!-- Live Activity -->
-        <div class="feed-card">
-            <div class="feed-header">
-                <h3>Live <em>Activity</em></h3>
-                <div class="live-dot">Live</div>
+    <!-- Messages one by one -->
+    <div class="stacked-row">
+        <!-- Messages Summary -->
+        <div class="msg-card message-status-mini">
+            <div class="msg-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h3>Customer <em>Messages</em></h3>
+                <div class="msg-status-badges" style="display:flex; gap:10px; align-items:center;">
+                    <span class="status-mini new">New <b id="msgNew">0</b></span>
+                    <span class="status-mini pending">Pending <b id="msgPending">0</b></span>
+                    <span class="status-mini replied">Replied <b id="msgReplied">0</b></span>
+                    <span class="status-mini reject">Reject <b id="msgReject">0</b></span>
+                </div>
             </div>
-            <div id="activityFeed">
+            <div id="msgList">
                 <!-- Injected by JS -->
             </div>
         </div>
+    </div>
 
+    <!-- Geographic Reach and Live Activity side by side -->
+    <div class="geo-activity-row">
         <!-- Geographic Distribution -->
         <div class="geo-card">
             <div class="geo-header">
@@ -1222,15 +1248,13 @@
             </div>
         </div>
 
-        <!-- Messages Summary -->
-        <div class="message-status-mini">
-            <div class="msg-header">
-                <span class="status-mini new">New <b id="msgNew">0</b></span>
-                <span class="status-mini pending">Pending <b id="msgPending">0</b></span>
-                <span class="status-mini replied">Replied <b id="msgReplied">0</b></span>
-                <span class="status-mini reject">Reject <b id="msgReject">0</b></span>
+        <!-- Live Activity -->
+        <div class="feed-card">
+            <div class="feed-header">
+                <h3>Live <em>Activity</em></h3>
+                <div class="live-dot">Live</div>
             </div>
-            <div id="msgList">
+            <div id="activityFeed">
                 <!-- Injected by JS -->
             </div>
         </div>
@@ -1247,21 +1271,21 @@
         <div class="form-row">
             <div class="form-group">
                 <label class="form-label">Property Name</label>
-                <input class="form-input" id="fieldProperty" placeholder="e.g. Azure Penthouse" />
+                <input class="form-input" id="fieldProperty" type="text" minlength="2" maxlength="80" required autocomplete="off" placeholder="e.g. Azure Penthouse" />
             </div>
             <div class="form-group">
                 <label class="form-label">Client Name</label>
-                <input class="form-input" id="fieldClient" placeholder="e.g. James Perera" />
+                <input class="form-input" id="fieldClient" type="text" minlength="2" maxlength="70" required autocomplete="off" placeholder="e.g. James Perera" />
             </div>
         </div>
         <div class="form-row">
             <div class="form-group">
                 <label class="form-label">Transaction Value</label>
-                <input class="form-input" id="fieldValue" placeholder="e.g. $1.2M" />
+                <input class="form-input" id="fieldValue" type="text" inputmode="decimal" maxlength="20" required autocomplete="off" placeholder="e.g. Rs 1.2M" />
             </div>
             <div class="form-group">
                 <label class="form-label">Status</label>
-                <select class="form-input" id="fieldStatus">
+                <select class="form-input" id="fieldStatus" required>
                     <option value="Sold">Sold</option>
                     <option value="Pending">Pending</option>
                     <option value="Rented">Rented</option>
@@ -1301,34 +1325,29 @@
         <div class="form-row">
             <div class="form-group">
                 <label class="form-label">Name</label>
-                <input class="form-input" id="agentName" placeholder="e.g. Amara Silva" />
+                <input class="form-input" id="agentName" type="text" minlength="2" maxlength="70" required autocomplete="off" placeholder="e.g. Amara Silva" />
             </div>
             <div class="form-group">
                 <label class="form-label">Role</label>
-                <input class="form-input" id="agentRole" placeholder="e.g. Senior Agent" />
+                <select class="form-input" id="agentRole" required>
+                    <option value="Senior Agent">Senior Agent</option>
+                    <option value="Luxury Specialist">Luxury Specialist</option>
+                    <option value="Agent">Agent</option>
+                    <option value="Junior Agent">Junior Agent</option>
+                    <option value="Other">Other</option>
+                </select>
             </div>
         </div>
         <div class="form-row">
             <div class="form-group">
                 <label class="form-label">Sales Amount</label>
-                <input class="form-input" id="agentSales" placeholder="e.g. $12.4M" />
+                <input class="form-input" id="agentSales" type="text" inputmode="decimal" maxlength="20" required autocomplete="off" placeholder="e.g. Rs 12.4M" />
             </div>
             <div class="form-group">
                 <label class="form-label">Deals Count</label>
-                <input class="form-input" id="agentCount" placeholder="e.g. 8 deals" />
+                <input class="form-input" id="agentCount" type="number" min="0" max="9999" step="1" required placeholder="e.g. 8" />
             </div>
         </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label class="form-label">Performance Pct (%)</label>
-                <input class="form-input" id="agentPct" type="number" placeholder="e.g. 95" />
-            </div>
-            <div class="form-group">
-                <label class="form-label">Theme Color</label>
-                <input class="form-input" id="agentColor" type="color" value="#c9a96e" style="padding:4px;" />
-            </div>
-        </div>
-
         <div class="modal-footer">
             <button class="btn-outline" onclick="closeAgentModal()">Cancel</button>
             <button class="btn-gold" onclick="saveAgent()">
@@ -1351,11 +1370,11 @@
        DATA STORE (CRUD)
     =========================== */
     let transactions = [
-        { id: 1, property: 'Azure Residences', client: 'Amara Silva', value: '$2.4M', status: 'Sold' },
-        { id: 2, property: 'Skyline Penthouse', client: 'Rohan Perera', value: '$3.1M', status: 'Pending' },
-        { id: 3, property: 'VIMAN Ultra-Loft', client: 'Dilini Fernando', value: '$1.8M', status: 'Rented' },
-        { id: 4, property: 'Sunrise Ridge Villa', client: 'Kasun Jayawardena', value: '$4.5M', status: 'Sold' },
-        { id: 5, property: 'TRI-ZEN Apartment', client: 'Nimasha De Silva', value: '$980K', status: 'Pending' },
+        { id: 1, property: 'Azure Residences', client: 'Amara Silva', value: 'Rs 2.4M', status: 'Sold' },
+        { id: 2, property: 'Skyline Penthouse', client: 'Rohan Perera', value: 'Rs 3.1M', status: 'Pending' },
+        { id: 3, property: 'VIMAN Ultra-Loft', client: 'Dilini Fernando', value: 'Rs 1.8M', status: 'Rented' },
+        { id: 4, property: 'Sunrise Ridge Villa', client: 'Kasun Jayawardena', value: 'Rs 4.5M', status: 'Sold' },
+        { id: 5, property: 'TRI-ZEN Apartment', client: 'Nimasha De Silva', value: 'Rs 980K', status: 'Pending' },
     ];
 
     let nextId = 6;
@@ -1367,21 +1386,202 @@
     let deletingAgentId = null;
     let agentToDelete = null;
 
+    const PROPERTY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9 .,'#&()/\-]{1,79}$/;
+    const PERSON_NAME_PATTERN = /^[A-Za-z][A-Za-z .'-]{1,69}$/;
+    const MONEY_PATTERN = /^Rs\.?\s?(\d{1,3}(,\d{3})+|\d+)(\.\d{1,2})?\s?([KkMm])?$/i;
+    const VALID_STATUSES = ['Sold', 'Pending', 'Rented'];
+    const VALID_AGENT_ROLES = ['Senior Agent', 'Luxury Specialist', 'Agent', 'Junior Agent', 'Other'];
+
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function clearFieldError(id) {
+        const input = document.getElementById(id);
+        if (!input) return;
+        input.classList.remove('invalid');
+        const existing = document.getElementById(`${id}Error`);
+        if (existing) existing.remove();
+    }
+
+    function setFieldError(id, message) {
+        const input = document.getElementById(id);
+        if (!input) return;
+        input.classList.add('invalid');
+        input.setAttribute('aria-invalid', 'true');
+        if (!document.getElementById(`${id}Error`)) {
+            const error = document.createElement('div');
+            error.className = 'form-error';
+            error.id = `${id}Error`;
+            input.insertAdjacentElement('afterend', error);
+        }
+        document.getElementById(`${id}Error`).textContent = message;
+    }
+
+    function clearValidation(ids) {
+        ids.forEach(id => {
+            clearFieldError(id);
+            const input = document.getElementById(id);
+            if (input) input.removeAttribute('aria-invalid');
+        });
+    }
+
+    function normalizeMoney(value) {
+        const match = value.trim().match(MONEY_PATTERN);
+        if (!match) return value.trim();
+        const amount = match[1].replace(/,/g, '');
+        const decimal = match[3] || '';
+        const suffix = match[4] ? match[4].toUpperCase() : '';
+        return `Rs ${amount}${decimal}${suffix}`;
+    }
+
+    function moneyToNumber(value) {
+        const match = value.trim().match(MONEY_PATTERN);
+        if (!match) return NaN;
+        const amount = Number(`${match[1].replace(/,/g, '')}${match[3] || ''}`);
+        const suffix = match[4] ? match[4].toUpperCase() : '';
+        if (suffix === 'M') return amount * 1000000;
+        if (suffix === 'K') return amount * 1000;
+        return amount;
+    }
+
+    function parseDealCount(value) {
+        const match = String(value ?? '').match(/\d+/);
+        return match ? Number(match[0]) : NaN;
+    }
+
+    function formatDealCount(value) {
+        const deals = Number(value);
+        return `${deals} ${deals === 1 ? 'deal' : 'deals'}`;
+    }
+
+    function validateTransactionForm() {
+        const ids = ['fieldProperty', 'fieldClient', 'fieldValue', 'fieldStatus'];
+        clearValidation(ids);
+
+        const property = document.getElementById('fieldProperty').value.trim();
+        const client = document.getElementById('fieldClient').value.trim();
+        const value = document.getElementById('fieldValue').value.trim();
+        const status = document.getElementById('fieldStatus').value;
+        const errors = [];
+
+        if (!PROPERTY_PATTERN.test(property)) {
+            errors.push(['fieldProperty', 'Use 2-80 letters/numbers and common property punctuation only.']);
+        }
+        if (!PERSON_NAME_PATTERN.test(client)) {
+            errors.push(['fieldClient', 'Use 2-70 letters, spaces, apostrophes, hyphens, or periods.']);
+        }
+        if (!MONEY_PATTERN.test(value) || moneyToNumber(value) <= 0) {
+            errors.push(['fieldValue', 'Use a positive Rs amount, e.g. Rs 1.2M, Rs 980K, or Rs 1200000.']);
+        }
+        if (!VALID_STATUSES.includes(status)) {
+            errors.push(['fieldStatus', 'Choose a valid transaction status.']);
+        }
+
+        errors.forEach(([id, message]) => setFieldError(id, message));
+        if (errors.length > 0) {
+            document.getElementById(errors[0][0]).focus();
+            showToast(errors[0][1]);
+            return null;
+        }
+
+        return { property, client, value: normalizeMoney(value), status };
+    }
+
+    function validateAgentForm() {
+        const ids = ['agentName', 'agentRole', 'agentSales', 'agentCount'];
+        clearValidation(ids);
+
+        const name = document.getElementById('agentName').value.trim();
+        const role = document.getElementById('agentRole').value.trim();
+        const sales = document.getElementById('agentSales').value.trim();
+        const countValue = document.getElementById('agentCount').value.trim();
+        const deals = Number(countValue);
+        const errors = [];
+
+        if (!PERSON_NAME_PATTERN.test(name)) {
+            errors.push(['agentName', 'Use 2-70 letters, spaces, apostrophes, hyphens, or periods.']);
+        }
+        if (!VALID_AGENT_ROLES.includes(role)) {
+            errors.push(['agentRole', 'Choose a valid agent role.']);
+        }
+        if (!MONEY_PATTERN.test(sales) || moneyToNumber(sales) < 0) {
+            errors.push(['agentSales', 'Use an Rs amount, e.g. Rs 12.4M, Rs 980K, or Rs 1200000.']);
+        }
+        if (countValue === '' || !Number.isInteger(deals) || deals < 0 || deals > 9999) {
+            errors.push(['agentCount', 'Deals count must be a whole number from 0 to 9999.']);
+        }
+
+        errors.forEach(([id, message]) => setFieldError(id, message));
+        if (errors.length > 0) {
+            document.getElementById(errors[0][0]).focus();
+            showToast(errors[0][1]);
+            return null;
+        }
+
+        return { name, role, sales: normalizeMoney(sales), count: formatDealCount(deals) };
+    }
+
+    async function readErrorMessage(response, fallback) {
+        try {
+            const data = await response.json();
+            if (data && data.errors) {
+                return Object.values(data.errors)[0] || fallback;
+            }
+            return data.message || data.error || fallback;
+        } catch (e) {
+            return fallback;
+        }
+    }
+
     /* ===========================
        RENDER TABLE
     =========================== */
+    let txSearchQuery = '';
+
+    function toggleTxSearch() {
+        const container = document.getElementById('txSearchContainer');
+        const input = document.getElementById('txSearchInput');
+        if (container.style.display === 'none' || !container.style.display) {
+            container.style.display = 'flex';
+            input.focus();
+        } else {
+            container.style.display = 'none';
+            input.value = '';
+            filterTransactions('');
+        }
+    }
+
+    function filterTransactions(val) {
+        txSearchQuery = val;
+        renderTable();
+    }
+
     function renderTable() {
         const tbody = document.getElementById('transactionTableBody');
         tbody.innerHTML = '';
 
-        transactions.forEach(tx => {
+        const query = txSearchQuery.toLowerCase().trim();
+        const filtered = transactions.filter(tx => {
+            return (tx.property && tx.property.toLowerCase().includes(query)) ||
+                   (tx.client && tx.client.toLowerCase().includes(query)) ||
+                   (tx.value && tx.value.toLowerCase().includes(query)) ||
+                   (tx.status && tx.status.toLowerCase().includes(query));
+        });
+
+        filtered.forEach(tx => {
             const statusClass = tx.status === 'Sold' ? 'sold' : tx.status === 'Pending' ? 'pending' : 'rented';
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td class="td-primary">${tx.property}</td>
-                <td>${tx.client}</td>
-                <td style="color:var(--gold);font-weight:600;">${tx.value}</td>
-                <td><span class="status-badge ${statusClass}">${tx.status}</span></td>
+                <td class="td-primary">${escapeHtml(tx.property)}</td>
+                <td>${escapeHtml(tx.client)}</td>
+                <td style="color:var(--gold);font-weight:600;">${escapeHtml(tx.value)}</td>
+                <td><span class="status-badge ${statusClass}">${escapeHtml(tx.status)}</span></td>
                 <td>
                     <div class="row-actions">
                         <button class="row-btn" title="Edit" onclick="editRecord(${tx.id})"><i data-lucide="pencil"></i></button>
@@ -1398,6 +1598,7 @@
        CRUD OPERATIONS
     =========================== */
     function openAddModal() {
+        clearValidation(['fieldProperty', 'fieldClient', 'fieldValue', 'fieldStatus']);
         editingId = null;
         document.getElementById('modalTitle').innerHTML = 'Add <em>Record</em>';
         document.getElementById('modalSubtitle').textContent = 'Create a new transaction entry in the system.';
@@ -1412,6 +1613,7 @@
     function editRecord(id) {
         const tx = transactions.find(t => t.id === id);
         if (!tx) return;
+        clearValidation(['fieldProperty', 'fieldClient', 'fieldValue', 'fieldStatus']);
         editingId = id;
         document.getElementById('modalTitle').innerHTML = 'Edit <em>Record</em>';
         document.getElementById('modalSubtitle').textContent = 'Update the transaction details below.';
@@ -1424,17 +1626,8 @@
     }
 
     async function saveRecord() {
-        const property = document.getElementById('fieldProperty').value.trim();
-        const client = document.getElementById('fieldClient').value.trim();
-        const value = document.getElementById('fieldValue').value.trim();
-        const status = document.getElementById('fieldStatus').value;
-
-        if (!property || !client || !value) {
-            showToast('Please fill all fields.');
-            return;
-        }
-
-        const payload = { property, client, value, status };
+        const payload = validateTransactionForm();
+        if (!payload) return;
 
         try {
             const url = editingId 
@@ -1458,7 +1651,7 @@
                 renderTable();
                 closeModal();
             } else {
-                showToast('Failed to save record to server.');
+                showToast(await readErrorMessage(res, 'Failed to save record to server.'));
             }
         } catch(e) {
             console.error(e);
@@ -1499,6 +1692,7 @@
 
     function closeModal() {
         document.getElementById('crudModal').classList.remove('open');
+        clearValidation(['fieldProperty', 'fieldClient', 'fieldValue', 'fieldStatus']);
     }
 
     function closeConfirm() {
@@ -1572,7 +1766,7 @@
             data: {
                 labels: chartData[period].labels,
                 datasets: [{
-                    label: 'Revenue ($k)',
+                    label: 'Revenue (Rs k)',
                     data: chartData[period].data,
                     borderColor: '#c9a96e',
                     borderWidth: 2.5,
@@ -1646,50 +1840,78 @@
        AGENT LEADERBOARD
     =========================== */
     let agents = [
-        { id: 1, name: 'Amara Silva', role: 'Senior Agent', sales: '$12.4M', count: '8 deals', pct: 95, color: '#c9a96e' },
-        { id: 2, name: 'Rohan Perera', role: 'Luxury Specialist', sales: '$9.8M', count: '6 deals', pct: 80, color: '#818cf8' },
-        { id: 3, name: 'Dilini Fernando', role: 'Agent', sales: '$7.2M', count: '5 deals', pct: 62, color: '#22d3ee' },
-        { id: 4, name: 'Kasun Jayawardena', role: 'Agent', sales: '$5.5M', count: '4 deals', pct: 48, color: '#10b981' },
-        { id: 5, name: 'Nimasha De Silva', role: 'Junior Agent', sales: '$3.1M', count: '3 deals', pct: 30, color: '#f59e0b' },
+        { id: 1, name: 'Amara Silva', role: 'Senior Agent', sales: 'Rs 12.4M', count: '8 deals' },
+        { id: 2, name: 'Rohan Perera', role: 'Luxury Specialist', sales: 'Rs 9.8M', count: '6 deals' },
+        { id: 3, name: 'Dilini Fernando', role: 'Agent', sales: 'Rs 7.2M', count: '5 deals' },
+        { id: 4, name: 'Kasun Jayawardena', role: 'Agent', sales: 'Rs 5.5M', count: '4 deals' },
+        { id: 5, name: 'Nimasha De Silva', role: 'Junior Agent', sales: 'Rs 3.1M', count: '3 deals' },
     ];
+
+    let agentSearchQuery = '';
+    const agentPalette = ['#c9a96e', '#818cf8', '#22d3ee', '#10b981', '#f59e0b'];
+
+    function toggleAgentSearch() {
+        const container = document.getElementById('agentSearchContainer');
+        const input = document.getElementById('agentSearchInput');
+        if (container.style.display === 'none' || !container.style.display) {
+            container.style.display = 'flex';
+            input.focus();
+        } else {
+            container.style.display = 'none';
+            input.value = '';
+            filterAgents('');
+        }
+    }
+
+    function filterAgents(val) {
+        agentSearchQuery = val;
+        renderAgents();
+    }
 
     function renderAgents() {
         const list = document.getElementById('agentList');
-        list.innerHTML = agents.map((a, i) => `
+        const query = agentSearchQuery.toLowerCase().trim();
+        const filtered = agents.filter(a => {
+            return (a.name && a.name.toLowerCase().includes(query)) ||
+                   (a.role && a.role.toLowerCase().includes(query)) ||
+                   (a.sales && a.sales.toLowerCase().includes(query)) ||
+                   (a.count && a.count.toLowerCase().includes(query));
+        });
+
+        list.innerHTML = filtered.map((a, i) => {
+            const avatarColor = agentPalette[i % agentPalette.length];
+            return `
             <div class="agent-item">
-                <div class="agent-avatar" style="background:rgba(${hexToRgb(a.color)},0.15);color:${a.color};border:1px solid rgba(${hexToRgb(a.color)},0.3);">
-                    ${a.name ? a.name.charAt(0) : 'A'}
+                <div class="agent-avatar" style="background:rgba(${hexToRgb(avatarColor)},0.15);color:${avatarColor};border:1px solid rgba(${hexToRgb(avatarColor)},0.3);">
+                    ${a.name ? escapeHtml(a.name.charAt(0)) : 'A'}
                 </div>
                 <div class="agent-info">
-                    <div class="agent-name">${a.name}</div>
-                    <div class="agent-role">${a.role}</div>
+                    <div class="agent-name">${escapeHtml(a.name)}</div>
+                    <div class="agent-role">${escapeHtml(a.role)}</div>
                 </div>
                 <div class="agent-stats">
-                    <div class="agent-sales">${a.sales}</div>
-                    <div class="agent-count">${a.count}</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width:${a.pct}%;background:${a.color};"></div>
-                    </div>
+                    <div class="agent-sales">${escapeHtml(a.sales)}</div>
+                    <div class="agent-count">${escapeHtml(a.count)}</div>
                 </div>
                 <div class="row-actions" style="margin-left: 14px;">
                     <button class="row-btn" title="Edit" onclick="editAgent(${a.id})"><i data-lucide="pencil"></i></button>
                     <button class="row-btn danger" title="Delete" onclick="deleteAgent(${a.id})"><i data-lucide="trash-2"></i></button>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
         lucide.createIcons();
     }
 
     function openAddAgentModal() {
+        clearValidation(['agentName', 'agentRole', 'agentSales', 'agentCount']);
         editingAgentId = null;
         document.getElementById('agentModalTitle').innerHTML = 'Add <em>Agent</em>';
         document.getElementById('agentModalSubtitle').textContent = 'Create a new agent entry in the system.';
         document.getElementById('agentName').value = '';
-        document.getElementById('agentRole').value = '';
+        document.getElementById('agentRole').value = 'Agent';
         document.getElementById('agentSales').value = '';
         document.getElementById('agentCount').value = '';
-        document.getElementById('agentPct').value = '';
-        document.getElementById('agentColor').value = '#c9a96e';
         document.getElementById('agentModal').classList.add('open');
         lucide.createIcons();
     }
@@ -1697,34 +1919,29 @@
     function editAgent(id) {
         const ag = agents.find(a => a.id === id);
         if (!ag) return;
+        clearValidation(['agentName', 'agentRole', 'agentSales', 'agentCount']);
         editingAgentId = id;
         document.getElementById('agentModalTitle').innerHTML = 'Edit <em>Agent</em>';
         document.getElementById('agentModalSubtitle').textContent = 'Update the agent details below.';
         document.getElementById('agentName').value = ag.name;
-        document.getElementById('agentRole').value = ag.role;
+        
+        const roleSelect = document.getElementById('agentRole');
+        const roleOptions = Array.from(roleSelect.options).map(o => o.value);
+        if (roleOptions.includes(ag.role)) {
+            roleSelect.value = ag.role;
+        } else {
+            roleSelect.value = 'Other';
+        }
+        
         document.getElementById('agentSales').value = ag.sales;
-        document.getElementById('agentCount').value = ag.count;
-        document.getElementById('agentPct').value = ag.pct;
-        document.getElementById('agentColor').value = ag.color;
+        document.getElementById('agentCount').value = parseDealCount(ag.count);
         document.getElementById('agentModal').classList.add('open');
         lucide.createIcons();
     }
 
     async function saveAgent() {
-        const name = document.getElementById('agentName').value.trim();
-        const role = document.getElementById('agentRole').value.trim();
-        const sales = document.getElementById('agentSales').value.trim();
-        const count = document.getElementById('agentCount').value.trim();
-        const pctStr = document.getElementById('agentPct').value.trim();
-        const pct = parseInt(pctStr) || 0;
-        const color = document.getElementById('agentColor').value.trim() || '#c9a96e';
-
-        if (!name || !role || !sales || !count || pctStr === '') {
-            showToast('Please fill all fields.');
-            return;
-        }
-
-        const payload = { name, role, sales, count, pct, color };
+        const payload = validateAgentForm();
+        if (!payload) return;
 
         try {
             const url = editingAgentId 
@@ -1750,7 +1967,7 @@
                 renderAgents();
                 closeAgentModal();
             } else {
-                showToast('Failed to save agent on server.');
+                showToast(await readErrorMessage(res, 'Failed to save agent on server.'));
             }
         } catch(e) {
             console.error(e);
@@ -1787,6 +2004,7 @@
 
     function closeAgentModal() {
         document.getElementById('agentModal').classList.remove('open');
+        clearValidation(['agentName', 'agentRole', 'agentSales', 'agentCount']);
     }
 
     function hexToRgb(hex) {
@@ -2010,10 +2228,10 @@
         if (valInK >= 1000) {
             const valInM = valInK / 1000;
             const parts = valInM.toFixed(1).split('.');
-            return `$${parts[0]}<span>.${parts[1]}m</span>`;
+            return `Rs ${parts[0]}<span>.${parts[1]}m</span>`;
         } else {
             const parts = valInK.toFixed(1).split('.');
-            return `$${parts[0]}<span>.${parts[1]}k</span>`;
+            return `Rs ${parts[0]}<span>.${parts[1]}k</span>`;
         }
     }
 

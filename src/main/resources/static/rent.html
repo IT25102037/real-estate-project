@@ -583,7 +583,7 @@
                 <input type="hidden" id="propertyType" value="rental">
                 <div class="form-grid">
                     <div class="field">
-                        <label for="typeSpecificInput" id="typeSpecificLabel">Monthly Rent (LKR)</label>
+                    <label for="typeSpecificInput" id="typeSpecificLabel">Monthly Rent (Rs.)</label>
                         <input type="number" id="typeSpecificInput" min="0" step="1000" placeholder="150000" required>
                     </div>
                     <div class="field">
@@ -599,7 +599,7 @@
                         <input type="text" id="location" placeholder="Colombo 07" required>
                     </div>
                     <div class="field">
-                        <label for="advanceAmount">Advance / Deposit (LKR)</label>
+                    <label for="advanceAmount">Advance / Deposit (Rs.)</label>
                         <input type="number" id="advanceAmount" min="0" step="1000" placeholder="300000" required>
                     </div>
                     <div class="field full">
@@ -715,7 +715,7 @@
     });
 
     function updateTypeSpecificField() {
-        typeSpecificLabel.textContent = 'Monthly Rent (LKR)';
+            typeSpecificLabel.textContent = 'Monthly Rent (Rs.)';
         typeSpecificInput.placeholder = '150000';
     }
 
@@ -1062,18 +1062,14 @@
     }
 
     function formatPrice(value) {
-        return new Intl.NumberFormat('en-LK', {
-            style: 'currency',
-            currency: 'LKR',
-            maximumFractionDigits: 0
-        }).format(Number(value || 0)).replace('LKR', 'Rs.');
+        return `Rs. ${Number(value || 0).toLocaleString('en-LK', { maximumFractionDigits: 0 })}`;
     }
 
     function formatCompactPrice(value) {
         const amount = Number(value || 0);
-        if (amount >= 1000000) return `Rs.${(amount / 1000000).toFixed(1)}M`;
-        if (amount >= 1000) return `Rs.${Math.round(amount / 1000)}K`;
-        return `Rs.${Math.round(amount)}`;
+        if (amount >= 1000000) return `Rs ${(amount / 1000000).toFixed(1)}M`;
+        if (amount >= 1000) return `Rs ${Math.round(amount / 1000)}K`;
+        return `Rs ${Math.round(amount)}`;
     }
 
     function capitalize(value) {

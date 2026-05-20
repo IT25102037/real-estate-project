@@ -39,7 +39,7 @@ public class AnalyticsDashboardController {
         long activeListings = propertyService.getAllProperties().size();
         long inboxMessages = contactService.getAllMessages().size();
 
-        // Calculate total revenue from transactions ($k)
+        // Calculate total revenue from transactions (Rs k)
         double totalRevenue = 0.0;
         List<Transaction> transactions = transactionService.getAllTransactions();
         for (Transaction tx : transactions) {
@@ -235,7 +235,7 @@ public class AnalyticsDashboardController {
         List<ActivityLog> logs = activityService.getRecentActivities();
         if (logs.isEmpty()) {
             return List.of(
-                    new ActivityLog("TRANSACTION_CREATED", "<strong>Sale closed</strong> — Azure Residences by Amara Silva", "dollar-sign", "gold"),
+                    new ActivityLog("TRANSACTION_CREATED", "<strong>Sale closed</strong> — Azure Residences by Amara Silva", "banknote", "gold"),
                     new ActivityLog("CUSTOMER_REGISTERED", "<strong>New customer</strong> — Rohan Perera registered", "user-plus", "blue"),
                     new ActivityLog("PROPERTY_CREATED", "<strong>Listing approved</strong> — Skyline Penthouse #204", "check-circle", "green"),
                     new ActivityLog("MESSAGE_RECEIVED", "<strong>New inquiry</strong> — TRI-ZEN Apartment from client", "mail", "gold"),
@@ -251,18 +251,28 @@ public class AnalyticsDashboardController {
         return activityService.registerEmitter();
     }
 
-    /* ── HELPER: PARSE TRANSACTION VALUE TO $K ───────────────────── */
+    /* ── HELPER: PARSE TRANSACTION VALUE TO RS K ───────────────────── */
     private double parseValue(String val) {
         if (val == null) return 0.0;
-        String clean = val.replace("$", "").replace("M", "").replace("m", "").replace("K", "").replace("k", "").replace(" ", "").trim();
+        String clean = val.replace("$", "")
+                .replace("Rs.", "")
+                .replace("Rs", "")
+                .replace("LKR", "")
+                .replace("M", "")
+                .replace("m", "")
+                .replace("K", "")
+                .replace("k", "")
+                .replace(",", "")
+                .replace(" ", "")
+                .trim();
         try {
             double d = Double.parseDouble(clean);
             if (val.toUpperCase().contains("M")) {
-                return d * 1000.0; // scale to $k
+                return d * 1000.0; // scale to Rs k
             } else if (val.toUpperCase().contains("K")) {
                 return d;
             } else {
-                return d / 1000.0; // assume raw, scale to $k
+                return d / 1000.0; // assume raw rupees, scale to Rs k
             }
         } catch (NumberFormatException e) {
             return 0.0;
