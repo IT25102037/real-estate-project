@@ -602,7 +602,7 @@
                         <input type="text" id="location" placeholder="Colombo 07" required>
                     </div>
                     <div class="field">
-                        <label for="price">Selling Price (LKR)</label>
+                    <label for="price">Selling Price (Rs.)</label>
                         <input type="number" id="price" min="0" step="1000" placeholder="85000000" required>
                     </div>
                     <div class="field full">
@@ -1067,11 +1067,7 @@
     }
 
     function formatPrice(value) {
-        return new Intl.NumberFormat('en-LK', {
-            style: 'currency',
-            currency: 'LKR',
-            maximumFractionDigits: 0
-        }).format(Number(value || 0)).replace('LKR', 'Rs.');
+        return `Rs. ${Number(value || 0).toLocaleString('en-LK', { maximumFractionDigits: 0 })}`;
     }
 
     function capitalize(value) {

@@ -1,6 +1,7 @@
 package com.realestate.project.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * Entity representing a real estate transaction record.
@@ -24,11 +25,14 @@ public class Transaction {
     private String client;     // e.g. "Amara Silva"
 
     @Column(nullable = false)
-    private String value;      // e.g. "$2.4M"  (stored as string to match frontend format)
+    private String value;      // e.g. "Rs 2.4M"  (stored as string to match frontend format)
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;  // SOLD | PENDING | RENTED
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     /* ── Constructors ──────────────────────────────────────── */
 
@@ -39,6 +43,7 @@ public class Transaction {
         this.client   = client;
         this.value    = value;
         this.status   = status;
+        this.createdAt = LocalDateTime.now();
     }
 
     /* ── Getters & Setters ─────────────────────────────────── */
@@ -57,6 +62,9 @@ public class Transaction {
 
     public TransactionStatus getStatus()                    { return status; }
     public void setStatus(TransactionStatus status)         { this.status = status; }
+
+    public LocalDateTime getCreatedAt()                     { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt)       { this.createdAt = createdAt; }
 
     /* ── Nested Enum ───────────────────────────────────────── */
 

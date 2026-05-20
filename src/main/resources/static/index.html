@@ -2486,7 +2486,7 @@
                 <ul class="mortgage-feature-list">
                     <li>Instant monthly repayment estimate</li>
                     <li>Adjustable loan tenure up to 30 years</li>
-                    <li>Supports LKR-denominated calculations</li>
+                                <li>Supports Rs-denominated calculations</li>
                     <li>Connect with our partner banks for pre-approval</li>
                 </ul>
             </div>
@@ -3256,12 +3256,8 @@
         return (item.type || item.propertyCategory || '').toLowerCase();
     }
     function formatPrice(value) {
-        return new Intl.NumberFormat('en-LK', {
-            style: 'currency',
-            currency: 'LKR',
-            maximumFractionDigits: 0
-        }).format(Number(value || 0)).replace('LKR', 'Rs.');
-    }
+            return `Rs. ${Number(value || 0).toLocaleString('en-LK', { maximumFractionDigits: 0 })}`;
+        }
     function capitalize(v) {
         return v ? v.charAt(0).toUpperCase() + v.slice(1) : '';
     }

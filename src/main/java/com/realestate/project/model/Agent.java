@@ -28,18 +28,10 @@ public class Agent {
     @Column(nullable = false)
     private String count;
 
-    @Column(nullable = false)
-    private Integer pct;
-
-    @Column(nullable = false)
-    private String color;
-
-    public Agent(String name, String role, String sales, String count, Integer pct, String color) {
+    public Agent(String name, String role, String sales, String count) {
         this.name = name;
         this.role = role;
         this.sales = sales;
         this.count = count;
-        this.pct = pct;
-        this.color = color;
     }
 }

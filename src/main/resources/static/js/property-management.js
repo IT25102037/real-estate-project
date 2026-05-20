@@ -33,9 +33,9 @@ const propertyApp = (() => {
         }
     };
 
-    function formatCurrency(value) {
-        return new Intl.NumberFormat("en-LK", { style: "currency", currency: "LKR", maximumFractionDigits: 0 }).format(Number(value || 0));
-    }
+function formatCurrency(value) {
+    return `Rs. ${Number(value || 0).toLocaleString("en-LK", { maximumFractionDigits: 0 })}`;
+}
 
     function titleCase(value) {
         return String(value || "").replace(/[-_]/g, " ").replace(/\b\w/g, char => char.toUpperCase());

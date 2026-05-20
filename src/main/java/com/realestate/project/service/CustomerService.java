@@ -20,6 +20,9 @@ public class CustomerService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private ActivityService activityService;
+
     public List<CustomerEntity> getAllCustomers() {
         return customerRepository.findAll();
     }
@@ -37,7 +40,14 @@ public class CustomerService {
             throw new RuntimeException("EMAIL_ALREADY_EXISTS");
         }
         CustomerEntity customerEntity = modelMapper.map(customerDto, CustomerEntity.class);
-        return customerRepository.save(customerEntity);
+        CustomerEntity saved = customerRepository.save(customerEntity);
+        activityService.logActivity(
+                "CUSTOMER_REGISTERED",
+                "<strong>New customer</strong> — " + saved.getName() + " registered",
+                "user-plus",
+                "blue"
+        );
+        return saved;
     }
 
     @Transactional(readOnly = true)
@@ -57,7 +67,15 @@ public class CustomerService {
 
     @Transactional
     public void deleteCustomer(Long id) {
-        customerRepository.deleteById(id);
+        customerRepository.findById(id).ifPresent(customer -> {
+            customerRepository.delete(customer);
+            activityService.logActivity(
+                    "CUSTOMER_DELETED",
+                    "<strong>Customer profile deleted</strong> — " + customer.getName(),
+                    "trash-2",
+                    "red"
+            );
+        });
     }
 
     @Transactional
@@ -70,7 +88,14 @@ public class CustomerService {
             if (details.getAddress() != null) customer.setAddress(details.getAddress());
             if (details.getPassword() != null) customer.setPassword(details.getPassword());
 
-            return customerRepository.save(customer);
+            CustomerEntity saved = customerRepository.save(customer);
+            activityService.logActivity(
+                    "CUSTOMER_UPDATED",
+                    "<strong>Customer profile updated</strong> — " + saved.getName(),
+                    "pencil",
+                    "blue"
+            );
+            return saved;
         }).orElseThrow(() -> new RuntimeException("Customer not found"));
     }
 }

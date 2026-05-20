@@ -3,6 +3,8 @@ package com.realestate.project.dto;
 import com.realestate.project.model.Transaction.TransactionStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 /**
  * Data Transfer Object for Transaction create / update requests.
@@ -15,13 +17,22 @@ import jakarta.validation.constraints.NotNull;
 public class TransactionDTO {
 
     @NotBlank(message = "Property name is required")
+    @Size(min = 2, max = 80, message = "Property name must be 2 to 80 characters")
+    @Pattern(regexp = "^[A-Za-z0-9][A-Za-z0-9 .,'#&()/\\-]{1,79}$",
+            message = "Property name contains invalid characters")
     private String property;
 
     @NotBlank(message = "Client name is required")
+    @Size(min = 2, max = 70, message = "Client name must be 2 to 70 characters")
+    @Pattern(regexp = "^[A-Za-z][A-Za-z .'-]{1,69}$",
+            message = "Client name must contain only letters, spaces, apostrophes, hyphens, or periods")
     private String client;
 
     @NotBlank(message = "Transaction value is required")
-    private String value;          // e.g. "$2.4M"
+    @Size(max = 20, message = "Transaction value is too long")
+    @Pattern(regexp = "^[Rr][Ss]\\.?\\s?(\\d{1,3}(,\\d{3})+|\\d+)(\\.\\d{1,2})?\\s?([KkMm])?$",
+            message = "Transaction value must use Rs format, e.g. Rs 1.2M or Rs 980K")
+    private String value;          // e.g. "Rs 2.4M"
 
     @NotNull(message = "Status is required")
     private TransactionStatus status;  // Sold | Pending | Rented
