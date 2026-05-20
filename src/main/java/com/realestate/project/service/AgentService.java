@@ -12,9 +12,11 @@ import java.util.Optional;
 public class AgentService {
 
     private final AgentRepository agentRepository;
+    private final ActivityService activityService;
 
-    public AgentService(AgentRepository agentRepository) {
+    public AgentService(AgentRepository agentRepository, ActivityService activityService) {
         this.agentRepository = agentRepository;
+        this.activityService = activityService;
     }
 
     public List<Agent> getAllAgents() {
@@ -34,7 +36,14 @@ public class AgentService {
                 dto.getPct(),
                 dto.getColor()
         );
-        return agentRepository.save(agent);
+        Agent saved = agentRepository.save(agent);
+        activityService.logActivity(
+                "AGENT_CREATED",
+                "<strong>Agent added</strong> — " + saved.getName() + " (" + saved.getRole() + ")",
+                "user-plus",
+                "blue"
+        );
+        return saved;
     }
 
     public Optional<Agent> updateAgent(Long id, AgentDTO dto) {
@@ -45,15 +54,27 @@ public class AgentService {
             agent.setCount(dto.getCount());
             agent.setPct(dto.getPct());
             agent.setColor(dto.getColor());
-            return agentRepository.save(agent);
+            Agent saved = agentRepository.save(agent);
+            activityService.logActivity(
+                    "AGENT_UPDATED",
+                    "<strong>Agent updated</strong> — " + saved.getName() + " details updated",
+                    "pencil",
+                    "blue"
+            );
+            return saved;
         });
     }
 
     public boolean deleteAgent(Long id) {
-        if (agentRepository.existsById(id)) {
-            agentRepository.deleteById(id);
+        return agentRepository.findById(id).map(agent -> {
+            agentRepository.delete(agent);
+            activityService.logActivity(
+                    "AGENT_DELETED",
+                    "<strong>Agent removed</strong> — " + agent.getName(),
+                    "trash-2",
+                    "red"
+            );
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
 }

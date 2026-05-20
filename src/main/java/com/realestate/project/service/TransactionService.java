@@ -19,9 +19,11 @@ import java.util.Optional;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final ActivityService activityService;
 
-    public TransactionService(TransactionRepository transactionRepository) {
+    public TransactionService(TransactionRepository transactionRepository, ActivityService activityService) {
         this.transactionRepository = transactionRepository;
+        this.activityService = activityService;
     }
 
     /* ── READ ──────────────────────────────────────────────── */
@@ -49,7 +51,14 @@ public class TransactionService {
                 dto.getValue(),
                 dto.getStatus()
         );
-        return transactionRepository.save(tx);
+        Transaction saved = transactionRepository.save(tx);
+        activityService.logActivity(
+                "TRANSACTION_CREATED",
+                "<strong>Sale closed</strong> — " + saved.getProperty() + " by " + saved.getClient() + " (" + saved.getValue() + ")",
+                "dollar-sign",
+                "gold"
+        );
+        return saved;
     }
 
     /* ── UPDATE ────────────────────────────────────────────── */
@@ -66,7 +75,14 @@ public class TransactionService {
             existing.setClient(dto.getClient());
             existing.setValue(dto.getValue());
             existing.setStatus(dto.getStatus());
-            return transactionRepository.save(existing);
+            Transaction saved = transactionRepository.save(existing);
+            activityService.logActivity(
+                    "TRANSACTION_UPDATED",
+                    "<strong>Transaction updated</strong> — " + saved.getProperty() + " to " + saved.getStatus(),
+                    "pencil",
+                    "blue"
+            );
+            return saved;
         });
     }
 
@@ -78,10 +94,15 @@ public class TransactionService {
      * @return true if deleted, false if ID was not found
      */
     public boolean deleteTransaction(Long id) {
-        if (transactionRepository.existsById(id)) {
-            transactionRepository.deleteById(id);
+        return transactionRepository.findById(id).map(tx -> {
+            transactionRepository.delete(tx);
+            activityService.logActivity(
+                    "TRANSACTION_DELETED",
+                    "<strong>Transaction deleted</strong> — " + tx.getProperty() + " (" + tx.getValue() + ")",
+                    "trash-2",
+                    "red"
+            );
             return true;
-        }
-        return false;
+        }).orElse(false);
     }
 }

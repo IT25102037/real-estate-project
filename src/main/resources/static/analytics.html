@@ -650,6 +650,18 @@
             margin-bottom: 22px;
         }
 
+        .geo-activity-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .stacked-row {
+            margin-bottom: 22px;
+            width: 100%;
+        }
+
         /* Activity Feed */
         .feed-card {
             background: var(--card-glass);
@@ -1079,13 +1091,13 @@
         <div class="kpi-card">
             <div class="kpi-icon"><i data-lucide="dollar-sign"></i></div>
             <div class="kpi-label">Total Revenue</div>
-            <div class="kpi-value">$92<span>.4k</span></div>
+            <div class="kpi-value" id="kpiRevenue">—</div>
             <div class="kpi-change up"><i data-lucide="trending-up"></i> +8.3% vs last</div>
         </div>
         <div class="kpi-card">
             <div class="kpi-icon"><i data-lucide="palmtree"></i></div>
             <div class="kpi-label">Active Listings</div>
-            <div class="kpi-value">42</div>
+            <div class="kpi-value" id="kpiListings">—</div>
             <div class="kpi-change down"><i data-lucide="trending-down"></i> -3 this week</div>
         </div>
         <div class="kpi-card">
@@ -1498,9 +1510,17 @@
     /* ===========================
        TOAST
     =========================== */
-    function showToast(msg) {
+    /* ===========================
+       TOAST
+    =========================== */
+    function showToast(msg, isHtml = false) {
         const toast = document.getElementById('toast');
-        document.getElementById('toastMsg').textContent = msg;
+        const msgEl = document.getElementById('toastMsg');
+        if (isHtml) {
+            msgEl.innerHTML = msg;
+        } else {
+            msgEl.textContent = msg;
+        }
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3000);
     }
@@ -1591,14 +1611,16 @@
         initRevenueChart(period);
     }
 
-    function initDonutChart() {
+    let donutChart;
+    function initDonutChart(data = [38, 27, 21, 14]) {
         const ctx = document.getElementById('donutChart').getContext('2d');
-        new Chart(ctx, {
+        if (donutChart) donutChart.destroy();
+        donutChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: ['Mansions', 'Penthouses', 'Apartments', 'Villas'],
                 datasets: [{
-                    data: [38, 27, 21, 14],
+                    data: data,
                     backgroundColor: ['#c9a96e', '#818cf8', '#22d3ee', '#10b981'],
                     borderWidth: 0,
                     hoverOffset: 8
@@ -1777,72 +1799,222 @@
     /* ===========================
        ACTIVITY FEED
     =========================== */
-    const activities = [
-        { icon: 'dollar-sign', cls: 'gold', desc: '<strong>Sale closed</strong> — Azure Residences by Amara Silva', time: '2 min ago' },
-        { icon: 'user-plus', cls: 'blue', desc: '<strong>New customer</strong> — Rohan Perera registered', time: '15 min ago' },
-        { icon: 'check-circle', cls: 'green', desc: '<strong>Listing approved</strong> — Skyline Penthouse #204', time: '1 hr ago' },
-        { icon: 'mail', cls: 'gold', desc: '<strong>New inquiry</strong> — TRI-ZEN Apartment from client', time: '2 hr ago' },
-        { icon: 'trash-2', cls: 'red', desc: '<strong>Listing removed</strong> — Old stock cleared by admin', time: '3 hr ago' },
-    ];
+    async function fetchActivities() {
+        try {
+            const res = await fetch('http://localhost:8080/api/analytics/activities');
+            if (res.ok) {
+                const data = await res.json();
+                const container = document.getElementById('activityFeed');
+                container.innerHTML = data.map(a => {
+                    const timeText = formatTimeAgo(a.timestamp);
+                    return `
+                        <div class="feed-item">
+                            <div class="feed-icon ${a.colorClass}"><i data-lucide="${a.icon}"></i></div>
+                            <div class="feed-text">
+                                <div class="feed-desc">${a.description}</div>
+                                <div class="feed-time">${timeText}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                lucide.createIcons();
+            }
+        } catch (e) {
+            console.warn('Could not fetch activities:', e);
+        }
+    }
 
-    function renderActivity() {
-        document.getElementById('activityFeed').innerHTML = activities.map(a => `
-            <div class="feed-item">
-                <div class="feed-icon ${a.cls}"><i data-lucide="${a.icon}"></i></div>
-                <div class="feed-text">
-                    <div class="feed-desc">${a.desc}</div>
-                    <div class="feed-time">${a.time}</div>
-                </div>
+    function prependActivity(log) {
+        const container = document.getElementById('activityFeed');
+        const item = document.createElement('div');
+        item.className = 'feed-item';
+        item.style.opacity = 0;
+        item.style.transform = 'translateY(-10px)';
+        item.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+
+        item.innerHTML = `
+            <div class="feed-icon ${log.colorClass}"><i data-lucide="${log.icon}"></i></div>
+            <div class="feed-text">
+                <div class="feed-desc">${log.description}</div>
+                <div class="feed-time">Just now</div>
             </div>
-        `).join('');
+        `;
+
+        if (container.firstChild) {
+            container.insertBefore(item, container.firstChild);
+        } else {
+            container.appendChild(item);
+        }
+
+        setTimeout(() => {
+            item.style.opacity = 1;
+            item.style.transform = 'translateY(0)';
+        }, 50);
+
+        while (container.children.length > 10) {
+            container.removeChild(container.lastChild);
+        }
+        lucide.createIcons();
+    }
+
+    function formatTimeAgo(timestampStr) {
+        if (!timestampStr) return "Just now";
+        const date = new Date(timestampStr);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        if (diffMins < 1) return "Just now";
+        if (diffMins < 60) return `${diffMins} min ago`;
+        const diffHours = Math.floor(diffMins / 60);
+        if (diffHours < 24) return `${diffHours} hr ago`;
+        const diffDays = Math.floor(diffHours / 24);
+        if (diffDays === 1) return "Yesterday";
+        return `${diffDays} days ago`;
     }
 
     /* ===========================
        GEOGRAPHIC DATA
     =========================== */
-    const geoData = [
-        { city: 'Colombo', pct: 48 },
-        { city: 'Kandy', pct: 22 },
-        { city: 'Galle', pct: 15 },
-        { city: 'Negombo', pct: 9 },
-        { city: 'Jaffna', pct: 6 },
-    ];
-
-    function renderGeo() {
-        document.getElementById('geoList').innerHTML = geoData.map(g => `
-            <div class="geo-item">
-                <div class="geo-row">
-                    <span class="geo-city">${g.city}</span>
-                    <span class="geo-pct">${g.pct}%</span>
-                </div>
-                <div class="geo-bar"><div class="geo-fill" style="width:${g.pct}%;"></div></div>
-            </div>
-        `).join('');
+    async function fetchGeo() {
+        try {
+            const res = await fetch('http://localhost:8080/api/analytics/geo-reach');
+            if (res.ok) {
+                const data = await res.json();
+                document.getElementById('geoList').innerHTML = data.map(g => `
+                    <div class="geo-item">
+                        <div class="geo-row">
+                            <span class="geo-city">${g.city}</span>
+                            <span class="geo-pct">${g.pct}%</span>
+                        </div>
+                        <div class="geo-bar"><div class="geo-fill" style="width:${g.pct}%;"></div></div>
+                    </div>
+                `).join('');
+            }
+        } catch (e) {
+            console.warn('Could not fetch geo-reach:', e);
+        }
     }
 
     /* ===========================
        MESSAGES PREVIEW
     =========================== */
-    const msgs = [
-        { name: 'Kasun J.', preview: 'Interested in the penthouse...', time: '5m', color: '#c9a96e' },
-        { name: 'Amara S.', preview: 'Is the villa still available?', time: '18m', color: '#818cf8' },
-        { name: 'Dilini F.', preview: 'When can we schedule a visit?', time: '1h', color: '#22d3ee' },
-        { name: 'Rohan P.', preview: 'Contract signed — thank you!', time: '2h', color: '#10b981' },
-    ];
+    async function fetchMessages() {
+        try {
+            const res = await fetch('http://localhost:8080/api/contact');
+            if (res.ok) {
+                const messages = await res.json();
 
-    function renderMessages() {
-        document.getElementById('msgList').innerHTML = msgs.map(m => `
-            <div class="msg-item">
-                <div class="msg-avatar" style="background:rgba(${hexToRgb(m.color)},0.15);color:${m.color};border:1px solid rgba(${hexToRgb(m.color)},0.3);">
-                    ${m.name.charAt(0)}
-                </div>
-                <div class="msg-body">
-                    <div class="msg-sender">${m.name}</div>
-                    <div class="msg-preview">${m.preview}</div>
-                </div>
-                <div class="msg-time">${m.time}</div>
-            </div>
-        `).join('');
+                let countNew = 0;
+                let countPending = 0;
+                let countReplied = 0;
+                let countReject = 0;
+
+                messages.forEach(m => {
+                    const status = (m.status || 'New').toLowerCase();
+                    if (status === 'new') countNew++;
+                    else if (status === 'pending') countPending++;
+                    else if (status === 'replied' || status === 'reply' || status === 'repli') countReplied++;
+                    else if (status === 'reject' || status === 'rejected') countReject++;
+                });
+
+                document.getElementById('msgNew').textContent = countNew;
+                document.getElementById('msgPending').textContent = countPending;
+                document.getElementById('msgReplied').textContent = countReplied;
+                document.getElementById('msgReject').textContent = countReject;
+
+                const sorted = [...messages].sort((a, b) => b.id - a.id);
+                const list = document.getElementById('msgList');
+                const display = sorted.slice(0, 4);
+
+                if (display.length === 0) {
+                    list.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-dim); font-size: 12px;">No messages</div>';
+                } else {
+                    const colors = ['#c9a96e', '#818cf8', '#22d3ee', '#10b981', '#f59e0b'];
+                    list.innerHTML = display.map((m, idx) => {
+                        const avatarColor = colors[idx % colors.length];
+                        const firstChar = m.userName ? m.userName.charAt(0) : 'U';
+                        return `
+                            <div class="msg-item" onclick="window.location.href='view-messages.html'">
+                                <div class="msg-avatar" style="background:rgba(${hexToRgb(avatarColor)},0.15);color:${avatarColor};border:1px solid rgba(${hexToRgb(avatarColor)},0.3);">
+                                    ${firstChar}
+                                </div>
+                                <div class="msg-body">
+                                    <div class="msg-sender">${m.userName}</div>
+                                    <div class="msg-preview">${m.userMessage}</div>
+                                </div>
+                                <div class="msg-time">Just now</div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+        } catch (e) {
+            console.warn('Could not fetch messages:', e);
+        }
+    }
+
+    /* ===========================
+       PROPERTY TYPES
+    =========================== */
+    async function fetchPropertyTypes() {
+        try {
+            const res = await fetch('http://localhost:8080/api/analytics/property-types');
+            if (res.ok) {
+                const data = await res.json();
+                const total = (data.Mansions || 0) + (data.Penthouses || 0) + (data.Apartments || 0) + (data.Villas || 0);
+                const Mansions = total > 0 ? Math.round((data.Mansions || 0) * 100 / total) : 38;
+                const Penthouses = total > 0 ? Math.round((data.Penthouses || 0) * 100 / total) : 27;
+                const Apartments = total > 0 ? Math.round((data.Apartments || 0) * 100 / total) : 21;
+                const Villas = total > 0 ? Math.round((data.Villas || 0) * 100 / total) : 14;
+
+                initDonutChart([Mansions, Penthouses, Apartments, Villas]);
+
+                const legends = document.querySelectorAll('.donut-legend .legend-val');
+                if (legends.length >= 4) {
+                    legends[0].textContent = `${Mansions}%`;
+                    legends[1].textContent = `${Penthouses}%`;
+                    legends[2].textContent = `${Apartments}%`;
+                    legends[3].textContent = `${Villas}%`;
+                }
+            }
+        } catch (e) {
+            console.warn('Could not fetch property types:', e);
+        }
+    }
+
+    /* ===========================
+       REVENUE HISTORICAL PERFORMANCE
+    =========================== */
+    async function fetchRevenuePerformance() {
+        try {
+            const res = await fetch('http://localhost:8080/api/analytics/revenue-performance');
+            if (res.ok) {
+                const data = await res.json();
+                chartData['6m'] = data['6m'];
+                chartData['1y'] = data['1y'];
+                chartData['all'] = data['all'];
+
+                const activeBtn = document.querySelector('.period-tab.active');
+                const period = activeBtn ? activeBtn.textContent.toLowerCase() : '6m';
+                initRevenueChart(period);
+            }
+        } catch (e) {
+            console.warn('Could not fetch revenue performance:', e);
+        }
+    }
+
+    /* ===========================
+       FORMAT REVENUE HTML
+    =========================== */
+    function formatRevenueHtml(valInK) {
+        if (valInK >= 1000) {
+            const valInM = valInK / 1000;
+            const parts = valInM.toFixed(1).split('.');
+            return `$${parts[0]}<span>.${parts[1]}m</span>`;
+        } else {
+            const parts = valInK.toFixed(1).split('.');
+            return `$${parts[0]}<span>.${parts[1]}k</span>`;
+        }
     }
 
     /* ===========================
@@ -1866,21 +2038,57 @@
                 renderAgents();
             }
         } catch(e) { console.warn('Could not fetch agents:', e); }
-        try {
-            const cRes = await fetch('http://localhost:8080/api/customers');
-            if (cRes.ok) {
-                const customers = await cRes.json();
-                document.getElementById('kpiCustomers').textContent = customers.length.toLocaleString();
-            }
-        } catch(e) { document.getElementById('kpiCustomers').textContent = '248'; }
 
         try {
-            const mRes = await fetch('http://localhost:8080/api/contact');
-            if (mRes.ok) {
-                const messages = await mRes.json();
-                document.getElementById('kpiMessages').textContent = messages.length.toLocaleString();
+            const kpiRes = await fetch('http://localhost:8080/api/analytics/kpis');
+            if (kpiRes.ok) {
+                const kpis = await kpiRes.json();
+                document.getElementById('kpiCustomers').textContent = kpis.totalCustomers.toLocaleString();
+                document.getElementById('kpiRevenue').innerHTML = formatRevenueHtml(kpis.totalRevenue);
+                document.getElementById('kpiListings').textContent = kpis.activeListings.toLocaleString();
+                document.getElementById('kpiMessages').textContent = kpis.inboxMessages.toLocaleString();
             }
-        } catch(e) { document.getElementById('kpiMessages').textContent = '63'; }
+        } catch (e) {
+            console.warn('Could not fetch KPIs:', e);
+        }
+
+        fetchGeo();
+        fetchPropertyTypes();
+        fetchRevenuePerformance();
+        fetchActivities();
+        fetchMessages();
+    }
+
+    /* ===========================
+       REAL-TIME SSE SYNC
+    =========================== */
+    let sseSource;
+    function connectSSE() {
+        if (sseSource) {
+            sseSource.close();
+        }
+        sseSource = new EventSource('http://localhost:8080/api/analytics/stream');
+
+        sseSource.addEventListener('init', (e) => {
+            console.log('SSE connection initialized:', e.data);
+        });
+
+        sseSource.addEventListener('activity', (e) => {
+            try {
+                const log = JSON.parse(e.data);
+                showToast(log.description, true);
+                prependActivity(log);
+                fetchDashboardData();
+            } catch (err) {
+                console.error('Error handling activity stream:', err);
+            }
+        });
+
+        sseSource.onerror = (err) => {
+            console.warn('SSE disconnected. Attempting to reconnect in 5 seconds...', err);
+            sseSource.close();
+            setTimeout(connectSSE, 5000);
+        };
     }
 
     /* ===========================
@@ -1889,12 +2097,10 @@
     window.onload = () => {
         renderTable();
         renderAgents();
-        renderActivity();
-        renderGeo();
-        renderMessages();
         initRevenueChart('6m');
         initDonutChart();
         fetchDashboardData();
+        connectSSE();
         lucide.createIcons();
     };
 </script>
