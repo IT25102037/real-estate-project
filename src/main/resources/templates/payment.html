@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Payment</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"></div>
+            <div class="brand">
+                <h2>RealEstate</h2>
+                <span>Finance Suite</span>
+            </div>
+        </div>
+
+        <div class="nav-links">
+            <a href="/dashboard" class="nav-link">
+                <div class="dot"></div>
+                <span>Dashboard</span>
+            </a>
+            <a href="/payment-page" class="nav-link active">
+                <div class="dot"></div>
+                <span>New Payment</span>
+            </a>
+            <a href="/invoice-page" class="nav-link">
+                <div class="dot"></div>
+                <span>Invoices</span>
+            </a>
+            <a href="/payment-history-page" class="nav-link">
+                <div class="dot"></div>
+                <span>Payment History</span>
+            </a>
+            <a href="/bank-account-page" class="nav-link">
+                <div class="dot"></div>
+                <span>Bank Accounts</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-section">
+            <div class="header-text">
+                <h1>Create New Payment</h1>
+                <p>Record a new transaction securely.</p>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <form id="paymentForm">
+                
+                <div class="form-group">
+                    <label for="userId">User ID</label>
+                    <input type="number" id="userId" placeholder="Enter User ID" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="propertyId">Property</label>
+                    <select id="propertyId" name="propertyId" required>
+                        <option value="">Select Property...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="bankAccountId">Bank Account</label>
+                    <select id="bankAccountId" name="bankAccountId" required>
+                        <option value="">Select Bank Account...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">Amount ($)</label>
+                    <input type="number" id="amount" step="0.01" placeholder="0.00" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentMethod">Payment Method</label>
+                    <select id="paymentMethod">
+                        <option value="BANK_TRANSFER">Bank Transfer</option>
+                        <option value="CREDIT_CARD">Credit Card</option>
+                        <option value="DEBIT_CARD">Debit Card</option>
+                        <option value="CASH">Cash</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentType">Payment Type</label>
+                    <select id="paymentType">
+                        <option value="POST_BOOST">Post Boost</option>
+                        <option value="MONTHLY_RENT">Monthly Rent</option>
+                        <option value="PROPERTY_PURCHASE">Property Purchase</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-4" style="width: 100%;">Submit Payment</button>
+
+            </form>
+
+            <div id="message"></div>
+        </div>
+    </div>
+
+    <script src="/static/js/payment.js"></script>
+</body>
+</html>
