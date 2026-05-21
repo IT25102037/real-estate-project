@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Accounts</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"></div>
+            <div class="brand">
+                <h2>RealEstate</h2>
+                <span>Finance Suite</span>
+            </div>
+        </div>
+
+        <div class="nav-links">
+            <a href="/dashboard" class="nav-link">
+                <div class="dot"></div>
+                <span>Dashboard</span>
+            </a>
+            <a href="/payment-page" class="nav-link">
+                <div class="dot"></div>
+                <span>New Payment</span>
+            </a>
+            <a href="/invoice-page" class="nav-link">
+                <div class="dot"></div>
+                <span>Invoices</span>
+            </a>
+            <a href="/payment-history-page" class="nav-link">
+                <div class="dot"></div>
+                <span>Payment History</span>
+            </a>
+            <a href="/bank-account-page" class="nav-link active">
+                <div class="dot"></div>
+                <span>Bank Accounts</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-section">
+            <div class="header-text">
+                <h1>Bank Accounts</h1>
+                <p>Manage linked bank accounts for transactions.</p>
+            </div>
+            <div class="header-actions">
+                <button type="button" class="btn btn-primary" onclick="toggleForm()">+ Add Account</button>
+            </div>
+        </div>
+
+        <div class="form-card" id="addAccountForm" style="display: none; margin-bottom: 2rem;">
+            <form id="bankAccountForm">
+                <div class="form-group">
+                    <label>User ID</label>
+                    <input type="number" id="userId" required>
+                </div>
+                <div class="form-group">
+                    <label>Bank Name</label>
+                    <input type="text" id="bankName" required>
+                </div>
+                <div class="form-group">
+                    <label>Account Holder</label>
+                    <input type="text" id="accountHolderName" required>
+                </div>
+                <div class="form-group">
+                    <label>Account Number</label>
+                    <input type="text" id="accountNumber" required>
+                </div>
+                <div class="form-group">
+                    <label>Branch Name</label>
+                    <input type="text" id="branchName" required>
+                </div>
+                <button type="submit" class="btn btn-success">Save Account</button>
+            </form>
+            <h3 id="message"></h3>
+        </div>
+
+        <div class="table-section">
+            <div id="accountList">
+                <p class="text-center text-secondary">Loading accounts...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleForm() {
+            const form = document.getElementById('addAccountForm');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+    <script src="/static/js/bank-account.js"></script>
+</body>
+</html>

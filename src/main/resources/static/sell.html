@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeEstate | Sell Your Property</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,700;0,900;1,400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --gold: #c9a96e;
+            --gold-light: #e8d5b0;
+            --gold-dark: #8b6914;
+            --obsidian: #0a0a0a;
+            --charcoal: #1a1a1a;
+            --smoke: #2e2e2e;
+            --ash: #888;
+            --pearl: #f5f0e8;
+            --cream: #faf7f2;
+            --white: #ffffff;
+            --text-muted: #9a9a9a;
+            --border-subtle: rgba(201,169,110,0.15);
+            --border-gold: rgba(201,169,110,0.4);
+            --shadow-gold: 0 0 60px rgba(201,169,110,0.08);
+            --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            min-height: 100vh;
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--cream);
+            color: var(--charcoal);
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--obsidian); }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+        .container { max-width: 1320px; margin: auto; padding: 0 40px; }
+
+        header {
+            background: rgba(10,10,10,0.92);
+            backdrop-filter: blur(30px) saturate(1.5);
+            -webkit-backdrop-filter: blur(30px) saturate(1.5);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 0;
+            position: fixed; top: 0; left: 0; width: 100%;
+            z-index: 1000;
+            transition: all 0.5s var(--transition-smooth);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            height: 80px;
+        }
+        .logo h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--white);
+        }
+        .logo h1 span { color: var(--gold); }
+
+        nav ul { display: flex; gap: 40px; list-style: none; }
+        nav a {
+            text-decoration: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+            transition: color 0.3s;
+            padding-bottom: 4px;
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 0%; height: 1px;
+            background: var(--gold);
+            transition: width 0.4s var(--transition-smooth);
+        }
+        nav a:hover, nav a.active { color: var(--gold); }
+        nav a:hover::after, nav a.active::after { width: 100%; }
+
+        .sign-in-btn, .primary-action {
+            background: var(--gold);
+            color: var(--obsidian);
+            padding: 13px 28px;
+            border-radius: 2px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: 1px solid var(--gold);
+            cursor: pointer;
+            transition: all 0.4s var(--transition-smooth);
+            white-space: nowrap;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .sign-in-btn:hover, .primary-action:hover {
+            background: var(--gold-light);
+            box-shadow: 0 0 40px rgba(201,169,110,0.35);
+        }
+
+        .sell-hero {
+            min-height: 620px;
+            padding: 170px 0 80px;
+            background:
+                    linear-gradient(rgba(10,10,10,0.72), rgba(10,10,10,0.62)),
+                    url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+        .sell-hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.45;
+            pointer-events: none;
+        }
+        .sell-hero::after {
+            content: '';
+            position: absolute;
+            top: 80px; left: 50%;
+            transform: translateX(-50%);
+            width: 1px; height: 110px;
+            background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+            opacity: 0.5;
+        }
+
+        .hero-layout {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+            gap: 56px;
+            align-items: center;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            color: var(--gold);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+        .eyebrow::before {
+            content: '';
+            width: 40px; height: 1px;
+            background: var(--gold);
+            opacity: 0.65;
+        }
+        .eyebrow i { width: 15px; height: 15px; }
+
+        .sell-hero h2 {
+            max-width: 760px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(52px, 6vw, 86px);
+            line-height: 1.04;
+            font-weight: 300;
+            letter-spacing: -1px;
+            margin-bottom: 26px;
+        }
+
+        .sell-hero p {
+            max-width: 590px;
+            color: rgba(255,255,255,0.58);
+            font-size: 15px;
+            line-height: 1.9;
+            letter-spacing: 0.6px;
+            font-weight: 300;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border-gold);
+            border: 1px solid var(--border-gold);
+        }
+
+        .stat {
+            background: rgba(10,10,10,0.72);
+            backdrop-filter: blur(24px);
+            padding: 28px 18px;
+            text-align: center;
+        }
+
+        .stat strong {
+            display: block;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 46px;
+            font-weight: 300;
+            color: var(--white);
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        .stat span {
+            color: var(--gold);
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+        }
+
+        main { padding: 90px 0 120px; background: var(--cream); }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: minmax(370px, 0.92fr) minmax(0, 1.08fr);
+            gap: 2px;
+            align-items: start;
+            background: #e8e2da;
+            border: 1px solid rgba(26,26,26,0.06);
+        }
+
+        .panel {
+            background: var(--white);
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .form-panel { padding: 42px; position: sticky; top: 104px; }
+        .panel-header { display: flex; justify-content: space-between; gap: 18px; align-items: flex-start; margin-bottom: 26px; }
+        .panel-header h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 38px;
+            line-height: 1.05;
+            font-weight: 400;
+            color: var(--obsidian);
+        }
+        .panel-header p {
+            color: var(--text-muted);
+            margin-top: 10px;
+            line-height: 1.75;
+            font-size: 13px;
+            letter-spacing: 0.4px;
+        }
+
+        .mode-chip {
+            border: none;
+            border-radius: 1px;
+            padding: 9px 14px;
+            background: var(--obsidian);
+            color: var(--gold);
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .field { display: flex; flex-direction: column; gap: 9px; }
+        .field.full { grid-column: 1 / -1; }
+        label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--obsidian);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            border: 1px solid rgba(26,26,26,0.12);
+            border-radius: 2px;
+            background: #fbfaf8;
+            padding: 15px 16px;
+            color: var(--charcoal);
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            letter-spacing: 0.4px;
+            outline: none;
+            transition: all 0.3s var(--transition-smooth);
+        }
+        textarea { min-height: 118px; resize: vertical; line-height: 1.6; }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201,169,110,0.12);
+            background: var(--white);
+        }
+
+        .upload-zone {
+            border: 1px dashed var(--border-gold);
+            border-radius: 2px;
+            padding: 22px;
+            background: #fbfaf8;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s var(--transition-smooth);
+        }
+        .upload-zone:hover, .upload-zone.dragover { border-color: var(--gold); background: #f7efe3; }
+        .upload-zone i { color: var(--gold); margin-bottom: 10px; }
+        .upload-zone strong { display: block; color: var(--obsidian); margin-bottom: 5px; font-size: 14px; }
+        .upload-zone span { color: var(--text-muted); font-size: 12px; }
+        .upload-zone input { display: none; }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .preview-grid img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 2px;
+            border: 1px solid rgba(26,26,26,0.08);
+        }
+
+        .existing-images {
+            display: none;
+            margin-bottom: 18px;
+        }
+        .existing-images h4 {
+            color: var(--obsidian);
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .existing-image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+            gap: 12px;
+        }
+        .existing-image-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 2px;
+            background: white;
+            border: 1px solid rgba(26,26,26,0.08);
+        }
+        .existing-image-card img {
+            width: 100%;
+            aspect-ratio: 1.12;
+            object-fit: cover;
+            display: block;
+        }
+        .image-actions {
+            display: flex;
+            gap: 8px;
+            padding: 9px;
+            background: white;
+        }
+        .image-action {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 34px;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            color: var(--obsidian);
+            background: #f5f0e8;
+            transition: 0.2s ease;
+        }
+        .image-action:hover { transform: translateY(-1px); }
+        .image-action.delete {
+            color: var(--danger);
+            background: #fee2e2;
+        }
+        .image-action input { display: none; }
+
+        .form-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+        .secondary-action, .danger-action, .icon-button {
+            border: none;
+            cursor: pointer;
+            border-radius: 2px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: 0.25s ease;
+        }
+        .secondary-action { padding: 12px 22px; background: white; color: var(--obsidian); border: 1px solid rgba(26,26,26,0.18); }
+        .danger-action { padding: 12px 22px; background: #fee2e2; color: #b91c1c; }
+        .secondary-action:hover, .danger-action:hover, .icon-button:hover { transform: translateY(-2px); }
+
+        .list-panel { padding: 42px; }
+        .toolbar { display: flex; gap: 14px; align-items: center; margin-bottom: 22px; }
+        .toolbar .search-wrap { flex: 1; position: relative; }
+        .toolbar .search-wrap i { position: absolute; top: 50%; left: 16px; transform: translateY(-50%); color: var(--gold); }
+        .toolbar input { padding-left: 46px; }
+        .toolbar select { max-width: 190px; }
+
+        .property-list { display: grid; gap: 16px; }
+        .seller-card {
+            display: grid;
+            grid-template-columns: 112px 1fr auto;
+            gap: 18px;
+            align-items: center;
+            background: white;
+            border: 1px solid rgba(26,26,26,0.08);
+            border-radius: 2px;
+            padding: 16px;
+            animation: fadeInUp 0.35s ease both;
+        }
+        .thumb {
+            width: 112px;
+            height: 96px;
+            border-radius: 2px;
+            background: var(--obsidian);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+        }
+        .seller-card h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--obsidian);
+            margin-bottom: 8px;
+        }
+        .meta-line { display: flex; flex-wrap: wrap; gap: 12px; color: var(--text-muted); font-size: 12px; font-weight: 500; }
+        .price {
+            margin-top: 12px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--obsidian);
+        }
+        .card-actions { display: flex; gap: 9px; }
+        .icon-button {
+            width: 42px;
+            height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #fbfaf8;
+            color: var(--obsidian);
+            border: 1px solid rgba(26,26,26,0.14);
+        }
+        .icon-button.delete { color: var(--danger); background: #fff1f2; border-color: #fecdd3; }
+
+        .empty-state {
+            text-align: center;
+            padding: 54px 20px;
+            color: var(--text-muted);
+            background: #fbfaf8;
+            border: 1px dashed var(--border-gold);
+            border-radius: 2px;
+        }
+        .empty-state i { color: var(--gold); margin-bottom: 14px; }
+        .toast {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            display: none;
+            min-width: 260px;
+            padding: 16px 18px;
+            border-radius: 2px;
+            background: var(--obsidian);
+            color: white;
+            border: 1px solid var(--border-gold);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.24);
+            z-index: 1200;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+        .toast.show { display: block; animation: fadeInUp 0.3s ease; }
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+
+        footer {
+            background: var(--obsidian);
+            color: var(--white);
+            padding: 70px 0;
+            text-align: center;
+            font-size: 13px;
+            border-top: 1px solid var(--border-subtle);
+        }
+        footer h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 42px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        footer p { color: var(--gold); letter-spacing: 4px; text-transform: uppercase; font-size: 9px; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1020px) {
+            .header-content, nav ul { gap: 18px; }
+            nav ul { flex-wrap: wrap; justify-content: center; }
+            .hero-layout, .workspace { grid-template-columns: 1fr; }
+            .form-panel { position: static; }
+            header { position: sticky; }
+        }
+
+        @media (max-width: 720px) {
+            .container { padding: 0 18px; }
+            .header-content { flex-direction: column; }
+            .sell-hero { padding: 130px 0 46px; min-height: auto; }
+            .hero-stats, .form-grid { grid-template-columns: 1fr; }
+            .seller-card { grid-template-columns: 1fr; }
+            .thumb { width: 100%; height: 160px; }
+            .card-actions { justify-content: flex-end; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .toolbar select { max-width: none; }
+        }
+    </style>
+</head>
+<body>
+
+<header id="mainHeader">
+    <div class="container header-content">
+        <div class="logo"><h1>Luxe<span>_Estate</span></h1></div>
+        <nav>
+            <ul>
+
+                <li><a href="index.html">Home</a></li>
+                <li><a href="rent.html">Rent</a></li>
+                <li><a href="sell.html" class="active">Sell</a></li>
+                <li><a href="agents.html">Agents</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="about.html">About Us</a></li>
+            </ul>
+        </nav>
+        <div id="userActions">
+            <a href="#propertyForm" class="sign-in-btn">Add Property</a>
+        </div>
+    </div>
+</header>
+
+<section class="sell-hero">
+    <div class="container hero-layout">
+        <div>
+            <div class="eyebrow"><i data-lucide="sparkles"></i> Seller Property Management</div>
+            <h2>Present your property with LuxeEstate polish.</h2>
+            <p>Add premium house and apartment listings, upload gallery images, update details, and remove sold listings from one focused management space.</p>
+        </div>
+        <div class="hero-stats">
+            <div class="stat"><strong id="totalCount">0</strong><span>Total Listings</span></div>
+            <div class="stat"><strong id="houseCount">0</strong><span>Houses</span></div>
+            <div class="stat"><strong id="apartmentCount">0</strong><span>Apartments</span></div>
+        </div>
+    </div>
+</section>
+
+<main>
+    <div class="container workspace">
+        <section class="panel form-panel" id="propertyForm">
+            <div class="panel-header">
+                <div>
+                    <h3 id="formTitle">Add Property</h3>
+                    <p id="formSubtitle">Rental properties are excluded from this seller form.</p>
+                </div>
+                <button class="mode-chip" id="modeChip" type="button">Create</button>
+            </div>
+
+            <form id="listingForm">
+                <input type="hidden" id="propertyId">
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="propertyType">Property Type</label>
+                        <select id="propertyType" required>
+                            <option value="house">House</option>
+                            <option value="apartment">Apartment</option>
+                        </select>
+                    </div>
+                    <div class="field" id="typeSpecificField">
+                        <label for="typeSpecificInput" id="typeSpecificLabel">Number of Floors</label>
+                        <input type="number" id="typeSpecificInput" min="1" placeholder="2" required>
+                    </div>
+                    <div class="field full">
+                        <label for="title">Property Title</label>
+                        <input type="text" id="title" placeholder="Modern luxury villa in Colombo" required>
+                    </div>
+                    <div class="field">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" placeholder="Colombo 07" required>
+                    </div>
+                    <div class="field">
+                    <label for="price">Selling Price (Rs.)</label>
+                        <input type="number" id="price" min="0" step="1000" placeholder="85000000" required>
+                    </div>
+                    <div class="field full">
+                        <label for="description">Description</label>
+                        <textarea id="description" placeholder="Describe rooms, finishes, neighborhood highlights, parking, and special features." required></textarea>
+                    </div>
+                    <div class="field full">
+                        <label>Property Images</label>
+                        <div class="existing-images" id="existingImagesSection">
+                            <h4>Existing Images</h4>
+                            <div class="existing-image-grid" id="existingImages"></div>
+                        </div>
+                        <label class="upload-zone" id="uploadZone" for="images">
+                            <i data-lucide="image-plus"></i>
+                            <strong>Drop images here or browse</strong>
+                            <span>Multiple JPG, PNG, or WEBP images are supported.</span>
+                            <input type="file" id="images" accept="image/*" multiple>
+                        </label>
+                        <div class="preview-grid" id="imagePreview"></div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="primary-action" id="submitBtn">Publish Property</button>
+                    <button type="button" class="secondary-action" id="resetBtn">Clear Form</button>
+                    <button type="button" class="danger-action" id="cancelEditBtn" style="display:none;">Cancel Edit</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="panel list-panel">
+            <div class="panel-header">
+                <div>
+                    <h3>Added Properties</h3>
+                    <p>Manage the sale listings already stored in the system.</p>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <div class="search-wrap">
+                    <i data-lucide="search"></i>
+                    <input type="search" id="searchInput" placeholder="Search by title or location">
+                </div>
+                <select id="filterType">
+                    <option value="all">All Types</option>
+                    <option value="house">Houses</option>
+                    <option value="apartment">Apartments</option>
+                </select>
+            </div>
+
+            <div class="property-list" id="propertyList"></div>
+        </section>
+    </div>
+</main>
+
+<footer>
+    <div class="container">
+        <h1>Luxe_Estate</h1>
+        <p>Creating New Worlds</p>
+    </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    lucide.createIcons();
+
+    const form = document.getElementById('listingForm');
+    const propertyType = document.getElementById('propertyType');
+    const typeSpecificLabel = document.getElementById('typeSpecificLabel');
+    const typeSpecificInput = document.getElementById('typeSpecificInput');
+    const imagesInput = document.getElementById('images');
+    const preview = document.getElementById('imagePreview');
+    const propertyList = document.getElementById('propertyList');
+    const searchInput = document.getElementById('searchInput');
+    const filterType = document.getElementById('filterType');
+    const uploadZone = document.getElementById('uploadZone');
+    const toast = document.getElementById('toast');
+    const propertyId = document.getElementById('propertyId');
+    const formTitle = document.getElementById('formTitle');
+    const formSubtitle = document.getElementById('formSubtitle');
+    const submitBtn = document.getElementById('submitBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const modeChip = document.getElementById('modeChip');
+    const existingImagesSection = document.getElementById('existingImagesSection');
+    const existingImages = document.getElementById('existingImages');
+
+    let listings = [];
+
+    propertyType.addEventListener('change', updateTypeSpecificField);
+    imagesInput.addEventListener('change', renderImagePreview);
+    form.addEventListener('submit', handleSubmit);
+    searchInput.addEventListener('input', renderListings);
+    filterType.addEventListener('change', renderListings);
+    document.getElementById('resetBtn').addEventListener('click', resetForm);
+    cancelEditBtn.addEventListener('click', resetForm);
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, event => {
+            event.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, event => {
+            event.preventDefault();
+            uploadZone.classList.remove('dragover');
+        });
+    });
+
+    uploadZone.addEventListener('drop', event => {
+        imagesInput.files = event.dataTransfer.files;
+        renderImagePreview();
+    });
+
+    function updateTypeSpecificField() {
+        const isHouse = propertyType.value === 'house';
+        typeSpecificLabel.textContent = isHouse ? 'Number of Floors' : 'Apartment Floor Number';
+        typeSpecificInput.placeholder = isHouse ? '2' : '12';
+        typeSpecificInput.value = '';
+    }
+
+    function renderImagePreview() {
+        preview.innerHTML = '';
+        [...imagesInput.files].forEach(file => {
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.alt = file.name;
+            preview.appendChild(img);
+        });
+    }
+
+    async function handleSubmit(event) {
+        event.preventDefault();
+        const editingId = propertyId.value;
+        const type = propertyType.value;
+
+        try {
+            if (editingId) {
+                await updateProperty(editingId, type);
+                if (imagesInput.files.length > 0) {
+                    await addImages(editingId);
+                }
+                showToast('Property updated successfully.', 'success');
+            } else {
+                await createProperty(type);
+                showToast('Property published successfully.', 'success');
+            }
+
+            resetForm();
+            await loadListings();
+        } catch (error) {
+            showToast(error.message || 'Something went wrong. Please try again.', 'error');
+        }
+    }
+
+    async function createProperty(type) {
+        const payload = {
+            type,
+            title: document.getElementById('title').value.trim(),
+            location: document.getElementById('location').value.trim(),
+            price: Number(document.getElementById('price').value),
+            description: document.getElementById('description').value.trim()
+        };
+
+        if (type === 'house') {
+            payload.numOfFloors = Number(typeSpecificInput.value);
+        } else {
+            payload.floorNumber = Number(typeSpecificInput.value);
+        }
+
+        const response = await fetch('/api/properties', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error('Could not publish the property.');
+        }
+
+        const savedProperty = await response.json();
+        if (imagesInput.files.length > 0) {
+            await addImages(savedProperty.id);
+        }
+    }
+
+    async function updateProperty(id, type) {
+        const payload = {
+            type,
+            title: document.getElementById('title').value.trim(),
+            location: document.getElementById('location').value.trim(),
+            price: Number(document.getElementById('price').value),
+            description: document.getElementById('description').value.trim()
+        };
+
+        if (type === 'house') {
+            payload.numOfFloors = Number(typeSpecificInput.value);
+        } else {
+            payload.floorNumber = Number(typeSpecificInput.value);
+        }
+
+        const response = await fetch(`/api/properties/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error('Could not update the property. Make sure the property type matches the original listing.');
+        }
+    }
+
+    async function addImages(id) {
+        const maxImageSize = 10 * 1024 * 1024;
+        const oversizedImage = [...imagesInput.files].find(file => file.size > maxImageSize);
+
+        if (oversizedImage) {
+            throw new Error(`"${oversizedImage.name}" is larger than 10MB. Please choose a smaller image.`);
+        }
+
+        const formData = new FormData();
+        [...imagesInput.files].forEach(file => formData.append('images', file));
+
+        const response = await fetch(`/api/properties/${id}/images`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok) {
+            if (response.status === 413) {
+                throw new Error('One or more images are too large. Please keep each image under 10MB.');
+            }
+            throw new Error('Property details were saved, but images could not be added.');
+        }
+    }
+
+    async function loadListings() {
+        try {
+            const response = await fetch('/api/properties');
+            if (!response.ok) throw new Error('Could not load properties.');
+            listings = await response.json();
+            listings = listings.filter(item => normalizeType(item) !== 'rental').reverse();
+            renderListings();
+            updateStats();
+        } catch (error) {
+            propertyList.innerHTML = `<div class="empty-state"><i data-lucide="wifi-off"></i><h3>Properties could not be loaded</h3><p>${error.message}</p></div>`;
+            lucide.createIcons();
+        }
+    }
+
+    function renderListings() {
+        const query = searchInput.value.toLowerCase().trim();
+        const selectedType = filterType.value;
+        const filtered = listings.filter(item => {
+            const type = normalizeType(item);
+            const matchesType = selectedType === 'all' || type === selectedType;
+            const matchesSearch = `${item.title || ''} ${item.location || ''}`.toLowerCase().includes(query);
+            return matchesType && matchesSearch;
+        });
+
+        if (filtered.length === 0) {
+            propertyList.innerHTML = '<div class="empty-state"><i data-lucide="home"></i><h3>No sale properties found</h3><p>Add your first house or apartment listing using the form.</p></div>';
+            lucide.createIcons();
+            return;
+        }
+
+        propertyList.innerHTML = filtered.map(item => {
+            const type = normalizeType(item);
+            const special = type === 'house'
+                ? `${item.numOfFloors || 0} floor${Number(item.numOfFloors) === 1 ? '' : 's'}`
+                : `Floor ${item.floorNumber || 0}`;
+
+            const thumbContent = (item.images && item.images.length > 0) 
+                ? `<img src="${item.images[0].url}" style="width:100%;height:100%;object-fit:cover;border-radius:2px;">` 
+                : `<i data-lucide="${type === 'house' ? 'home' : 'building-2'}"></i>`;
+
+            return `
+                <article class="seller-card">
+                    <div class="thumb" id="thumb-${item.id}">${thumbContent}</div>
+                    <div>
+                        <h4>${escapeHtml(item.title || 'Untitled property')}</h4>
+                        <div class="meta-line">
+                            <span>${capitalize(type)}</span>
+                            <span>${escapeHtml(item.location || 'No location')}</span>
+                            <span>${special}</span>
+                        </div>
+                        <div class="price">${formatPrice(item.price || 0)}</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="icon-button" title="Edit property" onclick="editProperty(${item.id})"><i data-lucide="pencil"></i></button>
+                        <button class="icon-button delete" title="Delete property" onclick="deleteProperty(${item.id})"><i data-lucide="trash-2"></i></button>
+                    </div>
+                </article>
+            `;
+        }).join('');
+
+        filtered.forEach(item => {
+            if (!item.imagesLoaded) {
+                fetch(`/images/property/${item.id}`)
+                    .then(res => res.ok ? res.json() : [])
+                    .then(imgs => {
+                        item.images = imgs;
+                        item.imagesLoaded = true;
+                        if (imgs && imgs.length > 0 && imgs[0].url) {
+                            const thumb = document.getElementById(`thumb-${item.id}`);
+                            if (thumb) thumb.innerHTML = `<img src="${imgs[0].url}" style="width:100%;height:100%;object-fit:cover;border-radius:2px;">`;
+                        }
+                    })
+                    .catch(e => console.error(e));
+            }
+        });
+        lucide.createIcons();
+    }
+
+    async function editProperty(id) {
+        const item = listings.find(property => Number(property.id) === Number(id));
+        if (!item) return;
+
+        const type = normalizeType(item);
+        propertyId.value = item.id;
+        propertyType.value = type;
+        propertyType.disabled = true;
+        updateTypeSpecificField();
+        document.getElementById('title').value = item.title || '';
+        document.getElementById('location').value = item.location || '';
+        document.getElementById('price').value = item.price || '';
+        document.getElementById('description').value = item.description || '';
+        typeSpecificInput.value = type === 'house' ? (item.numOfFloors || '') : (item.floorNumber || '');
+        preview.innerHTML = '';
+        imagesInput.value = '';
+        await loadExistingImages(item.id);
+
+        formTitle.textContent = 'Update Property';
+        formSubtitle.textContent = 'Edit details, replace a single image, delete an image, or add more images.';
+        submitBtn.textContent = 'Save Changes';
+        cancelEditBtn.style.display = 'inline-block';
+        modeChip.textContent = 'Editing';
+        document.getElementById('propertyForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    async function loadExistingImages(id) {
+        existingImagesSection.style.display = 'block';
+        existingImages.innerHTML = '<div class="empty-state" style="padding:18px;">Loading images...</div>';
+
+        try {
+            const response = await fetch(`/images/property/${id}`);
+            if (!response.ok) throw new Error('Could not load existing images.');
+            const images = await response.json();
+            renderExistingImages(images);
+        } catch (error) {
+            existingImages.innerHTML = `<div class="empty-state" style="padding:18px;">${error.message}</div>`;
+        }
+    }
+
+    function renderExistingImages(images) {
+        if (images.length === 0) {
+            existingImages.innerHTML = '<div class="empty-state" style="padding:18px;">No images added yet.</div>';
+            lucide.createIcons();
+            return;
+        }
+
+        existingImages.innerHTML = images.map(image => `
+            <div class="existing-image-card">
+                <img src="${image.url}" alt="${escapeHtml(image.fileName)}">
+                <div class="image-actions">
+                    <label class="image-action" title="Replace image">
+                        <i data-lucide="refresh-cw"></i>
+                        <input type="file" accept="image/*" onchange="replaceExistingImage(${image.id}, this.files[0])">
+                    </label>
+                    <button type="button" class="image-action delete" title="Delete image" onclick="deleteExistingImage(${image.id})">
+                        <i data-lucide="trash-2"></i>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+        lucide.createIcons();
+    }
+
+    async function replaceExistingImage(imageId, file) {
+        if (!file) return;
+        if (file.size > 10 * 1024 * 1024) {
+            showToast(`"${file.name}" is larger than 10MB. Please choose a smaller image.`, 'error');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('newImage', file);
+        formData.append('propertyId', propertyId.value);
+
+        try {
+            const response = await fetch(`/images/${imageId}/update`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error('Could not replace the image.');
+            showToast('Image replaced successfully.', 'success');
+            await loadExistingImages(propertyId.value);
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    async function deleteExistingImage(imageId) {
+        if (!confirm('Delete this image?')) return;
+
+        try {
+            const response = await fetch(`/images/${imageId}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error('Could not delete the image.');
+            showToast('Image deleted successfully.', 'success');
+            await loadExistingImages(propertyId.value);
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    async function deleteProperty(id) {
+        const item = listings.find(property => Number(property.id) === Number(id));
+        const name = item ? item.title : 'this property';
+        if (!confirm(`Delete "${name}" permanently?`)) return;
+
+        try {
+            const response = await fetch(`/api/properties/${id}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error('Could not delete the property.');
+            showToast('Property deleted successfully.', 'success');
+            if (propertyId.value === String(id)) resetForm();
+            await loadListings();
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    }
+
+    function resetForm() {
+        form.reset();
+        propertyId.value = '';
+        propertyType.disabled = false;
+        preview.innerHTML = '';
+        existingImages.innerHTML = '';
+        existingImagesSection.style.display = 'none';
+        propertyType.value = 'house';
+        updateTypeSpecificField();
+        formTitle.textContent = 'Add Property';
+        formSubtitle.textContent = 'Rental properties are excluded from this seller form.';
+        submitBtn.textContent = 'Publish Property';
+        cancelEditBtn.style.display = 'none';
+        modeChip.textContent = 'Create';
+    }
+
+    function updateStats() {
+        const houses = listings.filter(item => normalizeType(item) === 'house').length;
+        const apartments = listings.filter(item => normalizeType(item) === 'apartment').length;
+        document.getElementById('totalCount').textContent = listings.length;
+        document.getElementById('houseCount').textContent = houses;
+        document.getElementById('apartmentCount').textContent = apartments;
+    }
+
+    function normalizeType(item) {
+        const raw = item.type || item.propertyCategory || '';
+        return raw.toLowerCase();
+    }
+
+    function formatPrice(value) {
+        return `Rs. ${Number(value || 0).toLocaleString('en-LK', { maximumFractionDigits: 0 })}`;
+    }
+
+    function capitalize(value) {
+        return value ? value.charAt(0).toUpperCase() + value.slice(1) : '';
+    }
+
+    function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, character => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        }[character]));
+    }
+
+    function showToast(message, type) {
+        toast.textContent = message;
+        toast.className = `toast show ${type || ''}`;
+        setTimeout(() => toast.className = 'toast', 3200);
+    }
+
+    window.addEventListener('scroll', () => {
+        const header = document.getElementById('mainHeader');
+        if (window.scrollY > 35) {
+            header.style.padding = '10px 0';
+            header.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+        } else {
+            header.style.padding = '15px 0';
+            header.style.boxShadow = 'none';
+        }
+    });
+
+    window.onload = () => {
+        updateTypeSpecificField();
+        loadListings();
+    };
+</script>
+</body>
+</html>
