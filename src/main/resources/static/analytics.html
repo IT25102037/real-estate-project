@@ -1061,7 +1061,9 @@
         }
         .form-input:focus { border-color: var(--gold-border); }
         .form-input.invalid { border-color: rgba(239, 68, 68, 0.65); }
-        .form-input option { background: #1a1a1a; }
+        select.form-input { cursor: pointer; color-scheme: dark; }
+        .form-input option,
+        .form-input optgroup { background: #1a1a1a; color: #f8fafc; }
         .form-error {
             min-height: 14px;
             margin-top: 6px;
@@ -1070,6 +1072,14 @@
             line-height: 1.4;
             letter-spacing: 0.4px;
         }
+        .form-error.show {
+            margin-bottom: 10px;
+            padding: 10px 12px;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: 8px;
+        }
+        .form-error.show ul { margin: 6px 0 0 16px; padding: 0; }
 
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
@@ -1266,7 +1276,7 @@
                 </div>
                 <div class="table-actions" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                     <select id="txStatusFilter" class="form-input" onchange="txPage=1; renderTable()" style="width:130px; padding:8px 12px; font-size:11px;">
-                        <option value="">All payments</option>
+                        <option value="">Recent transactions</option>
                         <option value="COMPLETED">Completed</option>
                         <option value="PENDING">Pending</option>
                         <option value="FAILED">Failed</option>
@@ -2203,7 +2213,7 @@
             const report = await generatePeriodicReport(type);
             viewingReport = report;
             document.getElementById('viewReportTitle').textContent = report.title;
-            document.getElementById('viewReportMeta').textContent = `${report.reportType} · ${report.startDate} to ${report.endDate}`;
+            document.getElementById('viewReportMeta').textContent = `${formatReportTypeLabel(report.reportType)} · ${report.startDate} to ${report.endDate}`;
             const data = parseReportData(report);
             document.getElementById('viewReportBody').textContent = data ? JSON.stringify(data, null, 2) : report.reportData || '';
             document.getElementById('viewReportModal').classList.add('open');
@@ -2222,12 +2232,46 @@
     function printViewingReport() { if (viewingReport) printReport(viewingReport); }
     function pdfViewingReport() { if (viewingReport) downloadReportPdf(viewingReport); }
 
+    const TX_REPORT_FIELD_MAP = { title: 'txReportTitle', startDate: 'txReportStart', endDate: 'txReportEnd', selection: 'txReportSelection' };
+    const AGENT_REPORT_FIELD_MAP = { title: 'agentReportTitle', startDate: 'agentReportStart', endDate: 'agentReportEnd', selection: 'agentReportSelection' };
+
+    function clearReportModalErrors(prefix) {
+        const map = prefix === 'tx' ? TX_REPORT_FIELD_MAP : AGENT_REPORT_FIELD_MAP;
+        Object.values(map).forEach(id => clearFieldError(id));
+        const summary = document.getElementById(`${prefix}ReportError`);
+        if (summary) {
+            summary.textContent = '';
+            summary.classList.remove('show');
+        }
+    }
+
+    function showReportModalErrors(prefix, fieldErrors) {
+        const map = prefix === 'tx' ? TX_REPORT_FIELD_MAP : AGENT_REPORT_FIELD_MAP;
+        clearReportModalErrors(prefix);
+        const summary = document.getElementById(`${prefix}ReportError`);
+        if (summary && fieldErrors.length > 1) {
+            summary.innerHTML = '<strong>Please fix the following:</strong><ul>' +
+                fieldErrors.map(e => `<li>${escapeHtml(e.message)}</li>`).join('') + '</ul>';
+            summary.classList.add('show');
+        } else if (summary && fieldErrors.length === 1) {
+            summary.textContent = fieldErrors[0].message;
+            summary.classList.add('show');
+        }
+        fieldErrors.forEach(e => {
+            const id = map[e.field];
+            if (id) setFieldError(id, e.message);
+        });
+        const firstId = map[fieldErrors[0]?.field];
+        if (firstId) document.getElementById(firstId)?.focus();
+        showToast(fieldErrors[0]?.message || 'Please check the form.');
+    }
+
     function openTransactionReportModal() {
-        const today = new Date().toISOString().slice(0, 10);
-        document.getElementById('txReportTitle').value = `Transaction Report · ${today}`;
-        document.getElementById('txReportStart').value = today;
-        document.getElementById('txReportEnd').value = today;
-        document.getElementById('txReportError').textContent = '';
+        const range = getReportDateRange('DAILY') || { startDate: new Date().toISOString().slice(0, 10), endDate: new Date().toISOString().slice(0, 10) };
+        document.getElementById('txReportTitle').value = `Recent Transactions Report · ${range.endDate}`;
+        document.getElementById('txReportStart').value = range.startDate;
+        document.getElementById('txReportEnd').value = range.endDate;
+        clearReportModalErrors('tx');
         const box = document.getElementById('txReportSelection');
         box.innerHTML = getFilteredFinanceTransactions().map(tx => `
             <label style="display:block;margin-bottom:6px;">
@@ -2258,27 +2302,28 @@
             propertyName: 'Finance Transactions',
             clientName: 'Finance Module'
         };
-        const errors = validateReportPayload(payload, { requireDateRange: true, requireSelection: true });
-        if (errors.length) {
-            document.getElementById('txReportError').textContent = errors[0];
+        const { fieldErrors } = validateReportPayloadDetailed(payload, { requireDateRange: true, requireSelection: true });
+        if (fieldErrors.length) {
+            showReportModalErrors('tx', fieldErrors);
             return;
         }
+        clearReportModalErrors('tx');
         try {
             const report = await createReport(payload);
             viewingReport = report;
             closeTransactionReportModal();
-            showToast('Transaction report saved to Reports tab.');
+            showToast('Recent transactions report saved to Reports.');
         } catch (e) {
-            document.getElementById('txReportError').textContent = e.message;
+            showReportModalErrors('tx', [{ field: 'title', message: e.message || 'Could not save the report. Please try again.' }]);
         }
     }
 
     function openAgentReportModal() {
-        const today = new Date().toISOString().slice(0, 10);
-        document.getElementById('agentReportTitle').value = `Agent Report · ${today}`;
-        document.getElementById('agentReportStart').value = today;
-        document.getElementById('agentReportEnd').value = today;
-        document.getElementById('agentReportError').textContent = '';
+        const range = getReportDateRange('WEEKLY') || { startDate: new Date().toISOString().slice(0, 10), endDate: new Date().toISOString().slice(0, 10) };
+        document.getElementById('agentReportTitle').value = `Agent Report · ${range.endDate}`;
+        document.getElementById('agentReportStart').value = range.startDate;
+        document.getElementById('agentReportEnd').value = range.endDate;
+        clearReportModalErrors('agent');
         const box = document.getElementById('agentReportSelection');
         box.innerHTML = getFilteredAgents().map(a => `
             <label style="display:block;margin-bottom:6px;">
@@ -2309,17 +2354,18 @@
             propertyName: 'Agent Directory',
             clientName: 'Agents Module'
         };
-        const errors = validateReportPayload(payload, { requireDateRange: true, requireSelection: true });
-        if (errors.length) {
-            document.getElementById('agentReportError').textContent = errors[0];
+        const { fieldErrors } = validateReportPayloadDetailed(payload, { requireDateRange: true, requireSelection: true });
+        if (fieldErrors.length) {
+            showReportModalErrors('agent', fieldErrors);
             return;
         }
+        clearReportModalErrors('agent');
         try {
             await createReport(payload);
             closeAgentReportModal();
             showToast('Agent report saved to Reports tab.');
         } catch (e) {
-            document.getElementById('agentReportError').textContent = e.message;
+            showReportModalErrors('agent', [{ field: 'title', message: e.message || 'Could not save the report. Please try again.' }]);
         }
     }
 

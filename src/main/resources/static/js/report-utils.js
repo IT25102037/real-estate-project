@@ -4,9 +4,39 @@ const REPORT_CATEGORIES = [
     { key: 'DAILY', label: 'Daily Reports' },
     { key: 'WEEKLY', label: 'Weekly Reports' },
     { key: 'MONTHLY', label: 'Monthly Reports' },
-    { key: 'TRANSACTION', label: 'Transaction Reports' },
     { key: 'AGENT', label: 'Agent Reports' }
 ];
+
+const REPORT_TYPE_LABELS = {
+    DAILY: 'Daily',
+    WEEKLY: 'Weekly',
+    MONTHLY: 'Monthly',
+    TRANSACTION: 'Recent Transactions',
+    AGENT: 'Agent'
+};
+
+/** ISO date range for DAILY / WEEKLY / MONTHLY (matches server generatePeriodicReport). */
+function getReportDateRange(type, referenceDate = new Date()) {
+    const normalized = String(type || '').toUpperCase();
+    if (!['DAILY', 'WEEKLY', 'MONTHLY'].includes(normalized)) {
+        return null;
+    }
+    const end = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), referenceDate.getDate());
+    const start = new Date(end);
+    if (normalized === 'WEEKLY') {
+        start.setDate(end.getDate() - 6);
+    } else if (normalized === 'MONTHLY') {
+        start.setDate(end.getDate() - 29);
+    }
+    return {
+        startDate: start.toISOString().slice(0, 10),
+        endDate: end.toISOString().slice(0, 10)
+    };
+}
+
+function formatReportTypeLabel(type) {
+    return REPORT_TYPE_LABELS[String(type || '').toUpperCase()] || type || '—';
+}
 
 function escapeHtml(value) {
     return String(value ?? '')
@@ -43,7 +73,7 @@ function buildReportDocumentHtml(report) {
     return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${escapeHtml(report.title)}</title>
     <style>body{font-family:Arial,sans-serif;padding:32px;color:#111;}h1{margin-bottom:8px;}table{border-collapse:collapse;width:100%;margin-top:16px;}</style></head><body>
     <h1>${escapeHtml(report.title)}</h1>
-    <p><strong>Type:</strong> ${escapeHtml(report.reportType)}</p>
+    <p><strong>Type:</strong> ${escapeHtml(formatReportTypeLabel(report.reportType))}</p>
     <p><strong>Period:</strong> ${escapeHtml(report.startDate || '—')} to ${escapeHtml(report.endDate || '—')}</p>
     <p><strong>Created:</strong> ${formatDate(report.createdAt)}</p>
     ${report.propertyName ? `<p><strong>Subject:</strong> ${escapeHtml(report.propertyName)} · ${escapeHtml(report.clientName || '')}</p>` : ''}
@@ -123,15 +153,47 @@ async function generatePeriodicReport(type) {
 }
 
 function validateReportPayload(payload, options = {}) {
-    const errors = [];
-    if (!payload.title || !payload.title.trim()) errors.push('Report title is required.');
-    if (!payload.reportType || !payload.reportType.trim()) errors.push('Report type is required.');
-    if (options.requireDateRange) {
-        if (!payload.startDate) errors.push('Start date is required.');
-        if (!payload.endDate) errors.push('End date is required.');
+    return validateReportPayloadDetailed(payload, options).messages;
+}
+
+function validateReportPayloadDetailed(payload, options = {}) {
+    const fieldErrors = [];
+    const title = (payload.title || '').trim();
+    const reportType = (payload.reportType || '').trim().toUpperCase();
+
+    if (!title) {
+        fieldErrors.push({ field: 'title', message: 'Please enter a report title (at least one character).' });
+    } else if (title.length < 2) {
+        fieldErrors.push({ field: 'title', message: 'Report title should be at least 2 characters long.' });
     }
-    if (options.requireSelection && (!payload.reportData || payload.reportData === '[]')) {
-        errors.push('Select at least one record for this report.');
+
+    if (!reportType) {
+        fieldErrors.push({ field: 'reportType', message: 'Please choose a report type from the list.' });
+    } else if (!REPORT_TYPE_LABELS[reportType]) {
+        fieldErrors.push({ field: 'reportType', message: 'That report type is not supported. Choose Daily, Weekly, Monthly, or Agent.' });
     }
-    return errors;
+
+    if (options.requireDateRange || ['DAILY', 'WEEKLY', 'MONTHLY', 'TRANSACTION', 'AGENT'].includes(reportType)) {
+        if (!payload.startDate) {
+            fieldErrors.push({ field: 'startDate', message: 'Please choose a start date for this report period.' });
+        }
+        if (!payload.endDate) {
+            fieldErrors.push({ field: 'endDate', message: 'Please choose an end date for this report period.' });
+        }
+        if (payload.startDate && payload.endDate && payload.endDate < payload.startDate) {
+            fieldErrors.push({ field: 'endDate', message: 'End date cannot be earlier than the start date. Adjust the range and try again.' });
+        }
+    }
+
+    if (options.requireSelection) {
+        const empty = !payload.reportData || payload.reportData === '[]';
+        if (empty) {
+            fieldErrors.push({ field: 'selection', message: 'Select at least one record to include in this report.' });
+        }
+    }
+
+    return {
+        messages: fieldErrors.map(e => e.message),
+        fieldErrors
+    };
 }
