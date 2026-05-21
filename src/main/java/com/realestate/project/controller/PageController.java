@@ -70,4 +70,9 @@ public class PageController {
     public String showBoostPaymentPage() {
         return "boost-payment";
     }
+
+    @GetMapping("/reports")
+    public String showReportsPage() {
+        return "forward:/reports.html";
+    }
 }

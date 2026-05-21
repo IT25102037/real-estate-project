@@ -15,8 +15,8 @@ public class Apartment extends Property {
 
     private int floorNumber;
 
-    public Apartment(String title, String location, double price, String description, int floorNumber){
-        super(title,location,price,description);
+    public Apartment(String title, String address, String district, double price, String description, int floorNumber){
+        super(title, address, district, price, description);
         this.floorNumber = floorNumber;
 
     }
@@ -26,6 +26,5 @@ public class Apartment extends Property {
         return "Apartment";
     }
 }
-
 
 

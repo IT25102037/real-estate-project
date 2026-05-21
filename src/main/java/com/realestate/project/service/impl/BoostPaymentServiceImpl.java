@@ -6,7 +6,7 @@ import com.realestate.project.dto.BoostPaymentResponse;
 import com.realestate.project.dto.CreateBoostPaymentRequest;
 import com.realestate.project.entity.BoostPayment;
 import com.realestate.project.enums.BoostStatus;
-import com.realestate.project.repo.BoostPaymentRepository;
+import com.realestate.project.repository.BoostPaymentRepository;
 import com.realestate.project.service.BoostPaymentService;
 
 import java.time.LocalDate;

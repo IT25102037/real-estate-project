@@ -598,11 +598,41 @@
                         <input type="text" id="title" placeholder="Modern luxury villa in Colombo" required>
                     </div>
                     <div class="field">
-                        <label for="location">Location</label>
-                        <input type="text" id="location" placeholder="Colombo 07" required>
+                        <label for="address">Address</label>
+                        <input type="text" id="address" minlength="2" maxlength="160" placeholder="24 Park Road, Colombo 07" required>
                     </div>
                     <div class="field">
-                        <label for="price">Selling Price (LKR)</label>
+                        <label for="district">District</label>
+                        <select id="district" required>
+                            <option value="Ampara">Ampara</option>
+                            <option value="Anuradhapura">Anuradhapura</option>
+                            <option value="Badulla">Badulla</option>
+                            <option value="Batticaloa">Batticaloa</option>
+                            <option value="Colombo" selected>Colombo</option>
+                            <option value="Galle">Galle</option>
+                            <option value="Gampaha">Gampaha</option>
+                            <option value="Hambantota">Hambantota</option>
+                            <option value="Jaffna">Jaffna</option>
+                            <option value="Kalutara">Kalutara</option>
+                            <option value="Kandy">Kandy</option>
+                            <option value="Kegalle">Kegalle</option>
+                            <option value="Kilinochchi">Kilinochchi</option>
+                            <option value="Kurunegala">Kurunegala</option>
+                            <option value="Mannar">Mannar</option>
+                            <option value="Matale">Matale</option>
+                            <option value="Matara">Matara</option>
+                            <option value="Monaragala">Monaragala</option>
+                            <option value="Mullaitivu">Mullaitivu</option>
+                            <option value="Nuwara Eliya">Nuwara Eliya</option>
+                            <option value="Polonnaruwa">Polonnaruwa</option>
+                            <option value="Puttalam">Puttalam</option>
+                            <option value="Ratnapura">Ratnapura</option>
+                            <option value="Trincomalee">Trincomalee</option>
+                            <option value="Vavuniya">Vavuniya</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                    <label for="price">Selling Price (Rs.)</label>
                         <input type="number" id="price" min="0" step="1000" placeholder="85000000" required>
                     </div>
                     <div class="field full">
@@ -644,7 +674,7 @@
             <div class="toolbar">
                 <div class="search-wrap">
                     <i data-lucide="search"></i>
-                    <input type="search" id="searchInput" placeholder="Search by title or location">
+                    <input type="search" id="searchInput" placeholder="Search by title, address, or district">
                 </div>
                 <select id="filterType">
                     <option value="all">All Types</option>
@@ -689,6 +719,7 @@
     const modeChip = document.getElementById('modeChip');
     const existingImagesSection = document.getElementById('existingImagesSection');
     const existingImages = document.getElementById('existingImages');
+    const DISTRICTS = ['Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 'Galle', 'Gampaha', 'Hambantota', 'Jaffna', 'Kalutara', 'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar', 'Matale', 'Matara', 'Monaragala', 'Mullaitivu', 'Nuwara Eliya', 'Polonnaruwa', 'Puttalam', 'Ratnapura', 'Trincomalee', 'Vavuniya'];
 
     let listings = [];
 
@@ -764,7 +795,8 @@
         const payload = {
             type,
             title: document.getElementById('title').value.trim(),
-            location: document.getElementById('location').value.trim(),
+            address: document.getElementById('address').value.trim(),
+            district: document.getElementById('district').value,
             price: Number(document.getElementById('price').value),
             description: document.getElementById('description').value.trim()
         };
@@ -795,7 +827,8 @@
         const payload = {
             type,
             title: document.getElementById('title').value.trim(),
-            location: document.getElementById('location').value.trim(),
+            address: document.getElementById('address').value.trim(),
+            district: document.getElementById('district').value,
             price: Number(document.getElementById('price').value),
             description: document.getElementById('description').value.trim()
         };
@@ -861,7 +894,7 @@
         const filtered = listings.filter(item => {
             const type = normalizeType(item);
             const matchesType = selectedType === 'all' || type === selectedType;
-            const matchesSearch = `${item.title || ''} ${item.location || ''}`.toLowerCase().includes(query);
+            const matchesSearch = `${item.title || ''} ${item.address || ''} ${item.district || ''}`.toLowerCase().includes(query);
             return matchesType && matchesSearch;
         });
 
@@ -888,7 +921,8 @@
                         <h4>${escapeHtml(item.title || 'Untitled property')}</h4>
                         <div class="meta-line">
                             <span>${capitalize(type)}</span>
-                            <span>${escapeHtml(item.location || 'No location')}</span>
+                            <span>${escapeHtml(formatAddress(item))}</span>
+                            <span>${escapeHtml(item.district || 'District not set')}</span>
                             <span>${special}</span>
                         </div>
                         <div class="price">${formatPrice(item.price || 0)}</div>
@@ -929,7 +963,8 @@
         propertyType.disabled = true;
         updateTypeSpecificField();
         document.getElementById('title').value = item.title || '';
-        document.getElementById('location').value = item.location || '';
+        document.getElementById('address').value = item.address || '';
+        document.getElementById('district').value = normalizeDistrict(item.district);
         document.getElementById('price').value = item.price || '';
         document.getElementById('description').value = item.description || '';
         typeSpecificInput.value = type === 'house' ? (item.numOfFloors || '') : (item.floorNumber || '');
@@ -1045,6 +1080,7 @@
         existingImages.innerHTML = '';
         existingImagesSection.style.display = 'none';
         propertyType.value = 'house';
+        document.getElementById('district').value = 'Colombo';
         updateTypeSpecificField();
         formTitle.textContent = 'Add Property';
         formSubtitle.textContent = 'Rental properties are excluded from this seller form.';
@@ -1067,15 +1103,19 @@
     }
 
     function formatPrice(value) {
-        return new Intl.NumberFormat('en-LK', {
-            style: 'currency',
-            currency: 'LKR',
-            maximumFractionDigits: 0
-        }).format(Number(value || 0)).replace('LKR', 'Rs.');
+        return `Rs. ${Number(value || 0).toLocaleString('en-LK', { maximumFractionDigits: 0 })}`;
     }
 
     function capitalize(value) {
         return value ? value.charAt(0).toUpperCase() + value.slice(1) : '';
+    }
+
+    function normalizeDistrict(value) {
+        return DISTRICTS.includes(value) ? value : 'Colombo';
+    }
+
+    function formatAddress(item) {
+        return item.address || 'Address not set';
     }
 
     function escapeHtml(value) {

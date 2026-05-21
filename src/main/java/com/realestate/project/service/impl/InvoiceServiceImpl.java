@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import com.realestate.project.dto.InvoiceResponse;
 import com.realestate.project.entity.Invoice;
 import com.realestate.project.exception.ResourceNotFoundException;
-import com.realestate.project.repo.InvoiceRepository;
+import com.realestate.project.repository.InvoiceRepository;
 import com.realestate.project.service.InvoiceService;
 
 import java.util.List;

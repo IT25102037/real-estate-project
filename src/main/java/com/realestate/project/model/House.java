@@ -13,8 +13,8 @@ public class House extends Property {
 
     private int numOfFloors;
 
-    public House(String title, String location, double price, String description, int numOfFloors) {
-        super(title, location, price, description);
+    public House(String title, String address, String district, double price, String description, int numOfFloors) {
+        super(title, address, district, price, description);
         this.numOfFloors = numOfFloors;
     }
 

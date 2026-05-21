@@ -3,7 +3,7 @@ package com.realestate.project.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.realestate.project.dto.PaymentHistoryResponse;
-import com.realestate.project.repo.PaymentHistoryRepository;
+import com.realestate.project.repository.PaymentHistoryRepository;
 import com.realestate.project.service.PaymentHistoryService;
 
 import java.util.List;

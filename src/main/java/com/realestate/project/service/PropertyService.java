@@ -9,27 +9,32 @@ import com.realestate.project.repository.PropertyRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-
 import java.util.List;
 import java.util.Optional;
-
-
-
 
 @Service
 public class PropertyService {
 
     private final PropertyRepository propertyRepository;
     private final PropertyImageRepository propertyImageRepository;
+    private final ActivityService activityService;
 
-    public PropertyService(PropertyRepository propertyRepository, PropertyImageRepository propertyImageRepository){
+    public PropertyService(PropertyRepository propertyRepository, PropertyImageRepository propertyImageRepository, ActivityService activityService){
         this.propertyRepository = propertyRepository;
         this.propertyImageRepository = propertyImageRepository;
+        this.activityService = activityService;
     }
 
     /// save a property
     public Property saveProperty(Property property){
-        return propertyRepository.save(property);
+        Property saved = propertyRepository.save(property);
+        activityService.logActivity(
+                "PROPERTY_CREATED",
+                "<strong>New listing</strong> — " + saved.getTitle() + " at " + saved.getAddress() + ", " + saved.getDistrict(),
+                "check-circle",
+                "green"
+        );
+        return saved;
     }
     /// return a list of many properties
     public List <Property> getAllProperties(){
@@ -38,15 +43,20 @@ public class PropertyService {
     /// return a property if exits , if not no property
     public Optional <Property> getPropertyById(long id){
         return propertyRepository.findById(id);
-
     }
     /// deleting a property object
     @Transactional
     public void deleteProperty(long id){
-        propertyImageRepository.deleteByPropertyId(id);
-        propertyRepository.deleteById(id);
-
-
+        propertyRepository.findById(id).ifPresent(property -> {
+            propertyImageRepository.deleteByPropertyId(id);
+            propertyRepository.delete(property);
+            activityService.logActivity(
+                    "PROPERTY_DELETED",
+                    "<strong>Listing removed</strong> — " + property.getTitle(),
+                    "trash-2",
+                    "red"
+            );
+        });
     }
 
     /// updating a property
@@ -59,7 +69,8 @@ public class PropertyService {
 
             /// update parent fields
             existingProperty.setTitle(updatedProperty.getTitle());
-            existingProperty.setLocation(updatedProperty.getLocation());
+            existingProperty.setAddress(updatedProperty.getAddress());
+            existingProperty.setDistrict(updatedProperty.getDistrict());
             existingProperty.setPrice(updatedProperty.getPrice());
             existingProperty.setDescription(updatedProperty.getDescription());
 
@@ -74,13 +85,14 @@ public class PropertyService {
                 ((RentalProperty)existingProperty).setDuration(((RentalProperty)updatedProperty).getDuration());
             }
 
-            return propertyRepository.save(existingProperty);
-
-
+            Property saved = propertyRepository.save(existingProperty);
+            activityService.logActivity(
+                    "PROPERTY_UPDATED",
+                    "<strong>Listing updated</strong> — " + saved.getTitle() + " details updated",
+                    "pencil",
+                    "blue"
+            );
+            return saved;
         }).orElseThrow(()-> new RuntimeException("Property not Found"));
-
-
-
     }
-
 }

@@ -46,13 +46,14 @@ public class PropertyFormController {
     @PostMapping("/properties/save/house")
     public String saveHouse(
             @RequestParam String title,
-            @RequestParam String location,
+            @RequestParam String address,
+            @RequestParam String district,
             @RequestParam double price,
             @RequestParam String description,
             @RequestParam int numOfFloors,
             @RequestParam(value = "images", required = false) MultipartFile[] images
     ) throws IOException {
-        House house = new House(title, location, price, description, numOfFloors);
+        House house = new House(title, address, district, price, description, numOfFloors);
         Property savedProperty = propertyService.saveProperty(house);
         saveImages(savedProperty, images);
         return "redirect:/sell";
@@ -61,13 +62,14 @@ public class PropertyFormController {
     @PostMapping("/properties/save/apartment")
     public String saveApartment(
             @RequestParam String title,
-            @RequestParam String location,
+            @RequestParam String address,
+            @RequestParam String district,
             @RequestParam double price,
             @RequestParam String description,
             @RequestParam int floorNumber,
             @RequestParam(value = "images", required = false) MultipartFile[] images
     ) throws IOException {
-        Apartment apartment = new Apartment(title, location, price, description, floorNumber);
+        Apartment apartment = new Apartment(title, address, district, price, description, floorNumber);
         Property savedProperty = propertyService.saveProperty(apartment);
         saveImages(savedProperty, images);
         return "redirect:/sell";
@@ -76,7 +78,8 @@ public class PropertyFormController {
     @PostMapping("/properties/save/rental")
     public String saveRental(
             @RequestParam String title,
-            @RequestParam String location,
+            @RequestParam String address,
+            @RequestParam String district,
             @RequestParam double price,
             @RequestParam String description,
             @RequestParam double monthlyRent,
@@ -84,7 +87,7 @@ public class PropertyFormController {
             @RequestParam(required = false) String duration,
             @RequestParam(value = "images", required = false) MultipartFile[] images
     ) throws IOException {
-        RentalProperty rental = new RentalProperty(title, location, price, description, monthlyRent, advanceAmount, duration);
+        RentalProperty rental = new RentalProperty(title, address, district, price, description, monthlyRent, advanceAmount, duration);
         Property savedProperty = propertyService.saveProperty(rental);
         saveImages(savedProperty, images);
         return "redirect:/sell";
