@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Elite Agents | LuxeEstate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            /* Using a professional office background */
+            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)),
+                        url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-attachment: fixed;
+            color: #fff;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
+
+        .header { text-align: center; margin-bottom: 50px; }
+        .header h1 {
+            font-size: 3rem;
+            margin: 0;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .agent-card {
+            background: var(--glass);
+            border-radius: 20px;
+            padding: 40px 20px;
+            text-align: center;
+            color: #1e293b;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .agent-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .agent-img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #a855f7;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(168, 85, 247, 0.2);
+        }
+
+        .agent-name { font-size: 1.4rem; font-weight: 700; margin: 10px 0 5px; }
+        .agent-role { color: #64748b; font-size: 0.9rem; margin-bottom: 25px; }
+
+        .contact-btn {
+            display: inline-block;
+            padding: 12px 35px;
+            background: var(--primary-gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .contact-btn:hover { filter: brightness(1.1); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Our Elite Agents</h1>
+        <p>Connect with the best in the luxury real estate market.</p>
+    </div>
+
+    <div class="agent-grid">
+        <div class="agent-card">
+            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400" class="agent-img">
+            <div class="agent-name">James Wilson</div>
+            <div class="agent-role">Senior Luxury Specialist</div>
+            <a href="agent-detail.html" class="contact-btn">View Profile</a>
+        </div>
+
+        <div class="agent-card">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400" class="agent-img">
+            <div class="agent-name">Sarah Jenkins</div>
+            <div class="agent-role">Commercial Land Expert</div>
+            <a href="agent-detail.html" class="contact-btn">View Profile</a>
+        </div>
+
+        <div class="agent-card">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400" class="agent-img">
+            <div class="agent-name">Michael Chen</div>
+            <div class="agent-role">Modern Mansion Agent</div>
+            <a href="agent-detail.html" class="contact-btn">View Profile</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

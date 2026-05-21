@@ -70,8 +70,4 @@ public abstract class Property{
 
 
 
-
-
 }
-
-

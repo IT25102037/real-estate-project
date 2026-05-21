@@ -47,7 +47,6 @@ public class ContactService {
 
     public Optional<ContactMessage> updateStatus(Long id, String newStatus) {
         return contactRepository.findById(id).map(message -> {
-            // Business logic: cleaning the string
             String cleanStatus = newStatus.replace("\"", "");
             message.setStatus(cleanStatus);
             ContactMessage saved = contactRepository.save(message);

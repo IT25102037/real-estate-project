@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finance Overview</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
@@ -106,7 +106,7 @@
                 const summaryRes = await fetch('/api/finance/summary');
                 if (summaryRes.ok) {
                     const data = await summaryRes.json();
-                    document.getElementById('stat-total-collected').textContent = '$' + (data.totalRevenue || 0).toLocaleString(undefined, {minimumFractionDigits: 2});
+                    document.getElementById('stat-total-collected').textContent = 'RS.' + (data.totalRevenue || 0).toLocaleString(undefined, {minimumFractionDigits: 2});
                     document.getElementById('stat-pending-invoices').textContent = data.pendingInvoices || 0;
                     document.getElementById('stat-bank-accounts').textContent = data.totalBankAccounts || 0;
                     document.getElementById('stat-overdue').textContent = data.overdueInvoices || 0;
