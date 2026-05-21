@@ -2242,7 +2242,7 @@
         <div class="search-bar-modern">
             <div class="search-input-group">
                 <i data-lucide="map-pin"></i>
-                <input type="text" id="searchInput" placeholder="Search by city or zip...">
+                <input type="text" id="searchInput" placeholder="Search by address or district...">
             </div>
             <div class="search-input-group">
                 <i data-lucide="home"></i>
@@ -2265,14 +2265,14 @@
 <div class="marquee-strip">
     <div class="marquee-inner">
         <span class="marquee-item">Exclusive Properties <span class="marquee-dot"></span></span>
-        <span class="marquee-item">Premium Locations <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Premium Addresses <span class="marquee-dot"></span></span>
         <span class="marquee-item">Luxury Living <span class="marquee-dot"></span></span>
         <span class="marquee-item">World Class Amenities <span class="marquee-dot"></span></span>
         <span class="marquee-item">Investment Grade Real Estate <span class="marquee-dot"></span></span>
         <span class="marquee-item">Bespoke Interiors <span class="marquee-dot"></span></span>
         <span class="marquee-item">Prime Addresses <span class="marquee-dot"></span></span>
         <span class="marquee-item">Exclusive Properties <span class="marquee-dot"></span></span>
-        <span class="marquee-item">Premium Locations <span class="marquee-dot"></span></span>
+        <span class="marquee-item">Premium Addresses <span class="marquee-dot"></span></span>
         <span class="marquee-item">Luxury Living <span class="marquee-dot"></span></span>
         <span class="marquee-item">World Class Amenities <span class="marquee-dot"></span></span>
         <span class="marquee-item">Investment Grade Real Estate <span class="marquee-dot"></span></span>
@@ -2554,7 +2554,7 @@
 
                 <div class="filter-search-wrap">
                     <i data-lucide="search"></i>
-                    <input type="text" id="filterSearch" placeholder="Search by title or location…" oninput="applyFilters()">
+                    <input type="text" id="filterSearch" placeholder="Search by title, address, or district..." oninput="applyFilters()">
                 </div>
 
                 <select class="filter-select" id="filterType" onchange="applyFilters()">
@@ -2605,7 +2605,7 @@
 <section class="hq-map-section">
     <div class="hq-map-top">
         <div class="hq-map-info">
-            <div class="hq-eyebrow">Our Location</div>
+            <div class="hq-eyebrow">Our Address</div>
             <h2>Visit Our<br><em>Headquarters</em></h2>
             <p style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.9;font-weight:300;max-width:380px;">
                 Step into our flagship office on Galle Road, Kollupitiya — in the heart of Colombo's most prestigious commercial district. Our team is ready to welcome you.
@@ -2739,7 +2739,7 @@
         <div class="modal-body">
             <div class="modal-top">
                 <div>
-                    <div class="modal-eyebrow" id="modalEyebrow"><i data-lucide="map-pin"></i> <span id="modalLocation"></span></div>
+                    <div class="modal-eyebrow" id="modalEyebrow"><i data-lucide="map-pin"></i> <span id="modalAddress"></span></div>
                     <h2 class="modal-title" id="modalTitle"></h2>
                 </div>
                 <div class="modal-price-box">
@@ -2919,7 +2919,7 @@
         let list = allListings.filter(p => {
             const t = normalizeType(p);
             const matchType = type === 'all' || t === type;
-            const matchSearch = !search || `${p.title||''} ${p.location||''}`.toLowerCase().includes(search);
+            const matchSearch = !search || `${p.title||''} ${p.address||''} ${p.district||''}`.toLowerCase().includes(search);
             const price = parseFloat(p.price) || 0;
             const matchPrice = price >= minPrice && price <= maxPrice;
             return matchType && matchSearch && matchPrice;
@@ -2950,9 +2950,9 @@
     }
 
     function applyHeroSearch() {
-        const loc = document.getElementById('searchInput').value;
+        const query = document.getElementById('searchInput').value;
         const type = document.getElementById('propertyTypeSelect').value.toLowerCase();
-        if (loc) document.getElementById('filterSearch').value = loc;
+        if (query) document.getElementById('filterSearch').value = query;
         if (type !== 'all') document.getElementById('filterType').value = type;
         document.getElementById('properties-section').scrollIntoView({ behavior: 'smooth' });
         applyFilters();
@@ -3045,7 +3045,7 @@
                 </div>` : ''}
             </div>
             <div class="card-details">
-                <div class="loc-text"><i data-lucide="map-pin"></i>${escapeHtml(prop.location || 'Location TBC')}</div>
+                <div class="loc-text"><i data-lucide="map-pin"></i>${escapeHtml(formatPlace(prop))}</div>
                 <h3 class="property-title">${escapeHtml(prop.title || 'Untitled Property')}</h3>
                 <p class="card-desc-preview">${escapeHtml(prop.description || 'No description provided.')}</p>
                 <div class="meta-tags">
@@ -3082,7 +3082,7 @@
         const floorLabel = type === 'rental' ? 'Duration' : (type === 'house' ? 'Floors' : 'Floor No.');
 
         document.getElementById('modalTitle').textContent = prop.title || 'Untitled Property';
-        document.getElementById('modalLocation').textContent = prop.location || 'Location TBC';
+        document.getElementById('modalAddress').textContent = formatPlace(prop);
         document.getElementById('modalPrice').textContent = displayPrice;
         document.getElementById('modalDesc').textContent = prop.description || 'No description available.';
 
@@ -3097,7 +3097,11 @@
             </div>
             <div class="modal-meta-item">
                 <div class="modal-meta-icon"><i data-lucide="map-pin"></i></div>
-                <div class="modal-meta-text"><small>Location</small><strong>${escapeHtml(prop.location || 'TBC')}</strong></div>
+                <div class="modal-meta-text"><small>Address</small><strong>${escapeHtml(prop.address || 'TBC')}</strong></div>
+            </div>
+            <div class="modal-meta-item">
+                <div class="modal-meta-icon"><i data-lucide="map"></i></div>
+                <div class="modal-meta-text"><small>District</small><strong>${escapeHtml(prop.district || 'TBC')}</strong></div>
             </div>
             <div class="modal-meta-item">
                 <div class="modal-meta-icon"><i data-lucide="tag"></i></div>
@@ -3261,6 +3265,10 @@
         }
     function capitalize(v) {
         return v ? v.charAt(0).toUpperCase() + v.slice(1) : '';
+    }
+    function formatPlace(property) {
+        const address = property.address || 'Address TBC';
+        return property.district ? `${address}, ${property.district}` : address;
     }
     function escapeHtml(v) {
         return String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));

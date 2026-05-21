@@ -28,6 +28,27 @@ public class Agent {
     @Column(nullable = false)
     private String count;
 
+    private String email;
+
+    private String phone;
+
+    private String address;
+
+    @Column(name = "assigned_area")
+    private String assignedArea;
+
+    @Column(name = "commission_rate")
+    private String commissionRate;
+
+    private String status;
+
+    private String specialization;
+
+    private String experience;
+
+    @Column(name = "profile_image")
+    private String profileImage;
+
     public Agent(String name, String role, String sales, String count) {
         this.name = name;
         this.role = role;

@@ -2,6 +2,7 @@ package com.realestate.project.controller;
 
 import com.realestate.project.model.Property;
 import com.realestate.project.service.PropertyService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class PropertyController {
 
     /// creating a Property
     @PostMapping
-    public Property createProperty(@RequestBody Property property){
+    public Property createProperty(@Valid @RequestBody Property property){
         return propertyService.saveProperty(property);
     }
 
@@ -39,7 +40,7 @@ public class PropertyController {
     /// update a property
     @PutMapping("/{id}")
     public Property updateProperty(@PathVariable Long id,
-                                   @RequestBody Property updatedProperty){
+                                   @Valid @RequestBody Property updatedProperty){
         return propertyService.updateProperty(id, updatedProperty);
     }
 

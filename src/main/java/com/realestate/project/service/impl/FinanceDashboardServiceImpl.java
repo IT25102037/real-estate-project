@@ -3,10 +3,10 @@ package com.realestate.project.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.realestate.project.dto.FinanceSummaryResponse;
-import com.realestate.project.repo.PaymentRepository;
+import com.realestate.project.repository.PaymentRepository;
 import com.realestate.project.service.FinanceDashboardService;
 
-import com.realestate.project.repo.BankAccountRepository;
+import com.realestate.project.repository.BankAccountRepository;
 
 @Service
 @RequiredArgsConstructor

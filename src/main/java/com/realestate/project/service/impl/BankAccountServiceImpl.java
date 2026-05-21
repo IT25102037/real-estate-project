@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.realestate.project.dto.BankAccountDTO;
 import com.realestate.project.entity.BankAccount;
-import com.realestate.project.repo.BankAccountRepository;
+import com.realestate.project.repository.BankAccountRepository;
 import com.realestate.project.service.BankAccountService;
 
 import java.util.List;

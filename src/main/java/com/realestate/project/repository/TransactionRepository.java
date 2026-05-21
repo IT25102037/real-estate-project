@@ -11,7 +11,7 @@ import java.util.List;
  * Spring Data JPA repository for Transaction entities.
  * JpaRepository already provides: findAll, findById, save, deleteById, count.
  *
- * File location:
+ * File path:
  *   src/main/java/com/realestate/project/repository/TransactionRepository.java
  */
 @Repository

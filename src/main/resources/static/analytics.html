@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="/js/report-utils.js"></script>
 
     <style>
         :root {
@@ -191,6 +193,75 @@
             display: flex;
             gap: 12px;
             align-items: center;
+        }
+
+        .dropdown { position: relative; }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            min-width: 200px;
+            background: #141414;
+            border: 1px solid var(--gold-border);
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 50;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+        }
+        .dropdown-menu.open { display: block; }
+        .dropdown-menu button {
+            width: 100%;
+            text-align: left;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .dropdown-menu button:hover { background: rgba(201,169,110,0.12); color: var(--gold-light); }
+
+        .section-btn {
+            padding: 8px 16px;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+        }
+
+        .pagination-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            border-top: 1px solid var(--glass-border);
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+        .pagination-bar button {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-dim);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+        .pagination-bar button:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        .agent-profile-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--gold-border);
+        }
+
+        .readonly-tag {
+            font-size: 9px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-left: 8px;
         }
 
         .btn-gold {
@@ -384,7 +455,20 @@
             color: var(--obsidian);
         }
 
-        .chart-area { height: 240px; }
+        .chart-area { height: 240px; position: relative; }
+        .chart-fallback {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            border: 1px dashed var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-dim);
+            font-size: 12px;
+            text-align: center;
+            background: rgba(255,255,255,0.03);
+        }
 
         /* Donut legend */
         .donut-legend {
@@ -472,6 +556,11 @@
         table {
             width: 100%;
             border-collapse: collapse;
+        }
+
+        .table-scroll {
+            width: 100%;
+            overflow-x: auto;
         }
 
         thead th {
@@ -910,6 +999,9 @@
             position: relative;
             animation: modalIn 0.3s var(--transition);
         }
+        .modal.wide {
+            max-width: 760px;
+        }
         @keyframes modalIn {
             from { opacity: 0; transform: translateY(20px) scale(0.97); }
             to { opacity: 1; transform: translateY(0) scale(1); }
@@ -1057,9 +1149,10 @@
     <nav class="nav-menu">
         <a href="admin-dashboard.html" class="nav-item"><i data-lucide="layout-grid"></i> Dashboard</a>
         <a href="analytics.html" class="nav-item active"><i data-lucide="bar-chart-big"></i> Analytics</a>
+        <a href="reports.html" class="nav-item"><i data-lucide="file-text"></i> Reports</a>
         <a href="view-customer.html" class="nav-item"><i data-lucide="users-2"></i> Customers</a>
-        <a href="#" class="nav-item"><i data-lucide="contact-2"></i> Agents</a>
-        <a href="#" class="nav-item"><i data-lucide="landmark"></i> Transactions</a>
+        <a href="agents.html" class="nav-item"><i data-lucide="contact-2"></i> Agents</a>
+        <a href="#transactionsSection" class="nav-item"><i data-lucide="landmark"></i> Transactions</a>
         <a href="#" class="nav-item"><i data-lucide="palmtree"></i> Listings</a>
         <a href="view-messages.html" class="nav-item"><i data-lucide="mail"></i> Messages</a>
     </nav>
@@ -1078,12 +1171,16 @@
             <p>Full platform overview · Live data</p>
         </div>
         <div class="header-actions">
-            <button class="btn-outline" onclick="exportData()">
-                <i data-lucide="download" style="width:13px;height:13px;"></i> Export
-            </button>
-            <button class="btn-gold" onclick="openAddModal()">
-                <i data-lucide="plus" style="width:13px;height:13px;"></i> Add Record
-            </button>
+            <div class="dropdown" id="createReportDropdown">
+                <button class="btn-outline" type="button" onclick="toggleReportMenu(event)">
+                    <i data-lucide="file-text" style="width:13px;height:13px;"></i> Create Report
+                </button>
+                <div class="dropdown-menu" id="reportTypeMenu">
+                    <button type="button" onclick="generateAndViewPeriodicReport('DAILY')">Daily Report</button>
+                    <button type="button" onclick="generateAndViewPeriodicReport('WEEKLY')">Weekly Report</button>
+                    <button type="button" onclick="generateAndViewPeriodicReport('MONTHLY')">Monthly Report</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1144,55 +1241,66 @@
             <div class="chart-area" style="height:200px;"><canvas id="donutChart"></canvas></div>
             <div class="donut-legend">
                 <div class="legend-item">
-                    <div class="legend-left"><div class="legend-dot" style="background:#c9a96e;"></div>Mansions</div>
+                    <div class="legend-left"><div class="legend-dot" style="background:#c9a96e;"></div>House</div>
                     <div class="legend-val">38%</div>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-left"><div class="legend-dot" style="background:#818cf8;"></div>Penthouses</div>
-                    <div class="legend-val">27%</div>
+                    <div class="legend-left"><div class="legend-dot" style="background:#818cf8;"></div>Apartments</div>
+                    <div class="legend-val">34%</div>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-left"><div class="legend-dot" style="background:#22d3ee;"></div>Apartments</div>
-                    <div class="legend-val">21%</div>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-left"><div class="legend-dot" style="background:#10b981;"></div>Villas</div>
-                    <div class="legend-val">14%</div>
+                    <div class="legend-left"><div class="legend-dot" style="background:#22d3ee;"></div>Rental Property</div>
+                    <div class="legend-val">28%</div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Recent Transactions one by one -->
-    <div class="stacked-row">
+    <div class="stacked-row" id="transactionsSection">
         <!-- Transaction Table -->
         <div class="table-card">
             <div class="table-header">
                 <div>
-                    <h3>Recent <em>Transactions</em></h3>
+                    <h3>Recent <em>Transactions</em> <span class="readonly-tag">Read-only · Finance module</span></h3>
                 </div>
-                <div class="table-actions" style="display:flex; align-items:center; gap:8px;">
+                <div class="table-actions" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <select id="txStatusFilter" class="form-input" onchange="txPage=1; renderTable()" style="width:130px; padding:8px 12px; font-size:11px;">
+                        <option value="">All payments</option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="PENDING">Pending</option>
+                        <option value="FAILED">Failed</option>
+                    </select>
                     <div id="txSearchContainer" style="display:none; align-items:center; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:20px; padding:2px 10px;">
-                        <input type="text" id="txSearchInput" placeholder="Search..." oninput="filterTransactions(this.value)" style="background:transparent; border:none; color:var(--text-main); font-size:12px; outline:none; width:120px;" />
+                        <input type="text" id="txSearchInput" placeholder="Search..." oninput="txPage=1; filterTransactions(this.value)" style="background:transparent; border:none; color:var(--text-main); font-size:12px; outline:none; width:140px;" />
                     </div>
                     <button class="icon-btn" title="Search" onclick="toggleTxSearch()"><i data-lucide="search"></i></button>
-                    <button class="icon-btn" title="Add" onclick="openAddModal()"><i data-lucide="plus"></i></button>
+                    <button class="btn-outline section-btn" type="button" onclick="openTransactionReportModal()">
+                        <i data-lucide="file-text" style="width:13px;height:13px;"></i> Create Transaction Report
+                    </button>
                 </div>
             </div>
-            <table>
-                <thead>
-                <tr>
-                    <th>Property</th>
-                    <th>Client</th>
-                    <th>Value</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody id="transactionTableBody">
-                <!-- Rows injected by JS -->
-                </tbody>
-            </table>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Payment</th>
+                        <th>Payment History</th>
+                        <th>Invoice</th>
+                        <th>Home</th>
+                        <th>Bank Account</th>
+                    </tr>
+                    </thead>
+                    <tbody id="transactionTableBody"></tbody>
+                </table>
+            </div>
+            <div class="pagination-bar" id="txPagination">
+                <span id="txPageInfo">Showing 0 records</span>
+                <div style="display:flex;gap:8px;">
+                    <button type="button" id="txPrevBtn" onclick="changeTxPage(-1)">Previous</button>
+                    <button type="button" id="txNextBtn" onclick="changeTxPage(1)">Next</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1200,18 +1308,48 @@
     <div class="stacked-row">
         <!-- Agent Leaderboard -->
         <div class="agents-card">
-            <div class="agents-header" style="display:flex; justify-content:space-between; align-items:center;">
-                <h3>Top <em>Agents</em></h3>
-                <div class="agent-actions" style="display:flex; align-items:center; gap:8px;">
+            <div class="agents-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <h3>Top <em>Agents</em> <span class="readonly-tag">Read-only · Agents module</span></h3>
+                <div class="agent-actions" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <select id="agentStatusFilter" class="form-input" onchange="agentPage=1; renderAgents()" style="width:120px; padding:8px 12px; font-size:11px;">
+                        <option value="">All statuses</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="On Leave">On Leave</option>
+                    </select>
                     <div id="agentSearchContainer" style="display:none; align-items:center; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:20px; padding:2px 10px;">
-                        <input type="text" id="agentSearchInput" placeholder="Search..." oninput="filterAgents(this.value)" style="background:transparent; border:none; color:var(--text-main); font-size:12px; outline:none; width:120px;" />
+                        <input type="text" id="agentSearchInput" placeholder="Search..." oninput="agentPage=1; filterAgents(this.value)" style="background:transparent; border:none; color:var(--text-main); font-size:12px; outline:none; width:140px;" />
                     </div>
                     <button class="icon-btn" title="Search" onclick="toggleAgentSearch()"><i data-lucide="search"></i></button>
-                    <button class="icon-btn" onclick="openAddAgentModal()"><i data-lucide="plus"></i></button>
+                    <button class="btn-outline section-btn" type="button" onclick="openAgentReportModal()">
+                        <i data-lucide="file-text" style="width:13px;height:13px;"></i> Create Agent Report
+                    </button>
                 </div>
             </div>
-            <div id="agentList">
-                <!-- Injected by JS -->
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Agent</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Area</th>
+                        <th>Commission</th>
+                        <th>Status</th>
+                        <th>Specialization</th>
+                        <th>Experience</th>
+                    </tr>
+                    </thead>
+                    <tbody id="agentList"></tbody>
+                </table>
+            </div>
+            <div class="pagination-bar" id="agentPagination">
+                <span id="agentPageInfo">Showing 0 agents</span>
+                <div style="display:flex;gap:8px;">
+                    <button type="button" id="agentPrevBtn" onclick="changeAgentPage(-1)">Previous</button>
+                    <button type="button" id="agentNextBtn" onclick="changeAgentPage(1)">Next</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1263,25 +1401,29 @@
 
 <!-- ADD / EDIT MODAL -->
 <div class="modal-overlay" id="crudModal">
-    <div class="modal">
+    <div class="modal wide">
         <button class="modal-close" onclick="closeModal()"><i data-lucide="x"></i></button>
         <h2 id="modalTitle">Add <em>Record</em></h2>
         <p id="modalSubtitle">Create a new transaction entry in the system.</p>
 
         <div class="form-row">
             <div class="form-group">
-                <label class="form-label">Property Name</label>
-                <input class="form-input" id="fieldProperty" type="text" minlength="2" maxlength="80" required autocomplete="off" placeholder="e.g. Azure Penthouse" />
+                <label class="form-label">Property Type</label>
+                <select class="form-input" id="fieldPropertyType" required>
+                    <option value="House">House</option>
+                    <option value="Apartments">Apartments</option>
+                    <option value="Rental Property">Rental Property</option>
+                </select>
             </div>
             <div class="form-group">
-                <label class="form-label">Client Name</label>
-                <input class="form-input" id="fieldClient" type="text" minlength="2" maxlength="70" required autocomplete="off" placeholder="e.g. James Perera" />
+                <label class="form-label">Property Name</label>
+                <input class="form-input" id="fieldProperty" type="text" minlength="2" maxlength="80" required autocomplete="off" placeholder="e.g. Azure Penthouse" />
             </div>
         </div>
         <div class="form-row">
             <div class="form-group">
-                <label class="form-label">Transaction Value</label>
-                <input class="form-input" id="fieldValue" type="text" inputmode="decimal" maxlength="20" required autocomplete="off" placeholder="e.g. Rs 1.2M" />
+                <label class="form-label">Client Name</label>
+                <input class="form-input" id="fieldClient" type="text" minlength="2" maxlength="70" required autocomplete="off" placeholder="e.g. James Perera" />
             </div>
             <div class="form-group">
                 <label class="form-label">Status</label>
@@ -1292,9 +1434,60 @@
                 </select>
             </div>
         </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Transaction Value</label>
+                <input class="form-input" id="fieldValue" type="text" inputmode="decimal" maxlength="20" required autocomplete="off" placeholder="e.g. Rs 1.2M" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Address</label>
+                <input class="form-input" id="fieldAddress" type="text" minlength="2" maxlength="160" required autocomplete="off" placeholder="e.g. 24 Park Road, Colombo 07" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">District</label>
+                <select class="form-input" id="fieldDistrict" required>
+                    <option value="Ampara">Ampara</option>
+                    <option value="Anuradhapura">Anuradhapura</option>
+                    <option value="Badulla">Badulla</option>
+                    <option value="Batticaloa">Batticaloa</option>
+                    <option value="Colombo">Colombo</option>
+                    <option value="Galle">Galle</option>
+                    <option value="Gampaha">Gampaha</option>
+                    <option value="Hambantota">Hambantota</option>
+                    <option value="Jaffna">Jaffna</option>
+                    <option value="Kalutara">Kalutara</option>
+                    <option value="Kandy">Kandy</option>
+                    <option value="Kegalle">Kegalle</option>
+                    <option value="Kilinochchi">Kilinochchi</option>
+                    <option value="Kurunegala">Kurunegala</option>
+                    <option value="Mannar">Mannar</option>
+                    <option value="Matale">Matale</option>
+                    <option value="Matara">Matara</option>
+                    <option value="Monaragala">Monaragala</option>
+                    <option value="Mullaitivu">Mullaitivu</option>
+                    <option value="Nuwara Eliya">Nuwara Eliya</option>
+                    <option value="Polonnaruwa">Polonnaruwa</option>
+                    <option value="Puttalam">Puttalam</option>
+                    <option value="Ratnapura">Ratnapura</option>
+                    <option value="Trincomalee">Trincomalee</option>
+                    <option value="Vavuniya">Vavuniya</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Agent</label>
+                <select class="form-input" id="fieldAgent">
+                    <option value="">No agent assigned</option>
+                </select>
+            </div>
+        </div>
 
         <div class="modal-footer">
             <button class="btn-outline" onclick="closeModal()">Cancel</button>
+            <button class="btn-outline" onclick="openReportFromTransactionForm()">
+                <i data-lucide="file-text" style="width:13px;height:13px;"></i> Create Report
+            </button>
             <button class="btn-gold" id="modalSaveBtn" onclick="saveRecord()">
                 <i data-lucide="check" style="width:13px;height:13px;"></i> Save Record
             </button>
@@ -1350,9 +1543,89 @@
         </div>
         <div class="modal-footer">
             <button class="btn-outline" onclick="closeAgentModal()">Cancel</button>
+            <button class="btn-outline" onclick="openReportFromAgentForm()">
+                <i data-lucide="file-text" style="width:13px;height:13px;"></i> Create Report
+            </button>
             <button class="btn-gold" onclick="saveAgent()">
                 <i data-lucide="check" style="width:13px;height:13px;"></i> Save Agent
             </button>
+        </div>
+    </div>
+</div>
+
+<!-- VIEW GENERATED REPORT -->
+<div class="modal-overlay" id="viewReportModal">
+    <div class="modal wide">
+        <button class="modal-close" onclick="closeViewReportModal()"><i data-lucide="x"></i></button>
+        <h2 id="viewReportTitle">Report</h2>
+        <p id="viewReportMeta" style="color:var(--text-dim);font-size:12px;margin-bottom:12px;"></p>
+        <div id="viewReportBody" style="background:rgba(255,255,255,0.03);border:1px solid var(--glass-border);border-radius:10px;padding:16px;font-size:12px;max-height:280px;overflow:auto;white-space:pre-wrap;"></div>
+        <div class="modal-footer">
+            <button class="btn-outline" onclick="printViewingReport()"><i data-lucide="printer" style="width:13px;height:13px;"></i> Print</button>
+            <button class="btn-outline" onclick="pdfViewingReport()"><i data-lucide="download" style="width:13px;height:13px;"></i> PDF</button>
+            <button class="btn-gold" onclick="closeViewReportModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- TRANSACTION REPORT MODAL -->
+<div class="modal-overlay" id="transactionReportModal">
+    <div class="modal wide">
+        <button class="modal-close" onclick="closeTransactionReportModal()"><i data-lucide="x"></i></button>
+        <h2>Transaction <em>Report</em></h2>
+        <p>Filter records, then generate a report saved to the Reports tab.</p>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Report Title *</label>
+                <input class="form-input" id="txReportTitle" type="text" placeholder="e.g. March Finance Transactions" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Date Range *</label>
+                <div style="display:flex;gap:8px;">
+                    <input class="form-input" id="txReportStart" type="date" />
+                    <input class="form-input" id="txReportEnd" type="date" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Include Transactions *</label>
+            <div id="txReportSelection" style="max-height:180px;overflow:auto;border:1px solid var(--glass-border);border-radius:10px;padding:10px;font-size:12px;"></div>
+        </div>
+        <div id="txReportError" class="form-error"></div>
+        <div class="modal-footer">
+            <button class="btn-outline" onclick="closeTransactionReportModal()">Cancel</button>
+            <button class="btn-gold" onclick="saveTransactionReport()">Generate Report</button>
+        </div>
+    </div>
+</div>
+
+<!-- AGENT REPORT MODAL -->
+<div class="modal-overlay" id="agentReportModal">
+    <div class="modal wide">
+        <button class="modal-close" onclick="closeAgentReportModal()"><i data-lucide="x"></i></button>
+        <h2>Agent <em>Report</em></h2>
+        <p>Filter agents, then generate a report saved to the Reports tab.</p>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Report Title *</label>
+                <input class="form-input" id="agentReportTitle" type="text" placeholder="e.g. Q1 Agent Performance" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Date Range *</label>
+                <div style="display:flex;gap:8px;">
+                    <input class="form-input" id="agentReportStart" type="date" />
+                    <input class="form-input" id="agentReportEnd" type="date" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Include Agents *</label>
+            <div id="agentReportSelection" style="max-height:180px;overflow:auto;border:1px solid var(--glass-border);border-radius:10px;padding:10px;font-size:12px;"></div>
+        </div>
+        <div id="agentReportError" class="form-error"></div>
+        <div class="modal-footer">
+            <button class="btn-outline" onclick="closeAgentReportModal()">Cancel</button>
+            <button class="btn-gold" onclick="saveAgentReport()">Generate Report</button>
         </div>
     </div>
 </div>
@@ -1364,19 +1637,22 @@
 </div>
 
 <script>
-    lucide.createIcons();
+    function safeCreateIcons() {
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
+    }
+
+    safeCreateIcons();
 
     /* ===========================
        DATA STORE (CRUD)
     =========================== */
-    let transactions = [
-        { id: 1, property: 'Azure Residences', client: 'Amara Silva', value: 'Rs 2.4M', status: 'Sold' },
-        { id: 2, property: 'Skyline Penthouse', client: 'Rohan Perera', value: 'Rs 3.1M', status: 'Pending' },
-        { id: 3, property: 'VIMAN Ultra-Loft', client: 'Dilini Fernando', value: 'Rs 1.8M', status: 'Rented' },
-        { id: 4, property: 'Sunrise Ridge Villa', client: 'Kasun Jayawardena', value: 'Rs 4.5M', status: 'Sold' },
-        { id: 5, property: 'TRI-ZEN Apartment', client: 'Nimasha De Silva', value: 'Rs 980K', status: 'Pending' },
-    ];
-
+    let financeTransactions = [];
+    const PAGE_SIZE = 5;
+    let txPage = 1;
+    let agentPage = 1;
+    let viewingReport = null;
     let nextId = 6;
     let editingId = null;
     let deletingId = null;
@@ -1384,11 +1660,15 @@
     let nextAgentId = 6;
     let editingAgentId = null;
     let deletingAgentId = null;
+    let deletingReportId = null;
     let agentToDelete = null;
 
     const PROPERTY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9 .,'#&()/\-]{1,79}$/;
+    const ADDRESS_PATTERN = /^[A-Za-z0-9][A-Za-z0-9 .,'#&()/\-]{1,159}$/;
     const PERSON_NAME_PATTERN = /^[A-Za-z][A-Za-z .'-]{1,69}$/;
     const MONEY_PATTERN = /^Rs\.?\s?(\d{1,3}(,\d{3})+|\d+)(\.\d{1,2})?\s?([KkMm])?$/i;
+    const PROPERTY_TYPES = ['House', 'Apartments', 'Rental Property'];
+    const DISTRICTS = ['Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 'Galle', 'Gampaha', 'Hambantota', 'Jaffna', 'Kalutara', 'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar', 'Matale', 'Matara', 'Monaragala', 'Mullaitivu', 'Nuwara Eliya', 'Polonnaruwa', 'Puttalam', 'Ratnapura', 'Trincomalee', 'Vavuniya'];
     const VALID_STATUSES = ['Sold', 'Pending', 'Rented'];
     const VALID_AGENT_ROLES = ['Senior Agent', 'Luxury Specialist', 'Agent', 'Junior Agent', 'Other'];
 
@@ -1460,16 +1740,61 @@
         return `${deals} ${deals === 1 ? 'deal' : 'deals'}`;
     }
 
+    function normalizeOptionalText(value) {
+        const clean = String(value ?? '').trim();
+        return clean === '' ? null : clean;
+    }
+
+    function normalizePropertyType(value) {
+        return PROPERTY_TYPES.includes(value) ? value : 'House';
+    }
+
+    function normalizeDistrict(value) {
+        return DISTRICTS.includes(value) ? value : 'Colombo';
+    }
+
+    function populateAgentSelects() {
+        ['fieldAgent', 'reportAgentName'].forEach(id => {
+            const select = document.getElementById(id);
+            if (!select) return;
+            const current = select.value;
+            const options = ['<option value="">No agent assigned</option>']
+                .concat(agents.map(agent => `<option value="${escapeHtml(agent.name)}">${escapeHtml(agent.name)}</option>`));
+            select.innerHTML = options.join('');
+            setSelectValue(id, current);
+        });
+    }
+
+    function setSelectValue(id, value) {
+        const select = document.getElementById(id);
+        if (!select) return;
+        const clean = String(value ?? '').trim();
+        if (clean && !Array.from(select.options).some(option => option.value === clean)) {
+            const option = document.createElement('option');
+            option.value = clean;
+            option.textContent = clean;
+            select.appendChild(option);
+        }
+        select.value = clean;
+    }
+
     function validateTransactionForm() {
-        const ids = ['fieldProperty', 'fieldClient', 'fieldValue', 'fieldStatus'];
+        const ids = ['fieldPropertyType', 'fieldProperty', 'fieldClient', 'fieldValue', 'fieldStatus', 'fieldAddress', 'fieldDistrict', 'fieldAgent'];
         clearValidation(ids);
 
+        const propertyType = document.getElementById('fieldPropertyType').value;
         const property = document.getElementById('fieldProperty').value.trim();
         const client = document.getElementById('fieldClient').value.trim();
         const value = document.getElementById('fieldValue').value.trim();
         const status = document.getElementById('fieldStatus').value;
+        const address = document.getElementById('fieldAddress').value.trim();
+        const district = document.getElementById('fieldDistrict').value;
+        const agentName = document.getElementById('fieldAgent').value.trim();
         const errors = [];
 
+        if (!PROPERTY_TYPES.includes(propertyType)) {
+            errors.push(['fieldPropertyType', 'Choose House, Apartments, or Rental Property.']);
+        }
         if (!PROPERTY_PATTERN.test(property)) {
             errors.push(['fieldProperty', 'Use 2-80 letters/numbers and common property punctuation only.']);
         }
@@ -1482,6 +1807,15 @@
         if (!VALID_STATUSES.includes(status)) {
             errors.push(['fieldStatus', 'Choose a valid transaction status.']);
         }
+        if (!ADDRESS_PATTERN.test(address)) {
+            errors.push(['fieldAddress', 'Use 2-160 letters/numbers and common address punctuation only.']);
+        }
+        if (!DISTRICTS.includes(district)) {
+            errors.push(['fieldDistrict', 'Choose a valid Sri Lankan district.']);
+        }
+        if (agentName && !PERSON_NAME_PATTERN.test(agentName)) {
+            errors.push(['fieldAgent', 'Choose a valid agent or leave it empty.']);
+        }
 
         errors.forEach(([id, message]) => setFieldError(id, message));
         if (errors.length > 0) {
@@ -1490,7 +1824,74 @@
             return null;
         }
 
-        return { property, client, value: normalizeMoney(value), status };
+        return {
+            propertyType,
+            property,
+            client,
+            value: normalizeMoney(value),
+            status,
+            address,
+            district,
+            agentName: normalizeOptionalText(agentName)
+        };
+    }
+
+    function validateReportForm() {
+        const ids = ['reportPropertyType', 'reportPropertyName', 'reportClientName', 'reportStatus', 'reportValue', 'reportAddress', 'reportDistrict', 'reportAgentName'];
+        clearValidation(ids);
+
+        const propertyType = document.getElementById('reportPropertyType').value;
+        const propertyName = document.getElementById('reportPropertyName').value.trim();
+        const clientName = document.getElementById('reportClientName').value.trim();
+        const status = document.getElementById('reportStatus').value;
+        const value = document.getElementById('reportValue').value.trim();
+        const address = document.getElementById('reportAddress').value.trim();
+        const district = document.getElementById('reportDistrict').value;
+        const agentName = document.getElementById('reportAgentName').value.trim();
+        const errors = [];
+
+        if (!PROPERTY_TYPES.includes(propertyType)) {
+            errors.push(['reportPropertyType', 'Choose House, Apartments, or Rental Property.']);
+        }
+        if (!PROPERTY_PATTERN.test(propertyName)) {
+            errors.push(['reportPropertyName', 'Use 2-80 letters/numbers and common property punctuation only.']);
+        }
+        if (!PERSON_NAME_PATTERN.test(clientName)) {
+            errors.push(['reportClientName', 'Use 2-70 letters, spaces, apostrophes, hyphens, or periods.']);
+        }
+        if (!VALID_STATUSES.includes(status)) {
+            errors.push(['reportStatus', 'Choose a valid report status.']);
+        }
+        if (!MONEY_PATTERN.test(value) || moneyToNumber(value) <= 0) {
+            errors.push(['reportValue', 'Use a positive Rs amount, e.g. Rs 1.2M, Rs 980K, or Rs 1200000.']);
+        }
+        if (!ADDRESS_PATTERN.test(address)) {
+            errors.push(['reportAddress', 'Use 2-160 letters/numbers and common address punctuation only.']);
+        }
+        if (!DISTRICTS.includes(district)) {
+            errors.push(['reportDistrict', 'Choose a valid Sri Lankan district.']);
+        }
+        if (agentName && !PERSON_NAME_PATTERN.test(agentName)) {
+            errors.push(['reportAgentName', 'Choose a valid agent or leave it empty.']);
+        }
+
+        errors.forEach(([id, message]) => setFieldError(id, message));
+        if (errors.length > 0) {
+            document.getElementById(errors[0][0]).focus();
+            showToast(errors[0][1]);
+            return null;
+        }
+
+        return {
+            propertyType,
+            propertyName,
+            clientName,
+            status,
+            value: normalizeMoney(value),
+            address,
+            district,
+            agentName: normalizeOptionalText(agentName)
+        };
     }
 
     function validateAgentForm() {
@@ -1562,67 +1963,95 @@
         renderTable();
     }
 
+    function getFilteredFinanceTransactions() {
+        const query = txSearchQuery.toLowerCase().trim();
+        const statusFilter = (document.getElementById('txStatusFilter')?.value || '').toUpperCase();
+        return financeTransactions.filter(tx => {
+            const payment = (tx.payment || '').toUpperCase();
+            if (statusFilter && !payment.includes(statusFilter)) return false;
+            const blob = [tx.payment, tx.paymentHistory, tx.invoice, tx.home, tx.bankAccount].join(' ').toLowerCase();
+            return !query || blob.includes(query);
+        });
+    }
+
+    function changeTxPage(delta) {
+        const totalPages = Math.max(1, Math.ceil(getFilteredFinanceTransactions().length / PAGE_SIZE));
+        txPage = Math.min(Math.max(1, txPage + delta), totalPages);
+        renderTable();
+    }
+
     function renderTable() {
         const tbody = document.getElementById('transactionTableBody');
-        tbody.innerHTML = '';
+        const filtered = getFilteredFinanceTransactions();
+        const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+        if (txPage > totalPages) txPage = totalPages;
+        const start = (txPage - 1) * PAGE_SIZE;
+        const pageItems = filtered.slice(start, start + PAGE_SIZE);
 
-        const query = txSearchQuery.toLowerCase().trim();
-        const filtered = transactions.filter(tx => {
-            return (tx.property && tx.property.toLowerCase().includes(query)) ||
-                   (tx.client && tx.client.toLowerCase().includes(query)) ||
-                   (tx.value && tx.value.toLowerCase().includes(query)) ||
-                   (tx.status && tx.status.toLowerCase().includes(query));
-        });
+        if (pageItems.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:24px;">No finance transactions found</td></tr>';
+        } else {
+            tbody.innerHTML = pageItems.map(tx => `
+                <tr>
+                    <td>${escapeHtml(tx.payment)}</td>
+                    <td>${escapeHtml(tx.paymentHistory)}</td>
+                    <td>${escapeHtml(tx.invoice)}</td>
+                    <td>${escapeHtml(tx.home)}</td>
+                    <td>${escapeHtml(tx.bankAccount)}</td>
+                </tr>
+            `).join('');
+        }
 
-        filtered.forEach(tx => {
-            const statusClass = tx.status === 'Sold' ? 'sold' : tx.status === 'Pending' ? 'pending' : 'rented';
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="td-primary">${escapeHtml(tx.property)}</td>
-                <td>${escapeHtml(tx.client)}</td>
-                <td style="color:var(--gold);font-weight:600;">${escapeHtml(tx.value)}</td>
-                <td><span class="status-badge ${statusClass}">${escapeHtml(tx.status)}</span></td>
-                <td>
-                    <div class="row-actions">
-                        <button class="row-btn" title="Edit" onclick="editRecord(${tx.id})"><i data-lucide="pencil"></i></button>
-                        <button class="row-btn danger" title="Delete" onclick="deleteRecord(${tx.id})"><i data-lucide="trash-2"></i></button>
-                    </div>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-        lucide.createIcons();
+        const info = document.getElementById('txPageInfo');
+        if (info) info.textContent = filtered.length
+            ? `Showing ${start + 1}-${Math.min(start + PAGE_SIZE, filtered.length)} of ${filtered.length}`
+            : 'Showing 0 records';
+        const prev = document.getElementById('txPrevBtn');
+        const next = document.getElementById('txNextBtn');
+        if (prev) prev.disabled = txPage <= 1;
+        if (next) next.disabled = txPage >= totalPages;
+        safeCreateIcons();
     }
 
     /* ===========================
        CRUD OPERATIONS
     =========================== */
     function openAddModal() {
-        clearValidation(['fieldProperty', 'fieldClient', 'fieldValue', 'fieldStatus']);
+        clearValidation(['fieldPropertyType', 'fieldProperty', 'fieldClient', 'fieldValue', 'fieldStatus', 'fieldAddress', 'fieldDistrict', 'fieldAgent']);
         editingId = null;
         document.getElementById('modalTitle').innerHTML = 'Add <em>Record</em>';
         document.getElementById('modalSubtitle').textContent = 'Create a new transaction entry in the system.';
+        document.getElementById('fieldPropertyType').value = 'House';
         document.getElementById('fieldProperty').value = '';
         document.getElementById('fieldClient').value = '';
         document.getElementById('fieldValue').value = '';
         document.getElementById('fieldStatus').value = 'Sold';
+        document.getElementById('fieldAddress').value = '';
+        document.getElementById('fieldDistrict').value = 'Colombo';
+        populateAgentSelects();
+        document.getElementById('fieldAgent').value = '';
         document.getElementById('crudModal').classList.add('open');
-        lucide.createIcons();
+        safeCreateIcons();
     }
 
     function editRecord(id) {
         const tx = transactions.find(t => t.id === id);
         if (!tx) return;
-        clearValidation(['fieldProperty', 'fieldClient', 'fieldValue', 'fieldStatus']);
+        clearValidation(['fieldPropertyType', 'fieldProperty', 'fieldClient', 'fieldValue', 'fieldStatus', 'fieldAddress', 'fieldDistrict', 'fieldAgent']);
         editingId = id;
         document.getElementById('modalTitle').innerHTML = 'Edit <em>Record</em>';
         document.getElementById('modalSubtitle').textContent = 'Update the transaction details below.';
+        document.getElementById('fieldPropertyType').value = normalizePropertyType(tx.propertyType);
         document.getElementById('fieldProperty').value = tx.property;
         document.getElementById('fieldClient').value = tx.client;
         document.getElementById('fieldValue').value = tx.value;
         document.getElementById('fieldStatus').value = tx.status;
+        document.getElementById('fieldAddress').value = tx.address || '';
+        document.getElementById('fieldDistrict').value = normalizeDistrict(tx.district);
+        populateAgentSelects();
+        setSelectValue('fieldAgent', tx.agentName || '');
         document.getElementById('crudModal').classList.add('open');
-        lucide.createIcons();
+        safeCreateIcons();
     }
 
     async function saveRecord() {
@@ -1649,6 +2078,8 @@
                     showToast('Record added successfully.');
                 }
                 renderTable();
+                fetchPropertyTypes();
+                fetchRevenuePerformance();
                 closeModal();
             } else {
                 showToast(await readErrorMessage(res, 'Failed to save record to server.'));
@@ -1662,10 +2093,15 @@
     function deleteRecord(id) {
         deletingId = id;
         deletingAgentId = null;
+        deletingReportId = null;
         document.getElementById('confirmModal').classList.add('open');
     }
 
     async function confirmDelete() {
+        if (deletingReportId !== null) {
+            confirmDeleteReport();
+            return;
+        }
         if (deletingAgentId !== null) {
             confirmDeleteAgent();
             return;
@@ -1692,13 +2128,14 @@
 
     function closeModal() {
         document.getElementById('crudModal').classList.remove('open');
-        clearValidation(['fieldProperty', 'fieldClient', 'fieldValue', 'fieldStatus']);
+        clearValidation(['fieldPropertyType', 'fieldProperty', 'fieldClient', 'fieldValue', 'fieldStatus', 'fieldAddress', 'fieldDistrict', 'fieldAgent']);
     }
 
     function closeConfirm() {
         document.getElementById('confirmModal').classList.remove('open');
         deletingId = null;
         deletingAgentId = null;
+        deletingReportId = null;
     }
 
     /* ===========================
@@ -1723,14 +2160,419 @@
        EXPORT
     =========================== */
     function exportData() {
-        const rows = [['Property', 'Client', 'Value', 'Status']];
-        transactions.forEach(t => rows.push([t.property, t.client, t.value, t.status]));
-        const csv = rows.map(r => r.join(',')).join('\n');
+        const rows = [['Property Type', 'Property', 'Client', 'Value', 'Status', 'Address', 'District', 'Agent']];
+        transactions.forEach(t => rows.push([
+            normalizePropertyType(t.propertyType),
+            t.property,
+            t.client,
+            t.value,
+            t.status,
+            t.address || '',
+            t.district || '',
+            t.agentName || ''
+        ]));
+        const csv = rows.map(r => r.map(csvCell).join(',')).join('\n');
         const a = document.createElement('a');
         a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
         a.download = 'luxeestate_analytics.csv';
         a.click();
         showToast('Data exported as CSV.');
+    }
+
+    function csvCell(value) {
+        const text = String(value ?? '');
+        return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    }
+
+    /* ===========================
+       REPORTS (Analytics)
+    =========================== */
+    function toggleReportMenu(event) {
+        event.stopPropagation();
+        document.getElementById('reportTypeMenu').classList.toggle('open');
+    }
+
+    document.addEventListener('click', () => {
+        const menu = document.getElementById('reportTypeMenu');
+        if (menu) menu.classList.remove('open');
+    });
+
+    async function generateAndViewPeriodicReport(type) {
+        document.getElementById('reportTypeMenu')?.classList.remove('open');
+        try {
+            const report = await generatePeriodicReport(type);
+            viewingReport = report;
+            document.getElementById('viewReportTitle').textContent = report.title;
+            document.getElementById('viewReportMeta').textContent = `${report.reportType} · ${report.startDate} to ${report.endDate}`;
+            const data = parseReportData(report);
+            document.getElementById('viewReportBody').textContent = data ? JSON.stringify(data, null, 2) : report.reportData || '';
+            document.getElementById('viewReportModal').classList.add('open');
+            showToast(`${type} report generated and saved to Reports.`);
+            safeCreateIcons();
+        } catch (e) {
+            showToast(e.message || 'Failed to generate report.');
+        }
+    }
+
+    function closeViewReportModal() {
+        document.getElementById('viewReportModal').classList.remove('open');
+        viewingReport = null;
+    }
+
+    function printViewingReport() { if (viewingReport) printReport(viewingReport); }
+    function pdfViewingReport() { if (viewingReport) downloadReportPdf(viewingReport); }
+
+    function openTransactionReportModal() {
+        const today = new Date().toISOString().slice(0, 10);
+        document.getElementById('txReportTitle').value = `Transaction Report · ${today}`;
+        document.getElementById('txReportStart').value = today;
+        document.getElementById('txReportEnd').value = today;
+        document.getElementById('txReportError').textContent = '';
+        const box = document.getElementById('txReportSelection');
+        box.innerHTML = getFilteredFinanceTransactions().map(tx => `
+            <label style="display:block;margin-bottom:6px;">
+                <input type="checkbox" class="tx-report-pick" value="${tx.id}" checked>
+                ${escapeHtml(tx.payment)}
+            </label>
+        `).join('') || '<p style="color:var(--text-dim)">No transactions available.</p>';
+        document.getElementById('transactionReportModal').classList.add('open');
+        safeCreateIcons();
+    }
+
+    function closeTransactionReportModal() {
+        document.getElementById('transactionReportModal').classList.remove('open');
+    }
+
+    async function saveTransactionReport() {
+        const title = document.getElementById('txReportTitle').value.trim();
+        const startDate = document.getElementById('txReportStart').value;
+        const endDate = document.getElementById('txReportEnd').value;
+        const selected = [...document.querySelectorAll('.tx-report-pick:checked')].map(el => Number(el.value));
+        const records = financeTransactions.filter(tx => selected.includes(tx.id));
+        const payload = {
+            title,
+            reportType: 'TRANSACTION',
+            startDate,
+            endDate,
+            reportData: JSON.stringify(records),
+            propertyName: 'Finance Transactions',
+            clientName: 'Finance Module'
+        };
+        const errors = validateReportPayload(payload, { requireDateRange: true, requireSelection: true });
+        if (errors.length) {
+            document.getElementById('txReportError').textContent = errors[0];
+            return;
+        }
+        try {
+            const report = await createReport(payload);
+            viewingReport = report;
+            closeTransactionReportModal();
+            showToast('Transaction report saved to Reports tab.');
+        } catch (e) {
+            document.getElementById('txReportError').textContent = e.message;
+        }
+    }
+
+    function openAgentReportModal() {
+        const today = new Date().toISOString().slice(0, 10);
+        document.getElementById('agentReportTitle').value = `Agent Report · ${today}`;
+        document.getElementById('agentReportStart').value = today;
+        document.getElementById('agentReportEnd').value = today;
+        document.getElementById('agentReportError').textContent = '';
+        const box = document.getElementById('agentReportSelection');
+        box.innerHTML = getFilteredAgents().map(a => `
+            <label style="display:block;margin-bottom:6px;">
+                <input type="checkbox" class="agent-report-pick" value="${a.id}" checked>
+                ${escapeHtml(a.name)} · ${escapeHtml(a.status || 'Active')}
+            </label>
+        `).join('') || '<p style="color:var(--text-dim)">No agents available.</p>';
+        document.getElementById('agentReportModal').classList.add('open');
+        safeCreateIcons();
+    }
+
+    function closeAgentReportModal() {
+        document.getElementById('agentReportModal').classList.remove('open');
+    }
+
+    async function saveAgentReport() {
+        const title = document.getElementById('agentReportTitle').value.trim();
+        const startDate = document.getElementById('agentReportStart').value;
+        const endDate = document.getElementById('agentReportEnd').value;
+        const selected = [...document.querySelectorAll('.agent-report-pick:checked')].map(el => Number(el.value));
+        const records = agents.filter(a => selected.includes(a.id));
+        const payload = {
+            title,
+            reportType: 'AGENT',
+            startDate,
+            endDate,
+            reportData: JSON.stringify(records),
+            propertyName: 'Agent Directory',
+            clientName: 'Agents Module'
+        };
+        const errors = validateReportPayload(payload, { requireDateRange: true, requireSelection: true });
+        if (errors.length) {
+            document.getElementById('agentReportError').textContent = errors[0];
+            return;
+        }
+        try {
+            await createReport(payload);
+            closeAgentReportModal();
+            showToast('Agent report saved to Reports tab.');
+        } catch (e) {
+            document.getElementById('agentReportError').textContent = e.message;
+        }
+    }
+
+    function reportPayloadFromTransaction(tx) {
+        return {
+            propertyType: normalizePropertyType(tx.propertyType),
+            propertyName: tx.property || '',
+            clientName: tx.client || '',
+            status: tx.status || 'Pending',
+            value: tx.value || '',
+            address: tx.address || '',
+            district: tx.district || '',
+            agentName: tx.agentName || ''
+        };
+    }
+
+    function openReportModal(seed = {}) {
+        const ids = ['reportPropertyType', 'reportPropertyName', 'reportClientName', 'reportStatus', 'reportValue', 'reportAddress', 'reportDistrict', 'reportAgentName'];
+        clearValidation(ids);
+        populateAgentSelects();
+        document.getElementById('reportPropertyType').value = normalizePropertyType(seed.propertyType);
+        document.getElementById('reportPropertyName').value = seed.propertyName || '';
+        document.getElementById('reportClientName').value = seed.clientName || '';
+        document.getElementById('reportStatus').value = VALID_STATUSES.includes(seed.status) ? seed.status : 'Pending';
+        document.getElementById('reportValue').value = seed.value || '';
+        document.getElementById('reportAddress').value = seed.address || '';
+        document.getElementById('reportDistrict').value = normalizeDistrict(seed.district);
+        setSelectValue('reportAgentName', seed.agentName || '');
+        document.getElementById('reportModal').classList.add('open');
+        safeCreateIcons();
+    }
+
+    function openReportFromTransactionForm() {
+        openReportModal({
+            propertyType: document.getElementById('fieldPropertyType').value,
+            propertyName: document.getElementById('fieldProperty').value.trim(),
+            clientName: document.getElementById('fieldClient').value.trim(),
+            status: document.getElementById('fieldStatus').value,
+            value: document.getElementById('fieldValue').value.trim(),
+            address: document.getElementById('fieldAddress').value.trim(),
+            district: document.getElementById('fieldDistrict').value,
+            agentName: document.getElementById('fieldAgent').value.trim()
+        });
+    }
+
+    function openReportFromTransaction(id) {
+        const tx = transactions.find(t => t.id === id);
+        if (!tx) return;
+        openReportModal(reportPayloadFromTransaction(tx));
+    }
+
+    function openReportFromAgentForm() {
+        openReportModal({ agentName: document.getElementById('agentName').value.trim() });
+    }
+
+    function openReportFromAgent(id) {
+        const agent = agents.find(a => a.id === id);
+        if (!agent) return;
+        openReportModal({ agentName: agent.name });
+    }
+
+    function closeReportModal() {
+        document.getElementById('reportModal').classList.remove('open');
+        clearValidation(['reportPropertyType', 'reportPropertyName', 'reportClientName', 'reportStatus', 'reportValue', 'reportAddress', 'reportDistrict', 'reportAgentName']);
+    }
+
+    async function saveReport() {
+        const payload = validateReportForm();
+        if (!payload) return;
+
+        try {
+            const res = await fetch('http://localhost:8080/api/reports', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                const savedReport = await res.json();
+                reports.unshift(savedReport);
+                renderReports();
+                closeReportModal();
+                showToast('Report created successfully.');
+            } else {
+                showToast(await readErrorMessage(res, 'Failed to create report on server.'));
+            }
+        } catch (e) {
+            console.error(e);
+            showToast('Network error while creating report.');
+        }
+    }
+
+    async function fetchReports() {
+        try {
+            const res = await fetch('http://localhost:8080/api/reports');
+            if (res.ok) {
+                reports = await res.json();
+                renderReports();
+            }
+        } catch (e) {
+            console.warn('Could not fetch reports:', e);
+        }
+    }
+
+    let reportSearchQuery = '';
+    let reportSortKey = 'newest';
+
+    function toggleReportSearch() {
+        const container = document.getElementById('reportSearchContainer');
+        const input = document.getElementById('reportSearchInput');
+        if (container.style.display === 'none' || !container.style.display) {
+            container.style.display = 'flex';
+            input.focus();
+        } else {
+            container.style.display = 'none';
+            input.value = '';
+            filterReports('');
+        }
+    }
+
+    function filterReports(val) {
+        reportSearchQuery = val;
+        renderReports();
+    }
+
+    function setReportSort(value) {
+        reportSortKey = value;
+        renderReports();
+    }
+
+    function sortedFilteredReports() {
+        const query = reportSearchQuery.toLowerCase().trim();
+        const filtered = (reports || []).filter(report => {
+            return (report.propertyType && report.propertyType.toLowerCase().includes(query)) ||
+                   (report.propertyName && report.propertyName.toLowerCase().includes(query)) ||
+                   (report.clientName && report.clientName.toLowerCase().includes(query)) ||
+                   (report.status && report.status.toLowerCase().includes(query)) ||
+                   (report.value && report.value.toLowerCase().includes(query)) ||
+                   (report.address && report.address.toLowerCase().includes(query)) ||
+                   (report.district && report.district.toLowerCase().includes(query)) ||
+                   (report.agentName && report.agentName.toLowerCase().includes(query));
+        });
+
+        return filtered.sort((left, right) => {
+            if (reportSortKey === 'property') {
+                return String(left.propertyName || '').localeCompare(String(right.propertyName || ''));
+            }
+            if (reportSortKey === 'district') {
+                return String(left.district || '').localeCompare(String(right.district || ''));
+            }
+            if (reportSortKey === 'status') {
+                return String(left.status || '').localeCompare(String(right.status || ''));
+            }
+            if (reportSortKey === 'value') {
+                return moneyToNumber(right.value || 'Rs 0') - moneyToNumber(left.value || 'Rs 0');
+            }
+            return new Date(right.createdAt || 0) - new Date(left.createdAt || 0);
+        });
+    }
+
+    function renderReports() {
+        const tbody = document.getElementById('reportTableBody');
+        if (!tbody) return;
+
+        const visibleReports = sortedFilteredReports();
+        if (visibleReports.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:24px;">No reports found</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = visibleReports.map(report => {
+            const statusClass = report.status === 'Sold' ? 'sold' : report.status === 'Pending' ? 'pending' : 'rented';
+            return `
+                <tr>
+                    <td>${escapeHtml(normalizePropertyType(report.propertyType))}</td>
+                    <td class="td-primary">${escapeHtml(report.propertyName)}</td>
+                    <td>${escapeHtml(report.clientName)}</td>
+                    <td><span class="status-badge ${statusClass}">${escapeHtml(report.status)}</span></td>
+                    <td style="color:var(--gold);font-weight:600;">${escapeHtml(report.value)}</td>
+                    <td>${escapeHtml(report.address || 'Not set')}</td>
+                    <td>${escapeHtml(report.district || 'Not set')}</td>
+                    <td>${escapeHtml(report.agentName || 'None')}</td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="row-btn" title="Download" onclick="downloadReport(${report.id})"><i data-lucide="download"></i></button>
+                            <button class="row-btn danger" title="Delete" onclick="deleteReport(${report.id})"><i data-lucide="trash-2"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+        safeCreateIcons();
+    }
+
+    function reportCsvRows(items) {
+        const rows = [['Property Type', 'Property Name', 'Client Name', 'Status', 'Value', 'Address', 'District', 'Agent']];
+        items.forEach(report => rows.push([
+            normalizePropertyType(report.propertyType),
+            report.propertyName,
+            report.clientName,
+            report.status,
+            report.value,
+            report.address || '',
+            report.district || '',
+            report.agentName || ''
+        ]));
+        return rows;
+    }
+
+    function downloadReport(id) {
+        const report = reports.find(r => r.id === id);
+        if (!report) return;
+        const csv = reportCsvRows([report]).map(row => row.map(csvCell).join(',')).join('\n');
+        const a = document.createElement('a');
+        a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+        a.download = `luxeestate_report_${id}.csv`;
+        a.click();
+        showToast('Report downloaded.');
+    }
+
+    function exportReports() {
+        const csv = reportCsvRows(sortedFilteredReports()).map(row => row.map(csvCell).join(',')).join('\n');
+        const a = document.createElement('a');
+        a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+        a.download = 'luxeestate_reports.csv';
+        a.click();
+        showToast('Reports exported as CSV.');
+    }
+
+    function deleteReport(id) {
+        deletingReportId = id;
+        deletingId = null;
+        deletingAgentId = null;
+        document.getElementById('confirmModal').classList.add('open');
+    }
+
+    async function confirmDeleteReport() {
+        const idToDelete = deletingReportId;
+        try {
+            const res = await fetch(`http://localhost:8080/api/reports/${idToDelete}`, {
+                method: 'DELETE'
+            });
+            if (res.ok) {
+                reports = reports.filter(r => r.id !== idToDelete);
+                renderReports();
+                showToast('Report deleted.');
+            } else {
+                showToast('Failed to delete report on server.');
+            }
+        } catch (e) {
+            console.error(e);
+            showToast('Network error deleting report.');
+        }
+        closeConfirm();
     }
 
     /* ===========================
@@ -1751,10 +2593,39 @@
         }
     };
 
+    function showChartFallback(canvasId, message) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas || !canvas.parentElement) return;
+        canvas.style.display = 'none';
+        let fallback = canvas.parentElement.querySelector('.chart-fallback');
+        if (!fallback) {
+            fallback = document.createElement('div');
+            fallback.className = 'chart-fallback';
+            canvas.parentElement.appendChild(fallback);
+        }
+        fallback.textContent = message;
+    }
+
+    function showChartCanvas(canvasId) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas || !canvas.parentElement) return null;
+        canvas.style.display = '';
+        const fallback = canvas.parentElement.querySelector('.chart-fallback');
+        if (fallback) fallback.remove();
+        return canvas;
+    }
+
     let revenueChart;
 
     function initRevenueChart(period = '6m') {
-        const ctx = document.getElementById('revenueChart').getContext('2d');
+        const canvas = showChartCanvas('revenueChart');
+        if (!canvas) return;
+        if (typeof Chart === 'undefined') {
+            showChartFallback('revenueChart', 'Revenue chart is unavailable because Chart.js did not load. Tables and reports remain available.');
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
         const grad = ctx.createLinearGradient(0, 0, 0, 280);
         grad.addColorStop(0, 'rgba(201, 169, 110, 0.35)');
         grad.addColorStop(1, 'rgba(201, 169, 110, 0)');
@@ -1806,16 +2677,23 @@
     }
 
     let donutChart;
-    function initDonutChart(data = [38, 27, 21, 14]) {
-        const ctx = document.getElementById('donutChart').getContext('2d');
+    function initDonutChart(data = [38, 34, 28]) {
+        const canvas = showChartCanvas('donutChart');
+        if (!canvas) return;
+        if (typeof Chart === 'undefined') {
+            showChartFallback('donutChart', 'Property type chart is unavailable because Chart.js did not load.');
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
         if (donutChart) donutChart.destroy();
         donutChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Mansions', 'Penthouses', 'Apartments', 'Villas'],
+                labels: PROPERTY_TYPES,
                 datasets: [{
                     data: data,
-                    backgroundColor: ['#c9a96e', '#818cf8', '#22d3ee', '#10b981'],
+                    backgroundColor: ['#c9a96e', '#818cf8', '#22d3ee'],
                     borderWidth: 0,
                     hoverOffset: 8
                 }]
@@ -1868,39 +2746,65 @@
         renderAgents();
     }
 
-    function renderAgents() {
-        const list = document.getElementById('agentList');
+    function getFilteredAgents() {
         const query = agentSearchQuery.toLowerCase().trim();
-        const filtered = agents.filter(a => {
-            return (a.name && a.name.toLowerCase().includes(query)) ||
-                   (a.role && a.role.toLowerCase().includes(query)) ||
-                   (a.sales && a.sales.toLowerCase().includes(query)) ||
-                   (a.count && a.count.toLowerCase().includes(query));
+        const statusFilter = document.getElementById('agentStatusFilter')?.value || '';
+        return agents.filter(a => {
+            if (statusFilter && (a.status || 'Active') !== statusFilter) return false;
+            const blob = [a.name, a.email, a.phone, a.address, a.assignedArea, a.commissionRate, a.status, a.specialization, a.experience, a.role, a.sales].join(' ').toLowerCase();
+            return !query || blob.includes(query);
         });
+    }
 
-        list.innerHTML = filtered.map((a, i) => {
-            const avatarColor = agentPalette[i % agentPalette.length];
-            return `
-            <div class="agent-item">
-                <div class="agent-avatar" style="background:rgba(${hexToRgb(avatarColor)},0.15);color:${avatarColor};border:1px solid rgba(${hexToRgb(avatarColor)},0.3);">
-                    ${a.name ? escapeHtml(a.name.charAt(0)) : 'A'}
-                </div>
-                <div class="agent-info">
-                    <div class="agent-name">${escapeHtml(a.name)}</div>
-                    <div class="agent-role">${escapeHtml(a.role)}</div>
-                </div>
-                <div class="agent-stats">
-                    <div class="agent-sales">${escapeHtml(a.sales)}</div>
-                    <div class="agent-count">${escapeHtml(a.count)}</div>
-                </div>
-                <div class="row-actions" style="margin-left: 14px;">
-                    <button class="row-btn" title="Edit" onclick="editAgent(${a.id})"><i data-lucide="pencil"></i></button>
-                    <button class="row-btn danger" title="Delete" onclick="deleteAgent(${a.id})"><i data-lucide="trash-2"></i></button>
-                </div>
-            </div>
-            `;
-        }).join('');
-        lucide.createIcons();
+    function changeAgentPage(delta) {
+        const totalPages = Math.max(1, Math.ceil(getFilteredAgents().length / PAGE_SIZE));
+        agentPage = Math.min(Math.max(1, agentPage + delta), totalPages);
+        renderAgents();
+    }
+
+    function renderAgents() {
+        const tbody = document.getElementById('agentList');
+        const filtered = getFilteredAgents();
+        const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+        if (agentPage > totalPages) agentPage = totalPages;
+        const start = (agentPage - 1) * PAGE_SIZE;
+        const pageItems = filtered.slice(start, start + PAGE_SIZE);
+
+        if (pageItems.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:24px;">No agents found</td></tr>';
+        } else {
+            tbody.innerHTML = pageItems.map(a => `
+                <tr>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <img class="agent-profile-img" src="${escapeHtml(a.profileImage || '')}" alt="" onerror="this.style.display='none'">
+                            <div>
+                                <div class="td-primary">${escapeHtml(a.name)}</div>
+                                <div style="font-size:11px;color:var(--text-dim)">${escapeHtml(a.role)} · ${escapeHtml(a.sales)}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${escapeHtml(a.email)}</td>
+                    <td>${escapeHtml(a.phone)}</td>
+                    <td>${escapeHtml(a.address)}</td>
+                    <td>${escapeHtml(a.assignedArea)}</td>
+                    <td>${escapeHtml(a.commissionRate)}</td>
+                    <td>${escapeHtml(a.status || 'Active')}</td>
+                    <td>${escapeHtml(a.specialization)}</td>
+                    <td>${escapeHtml(a.experience)}</td>
+                </tr>
+            `).join('');
+        }
+
+        const info = document.getElementById('agentPageInfo');
+        if (info) info.textContent = filtered.length
+            ? `Showing ${start + 1}-${Math.min(start + PAGE_SIZE, filtered.length)} of ${filtered.length} agents`
+            : 'Showing 0 agents';
+        const prev = document.getElementById('agentPrevBtn');
+        const next = document.getElementById('agentNextBtn');
+        if (prev) prev.disabled = agentPage <= 1;
+        if (next) next.disabled = agentPage >= totalPages;
+        safeCreateIcons();
     }
 
     function openAddAgentModal() {
@@ -1913,7 +2817,7 @@
         document.getElementById('agentSales').value = '';
         document.getElementById('agentCount').value = '';
         document.getElementById('agentModal').classList.add('open');
-        lucide.createIcons();
+        safeCreateIcons();
     }
 
     function editAgent(id) {
@@ -1936,7 +2840,7 @@
         document.getElementById('agentSales').value = ag.sales;
         document.getElementById('agentCount').value = parseDealCount(ag.count);
         document.getElementById('agentModal').classList.add('open');
-        lucide.createIcons();
+        safeCreateIcons();
     }
 
     async function saveAgent() {
@@ -1978,6 +2882,7 @@
     function deleteAgent(id) {
         deletingAgentId = id;
         deletingId = null;
+        deletingReportId = null;
         document.getElementById('confirmModal').classList.add('open');
     }
 
@@ -2014,6 +2919,26 @@
         return `${r},${g},${b}`;
     }
 
+    function renderDefaultActivities() {
+        const container = document.getElementById('activityFeed');
+        if (!container || container.children.length > 0) return;
+        const items = [
+            { description: '<strong>Dashboard ready</strong> — Analytics modules loaded', icon: 'bar-chart-big', colorClass: 'gold', time: 'Just now' },
+            { description: '<strong>Reports enabled</strong> — Address and district fields active', icon: 'file-text', colorClass: 'blue', time: 'Just now' },
+            { description: '<strong>Transactions synced</strong> — Waiting for live updates', icon: 'landmark', colorClass: 'green', time: 'Just now' }
+        ];
+        container.innerHTML = items.map(item => `
+            <div class="feed-item">
+                <div class="feed-icon ${item.colorClass}"><i data-lucide="${item.icon}"></i></div>
+                <div class="feed-text">
+                    <div class="feed-desc">${item.description}</div>
+                    <div class="feed-time">${item.time}</div>
+                </div>
+            </div>
+        `).join('');
+        safeCreateIcons();
+    }
+
     /* ===========================
        ACTIVITY FEED
     =========================== */
@@ -2023,6 +2948,11 @@
             if (res.ok) {
                 const data = await res.json();
                 const container = document.getElementById('activityFeed');
+                if (!Array.isArray(data) || data.length === 0) {
+                    container.innerHTML = '';
+                    renderDefaultActivities();
+                    return;
+                }
                 container.innerHTML = data.map(a => {
                     const timeText = formatTimeAgo(a.timestamp);
                     return `
@@ -2035,10 +2965,13 @@
                         </div>
                     `;
                 }).join('');
-                lucide.createIcons();
+                safeCreateIcons();
+            } else {
+                renderDefaultActivities();
             }
         } catch (e) {
             console.warn('Could not fetch activities:', e);
+            renderDefaultActivities();
         }
     }
 
@@ -2072,7 +3005,7 @@
         while (container.children.length > 10) {
             container.removeChild(container.lastChild);
         }
-        lucide.createIcons();
+        safeCreateIcons();
     }
 
     function formatTimeAgo(timestampStr) {
@@ -2093,11 +3026,37 @@
     /* ===========================
        GEOGRAPHIC DATA
     =========================== */
+    function renderDefaultGeo() {
+        const list = document.getElementById('geoList');
+        if (!list || list.children.length > 0) return;
+        const defaults = [
+            { city: 'Colombo', pct: 48 },
+            { city: 'Kandy', pct: 22 },
+            { city: 'Galle', pct: 15 },
+            { city: 'Gampaha', pct: 9 },
+            { city: 'Jaffna', pct: 6 }
+        ];
+        list.innerHTML = defaults.map(g => `
+            <div class="geo-item">
+                <div class="geo-row">
+                    <span class="geo-city">${g.city}</span>
+                    <span class="geo-pct">${g.pct}%</span>
+                </div>
+                <div class="geo-bar"><div class="geo-fill" style="width:${g.pct}%;"></div></div>
+            </div>
+        `).join('');
+    }
+
     async function fetchGeo() {
         try {
             const res = await fetch('http://localhost:8080/api/analytics/geo-reach');
             if (res.ok) {
                 const data = await res.json();
+                if (!Array.isArray(data) || data.length === 0) {
+                    document.getElementById('geoList').innerHTML = '';
+                    renderDefaultGeo();
+                    return;
+                }
                 document.getElementById('geoList').innerHTML = data.map(g => `
                     <div class="geo-item">
                         <div class="geo-row">
@@ -2107,15 +3066,28 @@
                         <div class="geo-bar"><div class="geo-fill" style="width:${g.pct}%;"></div></div>
                     </div>
                 `).join('');
+            } else {
+                renderDefaultGeo();
             }
         } catch (e) {
             console.warn('Could not fetch geo-reach:', e);
+            renderDefaultGeo();
         }
     }
 
     /* ===========================
        MESSAGES PREVIEW
     =========================== */
+    function renderDefaultMessages() {
+        const list = document.getElementById('msgList');
+        if (!list || list.children.length > 0) return;
+        document.getElementById('msgNew').textContent = '0';
+        document.getElementById('msgPending').textContent = '0';
+        document.getElementById('msgReplied').textContent = '0';
+        document.getElementById('msgReject').textContent = '0';
+        list.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-dim); font-size: 12px;">No messages to show</div>';
+    }
+
     async function fetchMessages() {
         try {
             const res = await fetch('http://localhost:8080/api/contact');
@@ -2165,9 +3137,12 @@
                         `;
                     }).join('');
                 }
+            } else {
+                renderDefaultMessages();
             }
         } catch (e) {
             console.warn('Could not fetch messages:', e);
+            renderDefaultMessages();
         }
     }
 
@@ -2179,20 +3154,18 @@
             const res = await fetch('http://localhost:8080/api/analytics/property-types');
             if (res.ok) {
                 const data = await res.json();
-                const total = (data.Mansions || 0) + (data.Penthouses || 0) + (data.Apartments || 0) + (data.Villas || 0);
-                const Mansions = total > 0 ? Math.round((data.Mansions || 0) * 100 / total) : 38;
-                const Penthouses = total > 0 ? Math.round((data.Penthouses || 0) * 100 / total) : 27;
-                const Apartments = total > 0 ? Math.round((data.Apartments || 0) * 100 / total) : 21;
-                const Villas = total > 0 ? Math.round((data.Villas || 0) * 100 / total) : 14;
+                const total = (data.House || 0) + (data.Apartments || 0) + (data['Rental Property'] || 0);
+                const House = total > 0 ? Math.round((data.House || 0) * 100 / total) : 38;
+                const Apartments = total > 0 ? Math.round((data.Apartments || 0) * 100 / total) : 34;
+                const RentalProperty = total > 0 ? Math.round((data['Rental Property'] || 0) * 100 / total) : 28;
 
-                initDonutChart([Mansions, Penthouses, Apartments, Villas]);
+                initDonutChart([House, Apartments, RentalProperty]);
 
                 const legends = document.querySelectorAll('.donut-legend .legend-val');
-                if (legends.length >= 4) {
-                    legends[0].textContent = `${Mansions}%`;
-                    legends[1].textContent = `${Penthouses}%`;
-                    legends[2].textContent = `${Apartments}%`;
-                    legends[3].textContent = `${Villas}%`;
+                if (legends.length >= 3) {
+                    legends[0].textContent = `${House}%`;
+                    legends[1].textContent = `${Apartments}%`;
+                    legends[2].textContent = `${RentalProperty}%`;
                 }
             }
         } catch (e) {
@@ -2240,13 +3213,12 @@
     =========================== */
     async function fetchDashboardData() {
         try {
-            const tRes = await fetch('http://localhost:8080/api/transactions');
+            const tRes = await fetch(`${API_BASE}/api/finance-transactions`);
             if (tRes.ok) {
-                const data = await tRes.json();
-                transactions = data || [];
+                financeTransactions = await tRes.json() || [];
                 renderTable();
             }
-        } catch(e) { console.warn('Could not fetch transactions:', e); }
+        } catch(e) { console.warn('Could not fetch finance transactions:', e); }
 
         try {
             const aRes = await fetch('http://localhost:8080/api/agents');
@@ -2254,6 +3226,7 @@
                 const data = await aRes.json();
                 agents = data || [];
                 renderAgents();
+                populateAgentSelects();
             }
         } catch(e) { console.warn('Could not fetch agents:', e); }
 
@@ -2282,6 +3255,10 @@
     =========================== */
     let sseSource;
     function connectSSE() {
+        if (typeof EventSource === 'undefined') {
+            console.warn('SSE is not supported in this browser.');
+            return;
+        }
         if (sseSource) {
             sseSource.close();
         }
@@ -2315,11 +3292,14 @@
     window.onload = () => {
         renderTable();
         renderAgents();
+        renderDefaultGeo();
+        renderDefaultActivities();
+        renderDefaultMessages();
         initRevenueChart('6m');
         initDonutChart();
         fetchDashboardData();
         connectSSE();
-        lucide.createIcons();
+        safeCreateIcons();
     };
 </script>
 </body>

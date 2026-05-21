@@ -10,9 +10,9 @@ import com.realestate.project.entity.Payment;
 import com.realestate.project.entity.PaymentHistory;
 import com.realestate.project.enums.PaymentStatus;
 import com.realestate.project.enums.PaymentType;
-import com.realestate.project.repo.InvoiceRepository;
-import com.realestate.project.repo.PaymentHistoryRepository;
-import com.realestate.project.repo.PaymentRepository;
+import com.realestate.project.repository.InvoiceRepository;
+import com.realestate.project.repository.PaymentHistoryRepository;
+import com.realestate.project.repository.PaymentRepository;
 import com.realestate.project.service.PaymentService;
 
 import java.time.LocalDateTime;

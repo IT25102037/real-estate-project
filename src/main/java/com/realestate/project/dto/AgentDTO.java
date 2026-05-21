@@ -29,4 +29,31 @@ public class AgentDTO {
     @Pattern(regexp = "^(0|[1-9][0-9]{0,3})(\\sdeal(s)?)?$",
             message = "Deals count must be a whole number from 0 to 9999")
     private String count;
+
+    @Pattern(regexp = "^$|^[\\w.+-]+@[\\w.-]+\\.[A-Za-z]{2,}$", message = "Email format is invalid")
+    private String email;
+
+    @Size(max = 30, message = "Phone is too long")
+    private String phone;
+
+    @Size(max = 160, message = "Address is too long")
+    private String address;
+
+    @Size(max = 80, message = "Assigned area is too long")
+    private String assignedArea;
+
+    @Size(max = 20, message = "Commission rate is too long")
+    private String commissionRate;
+
+    @Pattern(regexp = "^$|^(Active|Inactive|On Leave)$", message = "Status must be Active, Inactive, or On Leave")
+    private String status;
+
+    @Size(max = 80, message = "Specialization is too long")
+    private String specialization;
+
+    @Size(max = 40, message = "Experience is too long")
+    private String experience;
+
+    @Size(max = 500, message = "Profile image URL is too long")
+    private String profileImage;
 }

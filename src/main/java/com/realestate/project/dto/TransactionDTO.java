@@ -9,9 +9,9 @@ import jakarta.validation.constraints.Size;
 /**
  * Data Transfer Object for Transaction create / update requests.
  * Matches the JSON body sent from analitics.html:
- *   { property, client, value, status }
+ *   { propertyType, property, client, value, status, address, district, agentName }
  *
- * File location:
+ * File path:
  *   src/main/java/com/realestate/project/dto/TransactionDTO.java
  */
 public class TransactionDTO {
@@ -21,6 +21,11 @@ public class TransactionDTO {
     @Pattern(regexp = "^[A-Za-z0-9][A-Za-z0-9 .,'#&()/\\-]{1,79}$",
             message = "Property name contains invalid characters")
     private String property;
+
+    @NotBlank(message = "Property type is required")
+    @Pattern(regexp = "^(House|Apartments|Rental Property)$",
+            message = "Property type must be House, Apartments, or Rental Property")
+    private String propertyType;
 
     @NotBlank(message = "Client name is required")
     @Size(min = 2, max = 70, message = "Client name must be 2 to 70 characters")
@@ -36,6 +41,22 @@ public class TransactionDTO {
 
     @NotNull(message = "Status is required")
     private TransactionStatus status;  // Sold | Pending | Rented
+
+    @NotBlank(message = "Address is required")
+    @Size(min = 2, max = 160, message = "Address must be 2 to 160 characters")
+    @Pattern(regexp = "^[A-Za-z0-9][A-Za-z0-9 .,'#&()/\\-]{1,159}$",
+            message = "Address contains invalid characters")
+    private String address;
+
+    @NotBlank(message = "District is required")
+    @Pattern(regexp = "^(Ampara|Anuradhapura|Badulla|Batticaloa|Colombo|Galle|Gampaha|Hambantota|Jaffna|Kalutara|Kandy|Kegalle|Kilinochchi|Kurunegala|Mannar|Matale|Matara|Monaragala|Mullaitivu|Nuwara Eliya|Polonnaruwa|Puttalam|Ratnapura|Trincomalee|Vavuniya)$",
+            message = "District is invalid")
+    private String district;
+
+    @Size(max = 70, message = "Agent name must be at most 70 characters")
+    @Pattern(regexp = "^$|^[A-Za-z][A-Za-z .'-]{1,69}$",
+            message = "Agent name must contain only letters, spaces, apostrophes, hyphens, or periods")
+    private String agentName;
 
     /* ── Constructors ──────────────────────────────────────── */
 
@@ -53,6 +74,9 @@ public class TransactionDTO {
     public String getProperty()                { return property; }
     public void setProperty(String property)   { this.property = property; }
 
+    public String getPropertyType()            { return propertyType; }
+    public void setPropertyType(String propertyType) { this.propertyType = propertyType; }
+
     public String getClient()                  { return client; }
     public void setClient(String client)       { this.client = client; }
 
@@ -61,4 +85,13 @@ public class TransactionDTO {
 
     public TransactionStatus getStatus()                    { return status; }
     public void setStatus(TransactionStatus status)         { this.status = status; }
+
+    public String getAddress()                 { return address; }
+    public void setAddress(String address)     { this.address = address; }
+
+    public String getDistrict()                { return district; }
+    public void setDistrict(String district)   { this.district = district; }
+
+    public String getAgentName()               { return agentName; }
+    public void setAgentName(String agentName) { this.agentName = agentName; }
 }

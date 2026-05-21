@@ -30,7 +30,7 @@ public class PropertyService {
         Property saved = propertyRepository.save(property);
         activityService.logActivity(
                 "PROPERTY_CREATED",
-                "<strong>New listing</strong> — " + saved.getTitle() + " in " + saved.getLocation(),
+                "<strong>New listing</strong> — " + saved.getTitle() + " at " + saved.getAddress() + ", " + saved.getDistrict(),
                 "check-circle",
                 "green"
         );
@@ -69,7 +69,8 @@ public class PropertyService {
 
             /// update parent fields
             existingProperty.setTitle(updatedProperty.getTitle());
-            existingProperty.setLocation(updatedProperty.getLocation());
+            existingProperty.setAddress(updatedProperty.getAddress());
+            existingProperty.setDistrict(updatedProperty.getDistrict());
             existingProperty.setPrice(updatedProperty.getPrice());
             existingProperty.setDescription(updatedProperty.getDescription());
 
