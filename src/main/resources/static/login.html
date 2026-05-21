@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - LuxeEstate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,700;0,900;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #c9a96e;
+            --gold-light: #e8d5b0;
+            --gold-dark: #8b6914;
+            --obsidian: #0a0a0a;
+            --white: #ffffff;
+            --border-subtle: rgba(201,169,110,0.2);
+            --border-gold: rgba(201,169,110,0.5);
+            --error-red: #ef4444;
+            --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .bg-layer {
+            position: fixed; inset: 0;
+            background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+            filter: brightness(0.55) saturate(1.0);
+            transform: scale(1.05);
+            animation: bgDrift 20s ease-in-out infinite alternate;
+            z-index: 0;
+        }
+        @keyframes bgDrift {
+            0%   { transform: scale(1.05) translate(0, 0); }
+            100% { transform: scale(1.12) translate(-1%, -1%); }
+        }
+
+        .bg-overlay {
+            position: fixed; inset: 0;
+            background: linear-gradient(160deg, rgba(30,22,10,0.35) 0%, rgba(15,12,6,0.40) 100%);
+            z-index: 1; pointer-events: none;
+        }
+        .bg-grain {
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.22; z-index: 2; pointer-events: none;
+        }
+        .bg-glow {
+            position: fixed; inset: 0;
+            background: radial-gradient(ellipse at 60% 35%, rgba(201,169,110,0.10) 0%, transparent 60%);
+            z-index: 2; pointer-events: none;
+        }
+        .gold-line-top {
+            position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+            width: 1px; height: 90px;
+            background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+            z-index: 3; opacity: 0.55;
+        }
+        .gold-line-bottom {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 1px; height: 90px;
+            background: linear-gradient(to top, transparent, var(--gold), transparent);
+            z-index: 3; opacity: 0.55;
+        }
+
+        .page-wrapper {
+            position: relative; z-index: 10;
+            width: 100%; min-height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .page-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 26px; font-weight: 300;
+            letter-spacing: 6px; text-transform: uppercase;
+            color: var(--white); margin-bottom: 44px;
+            opacity: 0;
+            animation: fadeUp 0.8s 0.1s var(--transition-smooth) forwards;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        }
+        .page-logo span { color: var(--gold); }
+
+        .eyebrow {
+            display: inline-flex; align-items: center; gap: 14px;
+            color: var(--gold); font-size: 10px;
+            font-weight: 500; letter-spacing: 4px;
+            text-transform: uppercase; margin-bottom: 14px;
+            opacity: 0;
+            animation: fadeUp 0.8s 0.25s var(--transition-smooth) forwards;
+        }
+        .eyebrow::before, .eyebrow::after {
+            content: ''; width: 32px; height: 1px;
+            background: var(--gold); opacity: 0.6;
+        }
+
+        .form-container {
+            background: rgba(45, 35, 20, 0.46);
+            backdrop-filter: blur(36px) saturate(1.8) brightness(1.1);
+            -webkit-backdrop-filter: blur(36px) saturate(1.8) brightness(1.1);
+            border: 1px solid var(--border-gold);
+            border-radius: 3px; width: 100%; max-width: 440px;
+            padding: 52px 48px;
+            box-shadow: 0 28px 56px rgba(0,0,0,0.25), inset 0 1px 0 rgba(201,169,110,0.18);
+            opacity: 0;
+            animation: fadeUp 0.9s 0.35s var(--transition-smooth) forwards;
+            position: relative; overflow: hidden;
+        }
+        .form-container::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 40px; height: 40px;
+            border-top: 1px solid var(--gold); border-left: 1px solid var(--gold);
+            opacity: 0.55;
+        }
+        .form-container::after {
+            content: ''; position: absolute; bottom: 0; right: 0;
+            width: 40px; height: 40px;
+            border-bottom: 1px solid var(--gold); border-right: 1px solid var(--gold);
+            opacity: 0.55;
+        }
+
+        .form-heading {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 38px; font-weight: 300;
+            color: var(--white); letter-spacing: -0.5px;
+            line-height: 1.1; margin-bottom: 8px;
+        }
+        .form-heading em { font-style: italic; color: var(--gold); }
+
+        .form-subheading {
+            color: rgba(255,255,255,0.52); font-size: 12px;
+            letter-spacing: 0.5px; font-weight: 300; margin-bottom: 36px;
+        }
+
+        .gold-divider {
+            width: 48px; height: 1px;
+            background: var(--gold); opacity: 0.5; margin-bottom: 32px;
+        }
+
+        .input-group { margin-bottom: 14px; position: relative; }
+
+        .input-label {
+            display: block; font-size: 9px; font-weight: 600;
+            letter-spacing: 2px; text-transform: uppercase;
+            color: var(--gold); opacity: 0.85; margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%; padding: 13px 18px;
+            background: rgba(255,255,255,0.09);
+            border: 1px solid rgba(201,169,110,0.22);
+            border-radius: 2px; color: var(--white);
+            font-size: 13px; font-family: 'DM Sans', sans-serif;
+            font-weight: 400; letter-spacing: 0.3px;
+            transition: all 0.35s var(--transition-smooth);
+            outline: none; -webkit-appearance: none; appearance: none;
+        }
+        input::placeholder { color: rgba(255,255,255,0.33); }
+        input:focus {
+            background: rgba(201,169,110,0.09);
+            border-color: var(--border-gold);
+            box-shadow: 0 0 0 3px rgba(201,169,110,0.09);
+        }
+
+        .error-message {
+            color: var(--error-red); font-size: 10px;
+            margin-top: 5px; display: none;
+            padding-left: 4px; letter-spacing: 0.3px;
+        }
+
+        button[type="submit"] {
+            width: 100%; padding: 17px;
+            background: var(--gold); color: var(--obsidian);
+            border: none; border-radius: 2px; cursor: pointer;
+            font-weight: 600; font-size: 11px;
+            font-family: 'DM Sans', sans-serif;
+            letter-spacing: 3px; text-transform: uppercase;
+            margin-top: 22px;
+            transition: all 0.4s var(--transition-smooth);
+            position: relative; overflow: hidden;
+        }
+        button[type="submit"]::before {
+            content: ''; position: absolute; inset: 0;
+            background: var(--gold-light); transform: scaleX(0);
+            transform-origin: left; transition: transform 0.4s var(--transition-smooth);
+        }
+        button[type="submit"]:hover { box-shadow: 0 0 40px rgba(201,169,110,0.35); }
+        button[type="submit"]:hover::before { transform: scaleX(1); }
+        button[type="submit"] span { position: relative; z-index: 1; }
+
+        .footer-links {
+            margin-top: 26px; display: flex; flex-direction: column;
+            align-items: center; gap: 10px;
+            padding-top: 22px; border-top: 1px solid var(--border-subtle);
+        }
+        .home-btn {
+            color: rgba(255,255,255,0.65); text-decoration: none;
+            font-size: 11px; font-weight: 500; letter-spacing: 1.5px;
+            text-transform: uppercase; display: inline-flex;
+            align-items: center; gap: 8px; transition: color 0.3s;
+        }
+        .home-btn::before { content: '←'; color: var(--gold); }
+        .home-btn:hover { color: var(--white); }
+
+        .nav-link {
+            color: rgba(255,255,255,0.30); text-decoration: none;
+            font-size: 10px; letter-spacing: 1px;
+            text-transform: uppercase; transition: color 0.3s;
+        }
+        .nav-link:hover { color: var(--gold); }
+
+        .page-footer {
+            margin-top: 32px; color: rgba(255,255,255,0.30);
+            font-size: 10px; letter-spacing: 1px; text-align: center;
+            opacity: 0;
+            animation: fadeUp 0.8s 0.7s var(--transition-smooth) forwards;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(22px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #1a130a; }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+    </style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+<div class="bg-overlay"></div>
+<div class="bg-grain"></div>
+<div class="bg-glow"></div>
+<div class="gold-line-top"></div>
+<div class="gold-line-bottom"></div>
+
+<div class="page-wrapper">
+
+    <div class="page-logo">Luxe<span>_Estate</span></div>
+    <div class="eyebrow">Member Access</div>
+
+    <div class="form-container">
+        <h2 class="form-heading">Welcome<br><em>Back</em></h2>
+        <p class="form-subheading">Sign in to your LuxeEstate account</p>
+        <div class="gold-divider"></div>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <label class="input-label">Email Address</label>
+                <input type="email" id="email" placeholder="your@email.com" required>
+            </div>
+            <div class="input-group">
+                <label class="input-label">Password</label>
+                <input type="password" id="password" placeholder="Your password" required>
+                <div id="loginError" class="error-message">Invalid email or password. Please try again.</div>
+            </div>
+            <button type="submit"><span>Sign In</span></button>
+        </form>
+
+        <div class="footer-links">
+            <a href="index.html" class="home-btn">Return to Main Page</a>
+            <a href="add-customer.html" class="nav-link">Create New Account</a>
+            <a href="admin-login.html" class="nav-link">Admin Login</a>
+        </div>
+    </div>
+
+    <p class="page-footer">© 2026 LuxeEstate Properties. All Rights Reserved.</p>
+</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const loginError = document.getElementById('loginError');
+        loginError.style.display = 'none';
+
+        const credentials = {
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value
+        };
+
+        fetch('http://localhost:8080/api/customers/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(credentials)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Invalid credentials');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // ── ORIGINAL line (unchanged) ──
+            localStorage.setItem('luxeUser', data.name);
+            // ── NEW: also save id and full object so profile.html can use them ──
+            localStorage.setItem('luxeUserId', data.id);
+            localStorage.setItem('luxeUserData', JSON.stringify(data));
+
+            window.location.href = "index.html";
+        })
+        .catch(error => {
+            console.error('Login error:', error);
+            loginError.style.display = 'block';
+            document.getElementById('password').style.borderColor = 'var(--error-red)';
+        });
+    });
+
+    // Clear error styling on input focus
+    document.getElementById('password').addEventListener('focus', function() {
+        document.getElementById('loginError').style.display = 'none';
+        this.style.borderColor = 'rgba(201,169,110,0.22)';
+    });
+</script>
+
+</body>
+</html>

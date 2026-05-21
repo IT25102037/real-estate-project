@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rent Payments</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <button type="button" onclick="window.location.href='/dashboard'">
+        Back to Dashboard
+    </button>
+
+    <h1>Rent Payments</h1>
+
+    <form id="rentForm">
+
+        <input type="number" id="userId" placeholder="User ID" required>
+
+        <input type="number" id="propertyId" placeholder="Property ID" required>
+
+        <input type="text" id="rentMonth" placeholder="Rent Month e.g. 2026-05" required>
+
+        <input type="number" id="amount" placeholder="Amount" required>
+
+        <input type="date" id="dueDate" required>
+
+        <button type="submit">Create Rent Payment</button>
+
+    </form>
+
+    <h3 id="message"></h3>
+
+    <button type="button" onclick="loadRentPayments()">
+        Load Rent Payments
+    </button>
+
+    <div id="rentList"></div>
+
+</div>
+
+<script src="/js/rent-payment.js"></script>
+</body>
+</html>
