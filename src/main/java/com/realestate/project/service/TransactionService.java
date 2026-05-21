@@ -3,6 +3,7 @@ package com.realestate.project.service;
 import com.realestate.project.dto.TransactionDTO;
 import com.realestate.project.model.Transaction;
 import com.realestate.project.repository.TransactionRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.regex.Pattern;
  * Service layer for Transaction CRUD operations.
  * Called by AnalyticsController to keep business logic out of the controller.
  *
- * File location:
+ * File path:
  *   src/main/java/com/realestate/project/service/TransactionService.java
  */
 @Service
@@ -35,7 +36,10 @@ public class TransactionService {
 
     /** Returns all transactions (used by the analytics table). */
     public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
+        return transactionRepository.findAll(Sort.by(
+                Sort.Order.desc("createdAt"),
+                Sort.Order.desc("id")
+        ));
     }
 
     /** Returns a single transaction by ID, or empty if not found. */
@@ -51,10 +55,14 @@ public class TransactionService {
      */
     public Transaction createTransaction(TransactionDTO dto) {
         Transaction tx = new Transaction(
+                dto.getPropertyType().trim(),
                 dto.getProperty().trim(),
                 dto.getClient().trim(),
                 normalizeMoney(dto.getValue()),
-                dto.getStatus()
+                dto.getStatus(),
+                dto.getAddress().trim(),
+                dto.getDistrict().trim(),
+                normalizeOptionalName(dto.getAgentName())
         );
         Transaction saved = transactionRepository.save(tx);
         activityService.logActivity(
@@ -77,9 +85,13 @@ public class TransactionService {
     public Optional<Transaction> updateTransaction(Long id, TransactionDTO dto) {
         return transactionRepository.findById(id).map(existing -> {
             existing.setProperty(dto.getProperty().trim());
+            existing.setPropertyType(dto.getPropertyType().trim());
             existing.setClient(dto.getClient().trim());
             existing.setValue(normalizeMoney(dto.getValue()));
             existing.setStatus(dto.getStatus());
+            existing.setAddress(dto.getAddress().trim());
+            existing.setDistrict(dto.getDistrict().trim());
+            existing.setAgentName(normalizeOptionalName(dto.getAgentName()));
             Transaction saved = transactionRepository.save(existing);
             activityService.logActivity(
                     "TRANSACTION_UPDATED",
@@ -121,5 +133,12 @@ public class TransactionService {
         String decimal = matcher.group(2) == null ? "" : matcher.group(2);
         String suffix = matcher.group(3) == null ? "" : matcher.group(3).toUpperCase();
         return "Rs " + amount + decimal + suffix;
+    }
+
+    private String normalizeOptionalName(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+        return value.trim();
     }
 }

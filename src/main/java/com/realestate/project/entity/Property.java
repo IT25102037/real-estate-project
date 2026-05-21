@@ -11,7 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
-@Entity
+@Entity(name = "PaymentProperty")
 @Table(name = "properties")
 @Data
 @Builder
@@ -24,6 +24,7 @@ public class Property {
     private Long id;
 
     private String title;
-    private String location;
+    private String address;
+    private String district;
     private BigDecimal price;
 }

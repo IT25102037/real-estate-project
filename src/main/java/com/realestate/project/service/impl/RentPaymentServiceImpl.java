@@ -6,7 +6,7 @@ import com.realestate.project.dto.CreateRentPaymentRequest;
 import com.realestate.project.dto.RentPaymentResponse;
 import com.realestate.project.entity.RentPayment;
 import com.realestate.project.enums.RentStatus;
-import com.realestate.project.repo.RentPaymentRepository;
+import com.realestate.project.repository.RentPaymentRepository;
 import com.realestate.project.service.RentPaymentService;
 
 import java.time.LocalDate;

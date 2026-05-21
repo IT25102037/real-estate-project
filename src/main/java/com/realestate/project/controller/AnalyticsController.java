@@ -26,7 +26,7 @@ import java.util.List;
  *   These two are fetched by fetchDashboardData() in analitics.html for the
  *   KPI cards (Total Customers, Inbox Messages) and require NO changes.
  *
- * File location:
+ * File path:
  *   src/main/java/com/realestate/project/controller/AnalyticsController.java
  */
 @RestController

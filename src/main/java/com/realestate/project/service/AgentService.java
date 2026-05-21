@@ -26,7 +26,9 @@ public class AgentService {
     }
 
     public List<Agent> getAllAgents() {
-        return agentRepository.findAll();
+        return agentRepository.findAll().stream()
+                .sorted((left, right) -> Double.compare(moneyToNumber(right.getSales()), moneyToNumber(left.getSales())))
+                .toList();
     }
 
     public Optional<Agent> getAgentById(Long id) {
@@ -90,6 +92,27 @@ public class AgentService {
         String decimal = matcher.group(2) == null ? "" : matcher.group(2);
         String suffix = matcher.group(3) == null ? "" : matcher.group(3).toUpperCase();
         return "Rs " + amount + decimal + suffix;
+    }
+
+    private double moneyToNumber(String value) {
+        if (value == null) {
+            return 0.0;
+        }
+
+        Matcher matcher = MONEY_PATTERN.matcher(value.trim());
+        if (!matcher.matches()) {
+            return 0.0;
+        }
+
+        double amount = Double.parseDouble((matcher.group(1) + (matcher.group(2) == null ? "" : matcher.group(2))).replace(",", ""));
+        String suffix = matcher.group(3) == null ? "" : matcher.group(3).toUpperCase();
+        if ("M".equals(suffix)) {
+            return amount * 1_000_000.0;
+        }
+        if ("K".equals(suffix)) {
+            return amount * 1_000.0;
+        }
+        return amount;
     }
 
     private String normalizeDeals(String count) {

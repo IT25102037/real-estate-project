@@ -366,8 +366,36 @@
         <input type="hidden" id="editId">
         <label>Title</label>
         <input type="text" id="editTitle">
-        <label>Location</label>
-        <input type="text" id="editLocation">
+        <label>Address</label>
+        <input type="text" id="editAddress">
+        <label>District</label>
+        <select id="editDistrict">
+            <option value="Ampara">Ampara</option>
+            <option value="Anuradhapura">Anuradhapura</option>
+            <option value="Badulla">Badulla</option>
+            <option value="Batticaloa">Batticaloa</option>
+            <option value="Colombo">Colombo</option>
+            <option value="Galle">Galle</option>
+            <option value="Gampaha">Gampaha</option>
+            <option value="Hambantota">Hambantota</option>
+            <option value="Jaffna">Jaffna</option>
+            <option value="Kalutara">Kalutara</option>
+            <option value="Kandy">Kandy</option>
+            <option value="Kegalle">Kegalle</option>
+            <option value="Kilinochchi">Kilinochchi</option>
+            <option value="Kurunegala">Kurunegala</option>
+            <option value="Mannar">Mannar</option>
+            <option value="Matale">Matale</option>
+            <option value="Matara">Matara</option>
+            <option value="Monaragala">Monaragala</option>
+            <option value="Mullaitivu">Mullaitivu</option>
+            <option value="Nuwara Eliya">Nuwara Eliya</option>
+            <option value="Polonnaruwa">Polonnaruwa</option>
+            <option value="Puttalam">Puttalam</option>
+            <option value="Ratnapura">Ratnapura</option>
+            <option value="Trincomalee">Trincomalee</option>
+            <option value="Vavuniya">Vavuniya</option>
+        </select>
         <label>Monthly Rent</label>
         <input type="number" id="editPrice" step="0.01">
         <label>Description</label>
@@ -400,7 +428,7 @@
     </div>
     <div class="filter-glass-panel">
         <input type="text" id="searchId" style="width: 80px;" placeholder="ID">
-        <input type="text" id="searchGeneral" style="flex: 1;" placeholder="Search title or location...">
+        <input type="text" id="searchGeneral" style="flex: 1;" placeholder="Search title, address, or district...">
         <button class="btn-primary" onclick="filterProperties()">🔍 Filter</button>
     </div>
 
@@ -410,7 +438,8 @@
             <tr>
                 <th>ID</th>
                 <th>Title</th>
-                <th>Location</th>
+                <th>Address</th>
+                <th>District</th>
                 <th>Monthly Rent</th>
                 <th>Type</th>
                 <th>Actions</th>
@@ -429,6 +458,7 @@
 <script>
     lucide.createIcons();
     let currentProperties = [];
+    const DISTRICTS = ['Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 'Galle', 'Gampaha', 'Hambantota', 'Jaffna', 'Kalutara', 'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar', 'Matale', 'Matara', 'Monaragala', 'Mullaitivu', 'Nuwara Eliya', 'Polonnaruwa', 'Puttalam', 'Ratnapura', 'Trincomalee', 'Vavuniya'];
 
     async function loadProperties() {
         try {
@@ -460,7 +490,8 @@
             <tr id="row-${prop.id}">
                 <td>#${prop.id}</td>
                 <td><b>${prop.title}</b></td>
-                <td>${prop.location}</td>
+                <td>${prop.address || 'N/A'}</td>
+                <td>${prop.district || 'N/A'}</td>
                 <td>Rs. ${Number(prop.monthlyRent || 0).toLocaleString('en-LK')}</td>
                 <td><span class="property-badge">${prop.type}</span></td>
                 <td class="actions-cell">
@@ -477,7 +508,8 @@
         if (property) {
             document.getElementById('editId').value = property.id;
             document.getElementById('editTitle').value = property.title;
-            document.getElementById('editLocation').value = property.location;
+            document.getElementById('editAddress').value = property.address || '';
+            document.getElementById('editDistrict').value = normalizeDistrict(property.district);
             document.getElementById('editPrice').value = property.monthlyRent || 0;
             document.getElementById('editDescription').value = property.description;
 
@@ -504,7 +536,8 @@
         const updatedData = {
             ...originalProperty,
             title: document.getElementById('editTitle').value,
-            location: document.getElementById('editLocation').value,
+            address: document.getElementById('editAddress').value,
+            district: document.getElementById('editDistrict').value,
             monthlyRent: parseFloat(document.getElementById('editPrice').value),
             price: 0,
             description: document.getElementById('editDescription').value
@@ -550,12 +583,17 @@
             const matchesId = idSearch === "" || prop.id.toString().includes(idSearch);
             const matchesGeneral = generalSearch === "" ||
                                  prop.title.toLowerCase().includes(generalSearch) ||
-                                 prop.location.toLowerCase().includes(generalSearch);
+                                 (prop.address || '').toLowerCase().includes(generalSearch) ||
+                                 (prop.district || '').toLowerCase().includes(generalSearch);
 
             return matchesId && matchesGeneral;
         });
 
         renderTable(filtered);
+    }
+
+    function normalizeDistrict(value) {
+        return DISTRICTS.includes(value) ? value : 'Colombo';
     }
 
     window.onload = loadProperties;

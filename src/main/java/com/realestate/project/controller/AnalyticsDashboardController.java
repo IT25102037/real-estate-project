@@ -72,24 +72,16 @@ public class AnalyticsDashboardController {
         counts.put("Colombo", 0L);
         counts.put("Kandy", 0L);
         counts.put("Galle", 0L);
-        counts.put("Negombo", 0L);
+        counts.put("Gampaha", 0L);
         counts.put("Jaffna", 0L);
         long otherCount = 0L;
 
         for (Property p : properties) {
-            String loc = p.getLocation();
-            if (loc == null) continue;
-            String lower = loc.toLowerCase();
-            if (lower.contains("colombo")) {
-                counts.put("Colombo", counts.get("Colombo") + 1);
-            } else if (lower.contains("kandy")) {
-                counts.put("Kandy", counts.get("Kandy") + 1);
-            } else if (lower.contains("galle")) {
-                counts.put("Galle", counts.get("Galle") + 1);
-            } else if (lower.contains("negombo")) {
-                counts.put("Negombo", counts.get("Negombo") + 1);
-            } else if (lower.contains("jaffna")) {
-                counts.put("Jaffna", counts.get("Jaffna") + 1);
+            String district = p.getDistrict();
+            if (district == null || district.isBlank()) {
+                otherCount++;
+            } else if (counts.containsKey(district)) {
+                counts.put(district, counts.get(district) + 1);
             } else {
                 otherCount++;
             }
@@ -119,35 +111,39 @@ public class AnalyticsDashboardController {
     /* ── PROPERTY TYPES DISTRIBUTION ────────────────────────────── */
     @GetMapping("/property-types")
     public Map<String, Integer> getPropertyTypes() {
-        List<Property> properties = propertyService.getAllProperties();
-        if (properties.isEmpty()) {
-            return Map.of(
-                    "Mansions", 38,
-                    "Penthouses", 27,
-                    "Apartments", 21,
-                    "Villas", 14
-            );
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        counts.put("House", 0);
+        counts.put("Apartments", 0);
+        counts.put("Rental Property", 0);
+
+        boolean countedTransactions = false;
+        for (Transaction tx : transactionService.getAllTransactions()) {
+            String type = tx.getPropertyType();
+            if (type != null && counts.containsKey(type)) {
+                counts.put(type, counts.get(type) + 1);
+                countedTransactions = true;
+            }
         }
 
-        Map<String, Integer> counts = new HashMap<>();
-        counts.put("Mansions", 0);
-        counts.put("Penthouses", 0);
-        counts.put("Apartments", 0);
-        counts.put("Villas", 0);
+        if (countedTransactions) {
+            return counts;
+        }
 
+        List<Property> properties = propertyService.getAllProperties();
         for (Property p : properties) {
             if (p instanceof House) {
-                counts.put("Mansions", counts.get("Mansions") + 1);
+                counts.put("House", counts.get("House") + 1);
             } else if (p instanceof Apartment) {
-                String title = p.getTitle();
-                if (title != null && title.toLowerCase().contains("penthouse")) {
-                    counts.put("Penthouses", counts.get("Penthouses") + 1);
-                } else {
-                    counts.put("Apartments", counts.get("Apartments") + 1);
-                }
+                counts.put("Apartments", counts.get("Apartments") + 1);
             } else if (p instanceof RentalProperty) {
-                counts.put("Villas", counts.get("Villas") + 1);
+                counts.put("Rental Property", counts.get("Rental Property") + 1);
             }
+        }
+
+        if (counts.values().stream().mapToInt(Integer::intValue).sum() == 0) {
+            counts.put("House", 38);
+            counts.put("Apartments", 34);
+            counts.put("Rental Property", 28);
         }
         return counts;
     }
