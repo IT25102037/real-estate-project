@@ -35,4 +35,39 @@ public class PageController {
     public String showAboutPage() {
         return "forward:/about.html";
     }
+
+    @GetMapping("/dashboard")
+    public String showDashboard() {
+        return "home";
+    }
+
+    @GetMapping("/payment-page")
+    public String showPaymentPage() {
+        return "payment";
+    }
+
+    @GetMapping("/invoice-page")
+    public String showInvoicePage() {
+        return "invoice";
+    }
+
+    @GetMapping("/payment-history-page")
+    public String showPaymentHistoryPage() {
+        return "payment-history";
+    }
+
+    @GetMapping("/bank-account-page")
+    public String showBankAccountPage() {
+        return "bank-account";
+    }
+
+    @GetMapping("/rent-payment-page")
+    public String showRentPaymentPage() {
+        return "rent-payment";
+    }
+
+    @GetMapping("/boost-payment-page")
+    public String showBoostPaymentPage() {
+        return "boost-payment";
+    }
 }
