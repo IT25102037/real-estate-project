@@ -1,4 +1,4 @@
-package com.realestate.project.Controller;
+package com.realestate.project.controller;
 
 import com.realestate.project.entity.Review;
 import com.realestate.project.service.ReviewService;
