@@ -11,20 +11,20 @@ public class AnalyticsReport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, name = "property_type")
+    @Column(nullable = true, name = "property_type")
     private String propertyType;
 
-    @Column(nullable = false, name = "property_name")
+    @Column(nullable = true, name = "property_name")
     private String propertyName;
 
-    @Column(nullable = false, name = "client_name")
+    @Column(nullable = true, name = "client_name")
     private String clientName;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     @Enumerated(EnumType.STRING)
     private Transaction.TransactionStatus status;
 
-    @Column(nullable = false, name = "report_value")
+    @Column(nullable = true, name = "report_value")
     private String value;
 
     private String address;
@@ -33,6 +33,22 @@ public class AnalyticsReport {
 
     @Column(name = "agent_name")
     private String agentName;
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false, name = "report_type")
+    private String reportType; // DAILY, WEEKLY, MONTHLY, TRANSACTION, AGENT
+
+    @Column(name = "start_date")
+    private String startDate;
+
+    @Column(name = "end_date")
+    private String endDate;
+
+    @Lob
+    @Column(name = "report_data", columnDefinition = "LONGTEXT")
+    private String reportData;
 
     @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -125,6 +141,46 @@ public class AnalyticsReport {
 
     public void setAgentName(String agentName) {
         this.agentName = agentName;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getReportType() {
+        return reportType;
+    }
+
+    public void setReportType(String reportType) {
+        this.reportType = reportType;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getReportData() {
+        return reportData;
+    }
+
+    public void setReportData(String reportData) {
+        this.reportData = reportData;
     }
 
     public LocalDateTime getCreatedAt() {

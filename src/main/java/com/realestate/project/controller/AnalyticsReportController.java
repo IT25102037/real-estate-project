@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reports")
@@ -37,6 +38,24 @@ public class AnalyticsReportController {
     public ResponseEntity<AnalyticsReport> createReport(@Valid @RequestBody AnalyticsReportDTO dto) {
         AnalyticsReport created = analyticsReportService.createReport(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @PostMapping("/generate/{type}")
+    public ResponseEntity<?> generateReport(@PathVariable String type) {
+        try {
+            AnalyticsReport created = analyticsReportService.generatePeriodicReport(type);
+            return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AnalyticsReport> updateReport(@PathVariable Long id,
+                                                        @Valid @RequestBody AnalyticsReportDTO dto) {
+        return analyticsReportService.updateReport(id, dto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

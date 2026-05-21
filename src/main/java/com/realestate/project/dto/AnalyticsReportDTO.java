@@ -2,53 +2,69 @@ package com.realestate.project.dto;
 
 import com.realestate.project.model.Transaction.TransactionStatus;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 
 public class AnalyticsReportDTO {
 
-    @NotBlank(message = "Property type is required")
-    @Pattern(regexp = "^(House|Apartments|Rental Property)$",
-            message = "Property type must be House, Apartments, or Rental Property")
+    @NotBlank(message = "Title is required")
+    private String title;
+
+    @NotBlank(message = "Report type is required")
+    private String reportType; // DAILY, WEEKLY, MONTHLY, TRANSACTION, AGENT
+
+    private String startDate;
+    private String endDate;
+    private String reportData;
+
+    // The remaining fields are optional now for general reports
     private String propertyType;
-
-    @NotBlank(message = "Property name is required")
-    @Size(min = 2, max = 80, message = "Property name must be 2 to 80 characters")
-    @Pattern(regexp = "^[A-Za-z0-9][A-Za-z0-9 .,'#&()/\\-]{1,79}$",
-            message = "Property name contains invalid characters")
     private String propertyName;
-
-    @NotBlank(message = "Client name is required")
-    @Size(min = 2, max = 70, message = "Client name must be 2 to 70 characters")
-    @Pattern(regexp = "^[A-Za-z][A-Za-z .'-]{1,69}$",
-            message = "Client name must contain only letters, spaces, apostrophes, hyphens, or periods")
     private String clientName;
-
-    @NotNull(message = "Status is required")
     private TransactionStatus status;
-
-    @NotBlank(message = "Value is required")
-    @Size(max = 20, message = "Value is too long")
-    @Pattern(regexp = "^[Rr][Ss]\\.?\\s?(\\d{1,3}(,\\d{3})+|\\d+)(\\.\\d{1,2})?\\s?([KkMm])?$",
-            message = "Value must use Rs format, e.g. Rs 1.2M or Rs 980K")
     private String value;
-
-    @NotBlank(message = "Address is required")
-    @Size(min = 2, max = 160, message = "Address must be 2 to 160 characters")
-    @Pattern(regexp = "^[A-Za-z0-9][A-Za-z0-9 .,'#&()/\\-]{1,159}$",
-            message = "Address contains invalid characters")
     private String address;
-
-    @NotBlank(message = "District is required")
-    @Pattern(regexp = "^(Ampara|Anuradhapura|Badulla|Batticaloa|Colombo|Galle|Gampaha|Hambantota|Jaffna|Kalutara|Kandy|Kegalle|Kilinochchi|Kurunegala|Mannar|Matale|Matara|Monaragala|Mullaitivu|Nuwara Eliya|Polonnaruwa|Puttalam|Ratnapura|Trincomalee|Vavuniya)$",
-            message = "District is invalid")
     private String district;
-
-    @Size(max = 70, message = "Agent name must be at most 70 characters")
-    @Pattern(regexp = "^$|^[A-Za-z][A-Za-z .'-]{1,69}$",
-            message = "Agent name must contain only letters, spaces, apostrophes, hyphens, or periods")
     private String agentName;
+
+    // Getters and Setters
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getReportType() {
+        return reportType;
+    }
+
+    public void setReportType(String reportType) {
+        this.reportType = reportType;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getReportData() {
+        return reportData;
+    }
+
+    public void setReportData(String reportData) {
+        this.reportData = reportData;
+    }
 
     public String getPropertyType() {
         return propertyType;

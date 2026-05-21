@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="/js/report-utils.js"></script>
 
     <style>
         :root {
@@ -191,6 +193,75 @@
             display: flex;
             gap: 12px;
             align-items: center;
+        }
+
+        .dropdown { position: relative; }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            min-width: 200px;
+            background: #141414;
+            border: 1px solid var(--gold-border);
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 50;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+        }
+        .dropdown-menu.open { display: block; }
+        .dropdown-menu button {
+            width: 100%;
+            text-align: left;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .dropdown-menu button:hover { background: rgba(201,169,110,0.12); color: var(--gold-light); }
+
+        .section-btn {
+            padding: 8px 16px;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+        }
+
+        .pagination-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            border-top: 1px solid var(--glass-border);
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+        .pagination-bar button {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-dim);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+        .pagination-bar button:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        .agent-profile-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--gold-border);
+        }
+
+        .readonly-tag {
+            font-size: 9px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-left: 8px;
         }
 
         .btn-gold {
@@ -1078,6 +1149,7 @@
     <nav class="nav-menu">
         <a href="admin-dashboard.html" class="nav-item"><i data-lucide="layout-grid"></i> Dashboard</a>
         <a href="analytics.html" class="nav-item active"><i data-lucide="bar-chart-big"></i> Analytics</a>
+        <a href="reports.html" class="nav-item"><i data-lucide="file-text"></i> Reports</a>
         <a href="view-customer.html" class="nav-item"><i data-lucide="users-2"></i> Customers</a>
         <a href="agents.html" class="nav-item"><i data-lucide="contact-2"></i> Agents</a>
         <a href="#transactionsSection" class="nav-item"><i data-lucide="landmark"></i> Transactions</a>
@@ -1099,15 +1171,16 @@
             <p>Full platform overview · Live data</p>
         </div>
         <div class="header-actions">
-            <button class="btn-outline" onclick="exportData()">
-                <i data-lucide="download" style="width:13px;height:13px;"></i> Export
-            </button>
-            <button class="btn-outline" onclick="openReportModal()">
-                <i data-lucide="file-text" style="width:13px;height:13px;"></i> Create Report
-            </button>
-            <button class="btn-gold" onclick="openAddModal()">
-                <i data-lucide="plus" style="width:13px;height:13px;"></i> Add Record
-            </button>
+            <div class="dropdown" id="createReportDropdown">
+                <button class="btn-outline" type="button" onclick="toggleReportMenu(event)">
+                    <i data-lucide="file-text" style="width:13px;height:13px;"></i> Create Report
+                </button>
+                <div class="dropdown-menu" id="reportTypeMenu">
+                    <button type="button" onclick="generateAndViewPeriodicReport('DAILY')">Daily Report</button>
+                    <button type="button" onclick="generateAndViewPeriodicReport('WEEKLY')">Weekly Report</button>
+                    <button type="button" onclick="generateAndViewPeriodicReport('MONTHLY')">Monthly Report</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1189,35 +1262,44 @@
         <div class="table-card">
             <div class="table-header">
                 <div>
-                    <h3>Recent <em>Transactions</em></h3>
+                    <h3>Recent <em>Transactions</em> <span class="readonly-tag">Read-only · Finance module</span></h3>
                 </div>
-                <div class="table-actions" style="display:flex; align-items:center; gap:8px;">
+                <div class="table-actions" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <select id="txStatusFilter" class="form-input" onchange="txPage=1; renderTable()" style="width:130px; padding:8px 12px; font-size:11px;">
+                        <option value="">All payments</option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="PENDING">Pending</option>
+                        <option value="FAILED">Failed</option>
+                    </select>
                     <div id="txSearchContainer" style="display:none; align-items:center; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:20px; padding:2px 10px;">
-                        <input type="text" id="txSearchInput" placeholder="Search..." oninput="filterTransactions(this.value)" style="background:transparent; border:none; color:var(--text-main); font-size:12px; outline:none; width:120px;" />
+                        <input type="text" id="txSearchInput" placeholder="Search..." oninput="txPage=1; filterTransactions(this.value)" style="background:transparent; border:none; color:var(--text-main); font-size:12px; outline:none; width:140px;" />
                     </div>
                     <button class="icon-btn" title="Search" onclick="toggleTxSearch()"><i data-lucide="search"></i></button>
-                    <button class="icon-btn" title="Add" onclick="openAddModal()"><i data-lucide="plus"></i></button>
+                    <button class="btn-outline section-btn" type="button" onclick="openTransactionReportModal()">
+                        <i data-lucide="file-text" style="width:13px;height:13px;"></i> Create Transaction Report
+                    </button>
                 </div>
             </div>
             <div class="table-scroll">
                 <table>
                     <thead>
                     <tr>
-                        <th>Type</th>
-                        <th>Property</th>
-                        <th>Client</th>
-                        <th>Value</th>
-                        <th>Status</th>
-                        <th>Address</th>
-                        <th>District</th>
-                        <th>Agent</th>
-                        <th>Actions</th>
+                        <th>Payment</th>
+                        <th>Payment History</th>
+                        <th>Invoice</th>
+                        <th>Home</th>
+                        <th>Bank Account</th>
                     </tr>
                     </thead>
-                    <tbody id="transactionTableBody">
-                    <!-- Rows injected by JS -->
-                    </tbody>
+                    <tbody id="transactionTableBody"></tbody>
                 </table>
+            </div>
+            <div class="pagination-bar" id="txPagination">
+                <span id="txPageInfo">Showing 0 records</span>
+                <div style="display:flex;gap:8px;">
+                    <button type="button" id="txPrevBtn" onclick="changeTxPage(-1)">Previous</button>
+                    <button type="button" id="txNextBtn" onclick="changeTxPage(1)">Next</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1226,65 +1308,48 @@
     <div class="stacked-row">
         <!-- Agent Leaderboard -->
         <div class="agents-card">
-            <div class="agents-header" style="display:flex; justify-content:space-between; align-items:center;">
-                <h3>Top <em>Agents</em></h3>
-                <div class="agent-actions" style="display:flex; align-items:center; gap:8px;">
+            <div class="agents-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <h3>Top <em>Agents</em> <span class="readonly-tag">Read-only · Agents module</span></h3>
+                <div class="agent-actions" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <select id="agentStatusFilter" class="form-input" onchange="agentPage=1; renderAgents()" style="width:120px; padding:8px 12px; font-size:11px;">
+                        <option value="">All statuses</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="On Leave">On Leave</option>
+                    </select>
                     <div id="agentSearchContainer" style="display:none; align-items:center; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:20px; padding:2px 10px;">
-                        <input type="text" id="agentSearchInput" placeholder="Search..." oninput="filterAgents(this.value)" style="background:transparent; border:none; color:var(--text-main); font-size:12px; outline:none; width:120px;" />
+                        <input type="text" id="agentSearchInput" placeholder="Search..." oninput="agentPage=1; filterAgents(this.value)" style="background:transparent; border:none; color:var(--text-main); font-size:12px; outline:none; width:140px;" />
                     </div>
                     <button class="icon-btn" title="Search" onclick="toggleAgentSearch()"><i data-lucide="search"></i></button>
-                    <button class="icon-btn" title="Create Report" onclick="openReportModal()"><i data-lucide="file-text"></i></button>
-                    <button class="icon-btn" onclick="openAddAgentModal()"><i data-lucide="plus"></i></button>
-                </div>
-            </div>
-            <div id="agentList">
-                <!-- Injected by JS -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Reports -->
-    <div class="stacked-row">
-        <div class="table-card">
-            <div class="table-header">
-                <div>
-                    <h3>Created <em>Reports</em></h3>
-                </div>
-                <div class="table-actions" style="display:flex; align-items:center; gap:8px;">
-                    <div id="reportSearchContainer" style="display:none; align-items:center; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:20px; padding:2px 10px;">
-                        <input type="text" id="reportSearchInput" placeholder="Search..." oninput="filterReports(this.value)" style="background:transparent; border:none; color:var(--text-main); font-size:12px; outline:none; width:120px;" />
-                    </div>
-                    <select id="reportSortSelect" class="form-input" onchange="setReportSort(this.value)" style="width:150px; padding:8px 12px; font-size:11px;">
-                        <option value="newest">Newest</option>
-                        <option value="property">Property</option>
-                        <option value="district">District</option>
-                        <option value="status">Status</option>
-                        <option value="value">Value</option>
-                    </select>
-                    <button class="icon-btn" title="Search Reports" onclick="toggleReportSearch()"><i data-lucide="search"></i></button>
-                    <button class="icon-btn" title="Create Report" onclick="openReportModal()"><i data-lucide="file-text"></i></button>
-                    <button class="icon-btn" title="Export Reports" onclick="exportReports()"><i data-lucide="download"></i></button>
+                    <button class="btn-outline section-btn" type="button" onclick="openAgentReportModal()">
+                        <i data-lucide="file-text" style="width:13px;height:13px;"></i> Create Agent Report
+                    </button>
                 </div>
             </div>
             <div class="table-scroll">
                 <table>
                     <thead>
                     <tr>
-                        <th>Type</th>
-                        <th>Property</th>
-                        <th>Client</th>
-                        <th>Status</th>
-                        <th>Value</th>
-                        <th>Address</th>
-                        <th>District</th>
                         <th>Agent</th>
-                        <th>Actions</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Area</th>
+                        <th>Commission</th>
+                        <th>Status</th>
+                        <th>Specialization</th>
+                        <th>Experience</th>
                     </tr>
                     </thead>
-                    <tbody id="reportTableBody">
-                    <!-- Rows injected by JS -->
-                    </tbody>
+                    <tbody id="agentList"></tbody>
                 </table>
+            </div>
+            <div class="pagination-bar" id="agentPagination">
+                <span id="agentPageInfo">Showing 0 agents</span>
+                <div style="display:flex;gap:8px;">
+                    <button type="button" id="agentPrevBtn" onclick="changeAgentPage(-1)">Previous</button>
+                    <button type="button" id="agentNextBtn" onclick="changeAgentPage(1)">Next</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1488,95 +1553,79 @@
     </div>
 </div>
 
-<!-- CREATE REPORT MODAL -->
-<div class="modal-overlay" id="reportModal">
+<!-- VIEW GENERATED REPORT -->
+<div class="modal-overlay" id="viewReportModal">
     <div class="modal wide">
-        <button class="modal-close" onclick="closeReportModal()"><i data-lucide="x"></i></button>
-        <h2>Create <em>Report</em></h2>
-        <p>Generate a report entry for a property, transaction, or assigned agent.</p>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label class="form-label">Property Type</label>
-                <select class="form-input" id="reportPropertyType" required>
-                    <option value="House">House</option>
-                    <option value="Apartments">Apartments</option>
-                    <option value="Rental Property">Rental Property</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Property Name</label>
-                <input class="form-input" id="reportPropertyName" type="text" minlength="2" maxlength="80" required autocomplete="off" placeholder="e.g. Azure Penthouse" />
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label class="form-label">Client Name</label>
-                <input class="form-input" id="reportClientName" type="text" minlength="2" maxlength="70" required autocomplete="off" placeholder="e.g. James Perera" />
-            </div>
-            <div class="form-group">
-                <label class="form-label">Status</label>
-                <select class="form-input" id="reportStatus" required>
-                    <option value="Sold">Sold</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Rented">Rented</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label class="form-label">Value</label>
-                <input class="form-input" id="reportValue" type="text" inputmode="decimal" maxlength="20" required autocomplete="off" placeholder="e.g. Rs 1.2M" />
-            </div>
-            <div class="form-group">
-                <label class="form-label">Address</label>
-                <input class="form-input" id="reportAddress" type="text" minlength="2" maxlength="160" required autocomplete="off" placeholder="e.g. 24 Park Road, Colombo 07" />
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group">
-                <label class="form-label">District</label>
-                <select class="form-input" id="reportDistrict" required>
-                    <option value="Ampara">Ampara</option>
-                    <option value="Anuradhapura">Anuradhapura</option>
-                    <option value="Badulla">Badulla</option>
-                    <option value="Batticaloa">Batticaloa</option>
-                    <option value="Colombo">Colombo</option>
-                    <option value="Galle">Galle</option>
-                    <option value="Gampaha">Gampaha</option>
-                    <option value="Hambantota">Hambantota</option>
-                    <option value="Jaffna">Jaffna</option>
-                    <option value="Kalutara">Kalutara</option>
-                    <option value="Kandy">Kandy</option>
-                    <option value="Kegalle">Kegalle</option>
-                    <option value="Kilinochchi">Kilinochchi</option>
-                    <option value="Kurunegala">Kurunegala</option>
-                    <option value="Mannar">Mannar</option>
-                    <option value="Matale">Matale</option>
-                    <option value="Matara">Matara</option>
-                    <option value="Monaragala">Monaragala</option>
-                    <option value="Mullaitivu">Mullaitivu</option>
-                    <option value="Nuwara Eliya">Nuwara Eliya</option>
-                    <option value="Polonnaruwa">Polonnaruwa</option>
-                    <option value="Puttalam">Puttalam</option>
-                    <option value="Ratnapura">Ratnapura</option>
-                    <option value="Trincomalee">Trincomalee</option>
-                    <option value="Vavuniya">Vavuniya</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Agent</label>
-                <select class="form-input" id="reportAgentName">
-                    <option value="">No agent assigned</option>
-                </select>
-            </div>
-        </div>
-
+        <button class="modal-close" onclick="closeViewReportModal()"><i data-lucide="x"></i></button>
+        <h2 id="viewReportTitle">Report</h2>
+        <p id="viewReportMeta" style="color:var(--text-dim);font-size:12px;margin-bottom:12px;"></p>
+        <div id="viewReportBody" style="background:rgba(255,255,255,0.03);border:1px solid var(--glass-border);border-radius:10px;padding:16px;font-size:12px;max-height:280px;overflow:auto;white-space:pre-wrap;"></div>
         <div class="modal-footer">
-            <button class="btn-outline" onclick="closeReportModal()">Cancel</button>
-            <button class="btn-gold" onclick="saveReport()">
-                <i data-lucide="check" style="width:13px;height:13px;"></i> Save Report
-            </button>
+            <button class="btn-outline" onclick="printViewingReport()"><i data-lucide="printer" style="width:13px;height:13px;"></i> Print</button>
+            <button class="btn-outline" onclick="pdfViewingReport()"><i data-lucide="download" style="width:13px;height:13px;"></i> PDF</button>
+            <button class="btn-gold" onclick="closeViewReportModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- TRANSACTION REPORT MODAL -->
+<div class="modal-overlay" id="transactionReportModal">
+    <div class="modal wide">
+        <button class="modal-close" onclick="closeTransactionReportModal()"><i data-lucide="x"></i></button>
+        <h2>Transaction <em>Report</em></h2>
+        <p>Filter records, then generate a report saved to the Reports tab.</p>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Report Title *</label>
+                <input class="form-input" id="txReportTitle" type="text" placeholder="e.g. March Finance Transactions" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Date Range *</label>
+                <div style="display:flex;gap:8px;">
+                    <input class="form-input" id="txReportStart" type="date" />
+                    <input class="form-input" id="txReportEnd" type="date" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Include Transactions *</label>
+            <div id="txReportSelection" style="max-height:180px;overflow:auto;border:1px solid var(--glass-border);border-radius:10px;padding:10px;font-size:12px;"></div>
+        </div>
+        <div id="txReportError" class="form-error"></div>
+        <div class="modal-footer">
+            <button class="btn-outline" onclick="closeTransactionReportModal()">Cancel</button>
+            <button class="btn-gold" onclick="saveTransactionReport()">Generate Report</button>
+        </div>
+    </div>
+</div>
+
+<!-- AGENT REPORT MODAL -->
+<div class="modal-overlay" id="agentReportModal">
+    <div class="modal wide">
+        <button class="modal-close" onclick="closeAgentReportModal()"><i data-lucide="x"></i></button>
+        <h2>Agent <em>Report</em></h2>
+        <p>Filter agents, then generate a report saved to the Reports tab.</p>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Report Title *</label>
+                <input class="form-input" id="agentReportTitle" type="text" placeholder="e.g. Q1 Agent Performance" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Date Range *</label>
+                <div style="display:flex;gap:8px;">
+                    <input class="form-input" id="agentReportStart" type="date" />
+                    <input class="form-input" id="agentReportEnd" type="date" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Include Agents *</label>
+            <div id="agentReportSelection" style="max-height:180px;overflow:auto;border:1px solid var(--glass-border);border-radius:10px;padding:10px;font-size:12px;"></div>
+        </div>
+        <div id="agentReportError" class="form-error"></div>
+        <div class="modal-footer">
+            <button class="btn-outline" onclick="closeAgentReportModal()">Cancel</button>
+            <button class="btn-gold" onclick="saveAgentReport()">Generate Report</button>
         </div>
     </div>
 </div>
@@ -1599,15 +1648,11 @@
     /* ===========================
        DATA STORE (CRUD)
     =========================== */
-    let transactions = [
-        { id: 1, propertyType: 'Apartments', property: 'Azure Residences', client: 'Amara Silva', value: 'Rs 2.4M', status: 'Sold', address: '24 Park Road, Colombo 07', district: 'Colombo', agentName: 'Amara Silva' },
-        { id: 2, propertyType: 'Apartments', property: 'Skyline Penthouse', client: 'Rohan Perera', value: 'Rs 3.1M', status: 'Pending', address: '15 Galle Road, Colombo 03', district: 'Colombo', agentName: 'Rohan Perera' },
-        { id: 3, propertyType: 'Rental Property', property: 'VIMAN Ultra-Loft', client: 'Dilini Fernando', value: 'Rs 1.8M', status: 'Rented', address: '8 Lake Drive, Kandy', district: 'Kandy', agentName: 'Dilini Fernando' },
-        { id: 4, propertyType: 'House', property: 'Sunrise Ridge Villa', client: 'Kasun Jayawardena', value: 'Rs 4.5M', status: 'Sold', address: '42 Ridge Lane, Galle', district: 'Galle', agentName: 'Kasun Jayawardena' },
-        { id: 5, propertyType: 'Apartments', property: 'TRI-ZEN Apartment', client: 'Nimasha De Silva', value: 'Rs 980K', status: 'Pending', address: '10 Union Place, Colombo 02', district: 'Colombo', agentName: 'Nimasha De Silva' },
-    ];
-
-    let reports = [];
+    let financeTransactions = [];
+    const PAGE_SIZE = 5;
+    let txPage = 1;
+    let agentPage = 1;
+    let viewingReport = null;
     let nextId = 6;
     let editingId = null;
     let deletingId = null;
@@ -1918,49 +1963,53 @@
         renderTable();
     }
 
+    function getFilteredFinanceTransactions() {
+        const query = txSearchQuery.toLowerCase().trim();
+        const statusFilter = (document.getElementById('txStatusFilter')?.value || '').toUpperCase();
+        return financeTransactions.filter(tx => {
+            const payment = (tx.payment || '').toUpperCase();
+            if (statusFilter && !payment.includes(statusFilter)) return false;
+            const blob = [tx.payment, tx.paymentHistory, tx.invoice, tx.home, tx.bankAccount].join(' ').toLowerCase();
+            return !query || blob.includes(query);
+        });
+    }
+
+    function changeTxPage(delta) {
+        const totalPages = Math.max(1, Math.ceil(getFilteredFinanceTransactions().length / PAGE_SIZE));
+        txPage = Math.min(Math.max(1, txPage + delta), totalPages);
+        renderTable();
+    }
+
     function renderTable() {
         const tbody = document.getElementById('transactionTableBody');
-        tbody.innerHTML = '';
+        const filtered = getFilteredFinanceTransactions();
+        const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+        if (txPage > totalPages) txPage = totalPages;
+        const start = (txPage - 1) * PAGE_SIZE;
+        const pageItems = filtered.slice(start, start + PAGE_SIZE);
 
-        const query = txSearchQuery.toLowerCase().trim();
-        const filtered = transactions.filter(tx => {
-            return (tx.propertyType && tx.propertyType.toLowerCase().includes(query)) ||
-                   (tx.property && tx.property.toLowerCase().includes(query)) ||
-                   (tx.client && tx.client.toLowerCase().includes(query)) ||
-                   (tx.value && tx.value.toLowerCase().includes(query)) ||
-                   (tx.status && tx.status.toLowerCase().includes(query)) ||
-                   (tx.address && tx.address.toLowerCase().includes(query)) ||
-                   (tx.district && tx.district.toLowerCase().includes(query)) ||
-                   (tx.agentName && tx.agentName.toLowerCase().includes(query));
-        });
-
-        if (filtered.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:24px;">No transactions found</td></tr>';
-            return;
+        if (pageItems.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:24px;">No finance transactions found</td></tr>';
+        } else {
+            tbody.innerHTML = pageItems.map(tx => `
+                <tr>
+                    <td>${escapeHtml(tx.payment)}</td>
+                    <td>${escapeHtml(tx.paymentHistory)}</td>
+                    <td>${escapeHtml(tx.invoice)}</td>
+                    <td>${escapeHtml(tx.home)}</td>
+                    <td>${escapeHtml(tx.bankAccount)}</td>
+                </tr>
+            `).join('');
         }
 
-        filtered.forEach(tx => {
-            const statusClass = tx.status === 'Sold' ? 'sold' : tx.status === 'Pending' ? 'pending' : 'rented';
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${escapeHtml(normalizePropertyType(tx.propertyType))}</td>
-                <td class="td-primary">${escapeHtml(tx.property)}</td>
-                <td>${escapeHtml(tx.client)}</td>
-                <td style="color:var(--gold);font-weight:600;">${escapeHtml(tx.value)}</td>
-                <td><span class="status-badge ${statusClass}">${escapeHtml(tx.status)}</span></td>
-                <td>${escapeHtml(tx.address || 'Not set')}</td>
-                <td>${escapeHtml(tx.district || 'Not set')}</td>
-                <td>${escapeHtml(tx.agentName || 'None')}</td>
-                <td>
-                    <div class="row-actions">
-                        <button class="row-btn" title="Create Report" onclick="openReportFromTransaction(${tx.id})"><i data-lucide="file-text"></i></button>
-                        <button class="row-btn" title="Edit" onclick="editRecord(${tx.id})"><i data-lucide="pencil"></i></button>
-                        <button class="row-btn danger" title="Delete" onclick="deleteRecord(${tx.id})"><i data-lucide="trash-2"></i></button>
-                    </div>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
+        const info = document.getElementById('txPageInfo');
+        if (info) info.textContent = filtered.length
+            ? `Showing ${start + 1}-${Math.min(start + PAGE_SIZE, filtered.length)} of ${filtered.length}`
+            : 'Showing 0 records';
+        const prev = document.getElementById('txPrevBtn');
+        const next = document.getElementById('txNextBtn');
+        if (prev) prev.disabled = txPage <= 1;
+        if (next) next.disabled = txPage >= totalPages;
         safeCreateIcons();
     }
 
@@ -2136,8 +2185,144 @@
     }
 
     /* ===========================
-       REPORTS
+       REPORTS (Analytics)
     =========================== */
+    function toggleReportMenu(event) {
+        event.stopPropagation();
+        document.getElementById('reportTypeMenu').classList.toggle('open');
+    }
+
+    document.addEventListener('click', () => {
+        const menu = document.getElementById('reportTypeMenu');
+        if (menu) menu.classList.remove('open');
+    });
+
+    async function generateAndViewPeriodicReport(type) {
+        document.getElementById('reportTypeMenu')?.classList.remove('open');
+        try {
+            const report = await generatePeriodicReport(type);
+            viewingReport = report;
+            document.getElementById('viewReportTitle').textContent = report.title;
+            document.getElementById('viewReportMeta').textContent = `${report.reportType} · ${report.startDate} to ${report.endDate}`;
+            const data = parseReportData(report);
+            document.getElementById('viewReportBody').textContent = data ? JSON.stringify(data, null, 2) : report.reportData || '';
+            document.getElementById('viewReportModal').classList.add('open');
+            showToast(`${type} report generated and saved to Reports.`);
+            safeCreateIcons();
+        } catch (e) {
+            showToast(e.message || 'Failed to generate report.');
+        }
+    }
+
+    function closeViewReportModal() {
+        document.getElementById('viewReportModal').classList.remove('open');
+        viewingReport = null;
+    }
+
+    function printViewingReport() { if (viewingReport) printReport(viewingReport); }
+    function pdfViewingReport() { if (viewingReport) downloadReportPdf(viewingReport); }
+
+    function openTransactionReportModal() {
+        const today = new Date().toISOString().slice(0, 10);
+        document.getElementById('txReportTitle').value = `Transaction Report · ${today}`;
+        document.getElementById('txReportStart').value = today;
+        document.getElementById('txReportEnd').value = today;
+        document.getElementById('txReportError').textContent = '';
+        const box = document.getElementById('txReportSelection');
+        box.innerHTML = getFilteredFinanceTransactions().map(tx => `
+            <label style="display:block;margin-bottom:6px;">
+                <input type="checkbox" class="tx-report-pick" value="${tx.id}" checked>
+                ${escapeHtml(tx.payment)}
+            </label>
+        `).join('') || '<p style="color:var(--text-dim)">No transactions available.</p>';
+        document.getElementById('transactionReportModal').classList.add('open');
+        safeCreateIcons();
+    }
+
+    function closeTransactionReportModal() {
+        document.getElementById('transactionReportModal').classList.remove('open');
+    }
+
+    async function saveTransactionReport() {
+        const title = document.getElementById('txReportTitle').value.trim();
+        const startDate = document.getElementById('txReportStart').value;
+        const endDate = document.getElementById('txReportEnd').value;
+        const selected = [...document.querySelectorAll('.tx-report-pick:checked')].map(el => Number(el.value));
+        const records = financeTransactions.filter(tx => selected.includes(tx.id));
+        const payload = {
+            title,
+            reportType: 'TRANSACTION',
+            startDate,
+            endDate,
+            reportData: JSON.stringify(records),
+            propertyName: 'Finance Transactions',
+            clientName: 'Finance Module'
+        };
+        const errors = validateReportPayload(payload, { requireDateRange: true, requireSelection: true });
+        if (errors.length) {
+            document.getElementById('txReportError').textContent = errors[0];
+            return;
+        }
+        try {
+            const report = await createReport(payload);
+            viewingReport = report;
+            closeTransactionReportModal();
+            showToast('Transaction report saved to Reports tab.');
+        } catch (e) {
+            document.getElementById('txReportError').textContent = e.message;
+        }
+    }
+
+    function openAgentReportModal() {
+        const today = new Date().toISOString().slice(0, 10);
+        document.getElementById('agentReportTitle').value = `Agent Report · ${today}`;
+        document.getElementById('agentReportStart').value = today;
+        document.getElementById('agentReportEnd').value = today;
+        document.getElementById('agentReportError').textContent = '';
+        const box = document.getElementById('agentReportSelection');
+        box.innerHTML = getFilteredAgents().map(a => `
+            <label style="display:block;margin-bottom:6px;">
+                <input type="checkbox" class="agent-report-pick" value="${a.id}" checked>
+                ${escapeHtml(a.name)} · ${escapeHtml(a.status || 'Active')}
+            </label>
+        `).join('') || '<p style="color:var(--text-dim)">No agents available.</p>';
+        document.getElementById('agentReportModal').classList.add('open');
+        safeCreateIcons();
+    }
+
+    function closeAgentReportModal() {
+        document.getElementById('agentReportModal').classList.remove('open');
+    }
+
+    async function saveAgentReport() {
+        const title = document.getElementById('agentReportTitle').value.trim();
+        const startDate = document.getElementById('agentReportStart').value;
+        const endDate = document.getElementById('agentReportEnd').value;
+        const selected = [...document.querySelectorAll('.agent-report-pick:checked')].map(el => Number(el.value));
+        const records = agents.filter(a => selected.includes(a.id));
+        const payload = {
+            title,
+            reportType: 'AGENT',
+            startDate,
+            endDate,
+            reportData: JSON.stringify(records),
+            propertyName: 'Agent Directory',
+            clientName: 'Agents Module'
+        };
+        const errors = validateReportPayload(payload, { requireDateRange: true, requireSelection: true });
+        if (errors.length) {
+            document.getElementById('agentReportError').textContent = errors[0];
+            return;
+        }
+        try {
+            await createReport(payload);
+            closeAgentReportModal();
+            showToast('Agent report saved to Reports tab.');
+        } catch (e) {
+            document.getElementById('agentReportError').textContent = e.message;
+        }
+    }
+
     function reportPayloadFromTransaction(tx) {
         return {
             propertyType: normalizePropertyType(tx.propertyType),
@@ -2561,40 +2746,64 @@
         renderAgents();
     }
 
-    function renderAgents() {
-        const list = document.getElementById('agentList');
+    function getFilteredAgents() {
         const query = agentSearchQuery.toLowerCase().trim();
-        const filtered = agents.filter(a => {
-            return (a.name && a.name.toLowerCase().includes(query)) ||
-                   (a.role && a.role.toLowerCase().includes(query)) ||
-                   (a.sales && a.sales.toLowerCase().includes(query)) ||
-                   (a.count && a.count.toLowerCase().includes(query));
+        const statusFilter = document.getElementById('agentStatusFilter')?.value || '';
+        return agents.filter(a => {
+            if (statusFilter && (a.status || 'Active') !== statusFilter) return false;
+            const blob = [a.name, a.email, a.phone, a.address, a.assignedArea, a.commissionRate, a.status, a.specialization, a.experience, a.role, a.sales].join(' ').toLowerCase();
+            return !query || blob.includes(query);
         });
+    }
 
-        list.innerHTML = filtered.map((a, i) => {
-            const avatarColor = agentPalette[i % agentPalette.length];
-            return `
-            <div class="agent-item">
-                <div class="agent-avatar" style="background:rgba(${hexToRgb(avatarColor)},0.15);color:${avatarColor};border:1px solid rgba(${hexToRgb(avatarColor)},0.3);">
-                    ${a.name ? escapeHtml(a.name.charAt(0)) : 'A'}
-                </div>
-                <div class="agent-info">
-                    <div class="agent-name">${escapeHtml(a.name)}</div>
-                    <div class="agent-role">${escapeHtml(a.role)}</div>
-                </div>
-                <div class="agent-stats">
-                    <div class="agent-sales">${escapeHtml(a.sales)}</div>
-                    <div class="agent-count">${escapeHtml(a.count)}</div>
-                </div>
-                <div class="row-actions" style="margin-left: 14px;">
-                    <button class="row-btn" title="Create Report" onclick="openReportFromAgent(${a.id})"><i data-lucide="file-text"></i></button>
-                    <button class="row-btn" title="Edit" onclick="editAgent(${a.id})"><i data-lucide="pencil"></i></button>
-                    <button class="row-btn danger" title="Delete" onclick="deleteAgent(${a.id})"><i data-lucide="trash-2"></i></button>
-                </div>
-            </div>
-            `;
-        }).join('');
-        populateAgentSelects();
+    function changeAgentPage(delta) {
+        const totalPages = Math.max(1, Math.ceil(getFilteredAgents().length / PAGE_SIZE));
+        agentPage = Math.min(Math.max(1, agentPage + delta), totalPages);
+        renderAgents();
+    }
+
+    function renderAgents() {
+        const tbody = document.getElementById('agentList');
+        const filtered = getFilteredAgents();
+        const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+        if (agentPage > totalPages) agentPage = totalPages;
+        const start = (agentPage - 1) * PAGE_SIZE;
+        const pageItems = filtered.slice(start, start + PAGE_SIZE);
+
+        if (pageItems.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:24px;">No agents found</td></tr>';
+        } else {
+            tbody.innerHTML = pageItems.map(a => `
+                <tr>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <img class="agent-profile-img" src="${escapeHtml(a.profileImage || '')}" alt="" onerror="this.style.display='none'">
+                            <div>
+                                <div class="td-primary">${escapeHtml(a.name)}</div>
+                                <div style="font-size:11px;color:var(--text-dim)">${escapeHtml(a.role)} · ${escapeHtml(a.sales)}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${escapeHtml(a.email)}</td>
+                    <td>${escapeHtml(a.phone)}</td>
+                    <td>${escapeHtml(a.address)}</td>
+                    <td>${escapeHtml(a.assignedArea)}</td>
+                    <td>${escapeHtml(a.commissionRate)}</td>
+                    <td>${escapeHtml(a.status || 'Active')}</td>
+                    <td>${escapeHtml(a.specialization)}</td>
+                    <td>${escapeHtml(a.experience)}</td>
+                </tr>
+            `).join('');
+        }
+
+        const info = document.getElementById('agentPageInfo');
+        if (info) info.textContent = filtered.length
+            ? `Showing ${start + 1}-${Math.min(start + PAGE_SIZE, filtered.length)} of ${filtered.length} agents`
+            : 'Showing 0 agents';
+        const prev = document.getElementById('agentPrevBtn');
+        const next = document.getElementById('agentNextBtn');
+        if (prev) prev.disabled = agentPage <= 1;
+        if (next) next.disabled = agentPage >= totalPages;
         safeCreateIcons();
     }
 
@@ -3004,13 +3213,12 @@
     =========================== */
     async function fetchDashboardData() {
         try {
-            const tRes = await fetch('http://localhost:8080/api/transactions');
+            const tRes = await fetch(`${API_BASE}/api/finance-transactions`);
             if (tRes.ok) {
-                const data = await tRes.json();
-                transactions = data || [];
+                financeTransactions = await tRes.json() || [];
                 renderTable();
             }
-        } catch(e) { console.warn('Could not fetch transactions:', e); }
+        } catch(e) { console.warn('Could not fetch finance transactions:', e); }
 
         try {
             const aRes = await fetch('http://localhost:8080/api/agents');
@@ -3040,7 +3248,6 @@
         fetchRevenuePerformance();
         fetchActivities();
         fetchMessages();
-        fetchReports();
     }
 
     /* ===========================
@@ -3085,8 +3292,6 @@
     window.onload = () => {
         renderTable();
         renderAgents();
-        renderReports();
-        populateAgentSelects();
         renderDefaultGeo();
         renderDefaultActivities();
         renderDefaultMessages();

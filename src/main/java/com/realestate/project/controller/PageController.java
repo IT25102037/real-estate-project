@@ -35,4 +35,9 @@ public class PageController {
     public String showAboutPage() {
         return "forward:/about.html";
     }
+
+    @GetMapping("/reports")
+    public String showReportsPage() {
+        return "forward:/reports.html";
+    }
 }
