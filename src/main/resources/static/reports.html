@@ -20,7 +20,15 @@
         .page-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:32px}
         .page-header h2{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300}.page-header h2 em{color:var(--gold);font-style:italic}
         .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
-        .form-input{background:rgba(255,255,255,.05);border:1px solid var(--glass-border);border-radius:8px;color:var(--text-main);padding:10px 14px;font-size:12px}
+        .form-input{background:rgba(255,255,255,.05);border:1px solid var(--glass-border);border-radius:8px;color:var(--text-main);padding:10px 14px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none}
+        select.form-input{cursor:pointer;color-scheme:dark;appearance:auto}
+        select.form-input option,select.form-input optgroup{background:#1a1a1a;color:#f8fafc}
+        .form-input:focus{border-color:var(--gold-border)}
+        .form-input.invalid{border-color:rgba(239,68,68,.65)}
+        .form-error{color:#fca5a5;font-size:10px;margin-top:6px;line-height:1.4;min-height:14px}
+        .validation-summary{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:11px;color:#fca5a5;display:none}
+        .validation-summary.show{display:block}
+        .validation-summary ul{margin:6px 0 0 18px;padding:0}
         .btn-gold,.btn-outline{padding:10px 20px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
         .btn-gold{background:var(--gold);color:var(--obsidian);border:none}.btn-outline{background:transparent;border:1px solid var(--glass-border);color:var(--text-dim)}
         .report-category{margin-bottom:28px;background:var(--card-glass);border:1px solid var(--glass-border);border-radius:20px;overflow:hidden}
@@ -35,8 +43,6 @@
         .modal{background:#141414;border:1px solid var(--gold-border);border-radius:16px;padding:32px;width:min(640px,92vw);max-height:90vh;overflow-y:auto;position:relative}
         .modal h2{font-family:'Cormorant Garamond',serif;font-size:28px;margin-bottom:8px}.modal h2 em{color:var(--gold);font-style:italic}
         .form-group{margin-bottom:14px}.form-label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:6px}
-        .form-error{color:var(--danger);font-size:11px;margin-top:4px}
-        .form-input.invalid{border-color:var(--danger)}
         .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
         .modal-close{position:absolute;top:16px;right:16px;background:transparent;border:none;color:var(--text-dim);cursor:pointer}
         .toast{position:fixed;bottom:24px;right:24px;background:#1a1a1a;border:1px solid var(--gold-border);padding:14px 20px;border-radius:10px;display:none;gap:10px;align-items:center;z-index:200}.toast.show{display:flex}
@@ -68,7 +74,6 @@
             <option value="DAILY">Daily</option>
             <option value="WEEKLY">Weekly</option>
             <option value="MONTHLY">Monthly</option>
-            <option value="TRANSACTION">Transaction</option>
             <option value="AGENT">Agent</option>
         </select>
         <select class="form-input" id="reportSort" onchange="renderAllReports()">
@@ -86,16 +91,17 @@
         <button class="modal-close" onclick="closeEditModal()"><i data-lucide="x"></i></button>
         <h2 id="editModalTitle">Edit <em>Report</em></h2>
         <input type="hidden" id="editReportId">
-        <div class="form-group"><label class="form-label">Title *</label><input class="form-input" id="editTitle" required></div>
+        <div id="editValidationSummary" class="validation-summary" role="alert"></div>
+        <div class="form-group"><label class="form-label">Title *</label><input class="form-input" id="editTitle" required aria-describedby="editTitleError"></div>
         <div class="form-group"><label class="form-label">Report Type *</label>
-            <select class="form-input" id="editReportType" required>
-                <option value="DAILY">Daily</option><option value="WEEKLY">Weekly</option><option value="MONTHLY">Monthly</option>
-                <option value="TRANSACTION">Transaction</option><option value="AGENT">Agent</option>
+            <select class="form-input" id="editReportType" required onchange="applyEditReportDateRange()" aria-describedby="editReportTypeError">
+                <option value="DAILY">Daily</option><option value="WEEKLY">Weekly</option>                <option value="MONTHLY">Monthly</option>
+                <option value="AGENT">Agent</option>
             </select>
         </div>
-        <div class="form-group"><label class="form-label">Start Date</label><input class="form-input" id="editStartDate" type="date"></div>
-        <div class="form-group"><label class="form-label">End Date</label><input class="form-input" id="editEndDate" type="date"></div>
-        <div id="editFormError" class="form-error"></div>
+        <div class="form-group"><label class="form-label">Start Date</label><input class="form-input" id="editStartDate" type="date" aria-describedby="editStartDateError"></div>
+        <div class="form-group"><label class="form-label">End Date</label><input class="form-input" id="editEndDate" type="date" aria-describedby="editEndDateError"></div>
+        <p id="editDateHint" style="font-size:10px;color:var(--text-dim);margin-top:-8px;margin-bottom:8px;display:none"></p>
         <div class="modal-footer">
             <button class="btn-outline" onclick="closeEditModal()">Cancel</button>
             <button class="btn-gold" onclick="saveEditedReport()">Save Changes</button>
@@ -134,10 +140,69 @@
     let viewingReport = null;
     let deletingId = null;
 
+    const EDIT_FIELD_MAP = { title: 'editTitle', reportType: 'editReportType', startDate: 'editStartDate', endDate: 'editEndDate' };
+
     function showToast(msg) {
         document.getElementById('toastMsg').textContent = msg;
         document.getElementById('toast').classList.add('show');
         setTimeout(() => document.getElementById('toast').classList.remove('show'), 3000);
+    }
+
+    function clearEditValidation() {
+        Object.values(EDIT_FIELD_MAP).forEach(id => {
+            const input = document.getElementById(id);
+            if (!input) return;
+            input.classList.remove('invalid');
+            input.removeAttribute('aria-invalid');
+            const err = document.getElementById(`${id}Error`);
+            if (err) err.remove();
+        });
+        const summary = document.getElementById('editValidationSummary');
+        summary.classList.remove('show');
+        summary.innerHTML = '';
+    }
+
+    function setEditFieldError(fieldKey, message) {
+        const id = EDIT_FIELD_MAP[fieldKey] || fieldKey;
+        const input = document.getElementById(id);
+        if (!input) return;
+        input.classList.add('invalid');
+        input.setAttribute('aria-invalid', 'true');
+        if (!document.getElementById(`${id}Error`)) {
+            const error = document.createElement('div');
+            error.className = 'form-error';
+            error.id = `${id}Error`;
+            input.insertAdjacentElement('afterend', error);
+        }
+        document.getElementById(`${id}Error`).textContent = message;
+    }
+
+    function showEditValidationErrors(fieldErrors) {
+        clearEditValidation();
+        if (!fieldErrors.length) return;
+        const summary = document.getElementById('editValidationSummary');
+        summary.innerHTML = '<strong>Please fix the following:</strong><ul>' +
+            fieldErrors.map(e => `<li>${escapeHtml(e.message)}</li>`).join('') + '</ul>';
+        summary.classList.add('show');
+        fieldErrors.forEach(e => setEditFieldError(e.field, e.message));
+        const firstId = EDIT_FIELD_MAP[fieldErrors[0].field];
+        if (firstId) document.getElementById(firstId)?.focus();
+        showToast(fieldErrors[0].message);
+    }
+
+    function applyEditReportDateRange() {
+        const type = document.getElementById('editReportType').value;
+        const range = getReportDateRange(type);
+        const hint = document.getElementById('editDateHint');
+        if (range) {
+            document.getElementById('editStartDate').value = range.startDate;
+            document.getElementById('editEndDate').value = range.endDate;
+            hint.style.display = 'block';
+            hint.textContent = `Date range auto-set for ${formatReportTypeLabel(type)}: ${range.startDate} to ${range.endDate}. You can still adjust if needed.`;
+        } else {
+            hint.style.display = 'none';
+            hint.textContent = '';
+        }
     }
 
     function filteredReports() {
@@ -161,12 +226,8 @@
         return list;
     }
 
-    function renderAllReports() {
-        const container = document.getElementById('reportCategories');
-        const list = filteredReports();
-        container.innerHTML = REPORT_CATEGORIES.map(cat => {
-            const items = list.filter(r => (r.reportType || '').toUpperCase() === cat.key);
-            const rows = items.length ? items.map(r => `
+    function renderReportCategorySection(titleFirst, titleEm, items) {
+        const rows = items.length ? items.map(r => `
                 <tr>
                     <td>${escapeHtml(r.title)}</td>
                     <td>${formatDate(r.createdAt)}</td>
@@ -181,9 +242,24 @@
                         </div>
                     </td>
                 </tr>`).join('') : '<tr class="empty-row"><td colspan="4">No reports in this category</td></tr>';
-            return `<section class="report-category"><div class="category-header"><h3>${cat.label.split(' ')[0]} <em>${cat.label.split(' ').slice(1).join(' ')}</em></h3><span style="color:var(--text-dim);font-size:12px">${items.length} report(s)</span></div>
+        return `<section class="report-category"><div class="category-header"><h3>${titleFirst} <em>${titleEm}</em></h3><span style="color:var(--text-dim);font-size:12px">${items.length} report(s)</span></div>
                 <table><thead><tr><th>Title</th><th>Created</th><th>Date Range</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table></section>`;
+    }
+
+    function renderAllReports() {
+        const container = document.getElementById('reportCategories');
+        const list = filteredReports();
+        const knownKeys = new Set(REPORT_CATEGORIES.map(c => c.key));
+        let html = REPORT_CATEGORIES.map(cat => {
+            const items = list.filter(r => (r.reportType || '').toUpperCase() === cat.key);
+            const parts = cat.label.split(' ');
+            return renderReportCategorySection(parts[0], parts.slice(1).join(' '), items);
         }).join('');
+        const other = list.filter(r => !knownKeys.has((r.reportType || '').toUpperCase()));
+        if (other.length) {
+            html += renderReportCategorySection('Other', 'Reports', other);
+        }
+        container.innerHTML = html;
         lucide.createIcons();
     }
 
@@ -202,7 +278,7 @@
         viewingReport = findReport(id);
         if (!viewingReport) return;
         document.getElementById('viewTitle').textContent = viewingReport.title;
-        document.getElementById('viewMeta').textContent = `${viewingReport.reportType} · ${formatDate(viewingReport.createdAt)}`;
+        document.getElementById('viewMeta').textContent = `${formatReportTypeLabel(viewingReport.reportType)} · ${formatDate(viewingReport.createdAt)}`;
         const data = parseReportData(viewingReport);
         document.getElementById('viewReportContent').textContent = data ? JSON.stringify(data, null, 2) : (viewingReport.reportData || 'No detail data.');
         document.getElementById('viewModal').classList.add('open');
@@ -220,21 +296,31 @@
         if (!r) return;
         document.getElementById('editReportId').value = r.id;
         document.getElementById('editTitle').value = r.title || '';
-        document.getElementById('editReportType').value = (r.reportType || 'DAILY').toUpperCase();
+        const allowedTypes = ['DAILY', 'WEEKLY', 'MONTHLY', 'AGENT'];
+        const type = (r.reportType || 'DAILY').toUpperCase();
+        document.getElementById('editReportType').value = allowedTypes.includes(type) ? type : 'DAILY';
         document.getElementById('editStartDate').value = r.startDate || '';
         document.getElementById('editEndDate').value = r.endDate || '';
-        document.getElementById('editFormError').textContent = '';
+        clearEditValidation();
+        applyEditReportDateRange();
         document.getElementById('editModal').classList.add('open');
     }
 
-    function closeEditModal() { document.getElementById('editModal').classList.remove('open'); }
+    function closeEditModal() {
+        document.getElementById('editModal').classList.remove('open');
+        clearEditValidation();
+    }
 
     async function saveEditedReport() {
         const id = Number(document.getElementById('editReportId').value);
         const existing = findReport(id);
+        const reportType = document.getElementById('editReportType').value;
+        if (getReportDateRange(reportType)) {
+            applyEditReportDateRange();
+        }
         const payload = {
             title: document.getElementById('editTitle').value.trim(),
-            reportType: document.getElementById('editReportType').value,
+            reportType,
             startDate: document.getElementById('editStartDate').value || null,
             endDate: document.getElementById('editEndDate').value || null,
             reportData: existing?.reportData || null,
@@ -247,18 +333,18 @@
             agentName: existing?.agentName,
             propertyType: existing?.propertyType
         };
-        const errors = validateReportPayload(payload, { requireDateRange: false });
-        if (errors.length) {
-            document.getElementById('editFormError').textContent = errors[0];
+        const { fieldErrors } = validateReportPayloadDetailed(payload, { requireDateRange: true });
+        if (fieldErrors.length) {
+            showEditValidationErrors(fieldErrors);
             return;
         }
         try {
             await updateReport(id, payload);
-            showToast('Report updated.');
+            showToast('Report updated successfully.');
             closeEditModal();
             await loadReports();
         } catch (e) {
-            document.getElementById('editFormError').textContent = e.message;
+            showEditValidationErrors([{ field: 'title', message: e.message || 'Could not save the report. Please try again.' }]);
         }
     }
 
