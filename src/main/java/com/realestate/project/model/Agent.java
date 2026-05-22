@@ -1,58 +1,143 @@
 package com.realestate.project.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "agents")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Agent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long agentId;
 
-    @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
-    private String role;
-
-    @Column(nullable = false)
-    private String sales;
-
-    @Column(nullable = false)
-    private String count;
-
     private String email;
-
     private String phone;
-
     private String address;
-
-    @Column(name = "assigned_area")
     private String assignedArea;
-
-    @Column(name = "commission_rate")
-    private String commissionRate;
-
+    private double commissionRate;
     private String status;
+    private String agentCode;
 
     private String specialization;
+    private int experience;
+    private String profileImageName;
 
-    private String experience;
+    // Default Constructor
+    public Agent() {
+    }
 
-    @Column(name = "profile_image")
-    private String profileImage;
+    // Parameterized Constructor
+    public Agent(String name, String email, String phone, String address,
+                 String assignedArea, double commissionRate, String status,
+                 String specialization, int experience, String profileImageName) {
 
-    public Agent(String name, String role, String sales, String count) {
         this.name = name;
-        this.role = role;
-        this.sales = sales;
-        this.count = count;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+        this.assignedArea = assignedArea;
+        this.commissionRate = commissionRate;
+        this.status = status;
+        this.specialization = specialization;
+        this.experience = experience;
+        this.profileImageName = profileImageName;
+    }
+
+    // Getters and Setters
+
+    public Long getAgentId() {
+        return agentId;
+    }
+
+    public void setAgentId(Long agentId) {
+        this.agentId = agentId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getAssignedArea() {
+        return assignedArea;
+    }
+
+    public void setAssignedArea(String assignedArea) {
+        this.assignedArea = assignedArea;
+    }
+
+    public double getCommissionRate() {
+        return commissionRate;
+    }
+
+    public void setCommissionRate(double commissionRate) {
+        this.commissionRate = commissionRate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getSpecialization() {
+        return specialization;
+    }
+
+    public void setSpecialization(String specialization) {
+        this.specialization = specialization;
+    }
+
+    public int getExperience() {
+        return experience;
+    }
+
+    public void setExperience(int experience) {
+        this.experience = experience;
+    }
+
+    public String getProfileImageName() {
+        return profileImageName;
+    }
+
+    public void setProfileImageName(String profileImageName) {
+        this.profileImageName = profileImageName;
+    }
+    public String getAgentCode() {
+        return agentCode;
+    }
+
+    public void setAgentCode(String agentCode) {
+        this.agentCode = agentCode;
     }
 }
