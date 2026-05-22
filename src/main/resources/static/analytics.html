@@ -1,0 +1,3352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeEstate | Analytics</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="/js/report-utils.js"></script>
+
+    <style>
+        :root {
+            --gold: #c9a96e;
+            --gold-light: #e8d5b0;
+            --gold-dark: #8b6914;
+            --primary: #818cf8;
+            --accent: #22d3ee;
+            --obsidian: #0a0a0a;
+            --charcoal: #1a1a1a;
+            --sidebar-width: 280px;
+            --glass-dark: rgba(10, 10, 10, 0.85);
+            --card-glass: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --gold-border: rgba(201, 169, 110, 0.25);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --text-muted: #6b7280;
+            --danger: #ef4444;
+            --success: #10b981;
+            --transition: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--obsidian); }
+        ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+        body {
+            background: linear-gradient(135deg, rgba(10,10,10,0.97) 0%, rgba(26,20,8,0.98) 50%, rgba(10,10,10,0.97) 100%),
+            url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            height: 100vh;
+            color: var(--text-main);
+            overflow: hidden;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        /* Grain overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ======== SIDEBAR ======== */
+        aside {
+            width: var(--sidebar-width);
+            background: var(--glass-dark);
+            backdrop-filter: blur(40px);
+            border-right: 1px solid var(--gold-border);
+            display: flex;
+            flex-direction: column;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        aside::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+        }
+
+        .sidebar-brand {
+            padding-left: 14px;
+            margin-bottom: 50px;
+        }
+
+        .sidebar-brand h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--text-main);
+        }
+        .sidebar-brand h1 span { color: var(--gold); }
+
+        .sidebar-brand p {
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .nav-section-label {
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.5;
+            padding: 0 14px;
+            margin: 28px 0 10px;
+        }
+
+        .nav-menu { list-style: none; flex-grow: 1; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 13px 18px;
+            margin-bottom: 4px;
+            border-radius: 10px;
+            color: rgba(255,255,255,0.4);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s var(--transition);
+            border: 1px solid transparent;
+        }
+        .nav-item i, .nav-item svg { margin-right: 14px; width: 16px; height: 16px; flex-shrink: 0; }
+
+        .nav-item.active {
+            background: rgba(201, 169, 110, 0.1);
+            color: var(--gold-light);
+            border-color: var(--gold-border);
+        }
+        .nav-item:hover:not(.active) {
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.75);
+            transform: translateX(5px);
+        }
+
+        .logout-link {
+            color: rgba(239, 68, 68, 0.5) !important;
+            margin-top: auto;
+        }
+        .logout-link:hover { color: #ef4444 !important; border-color: rgba(239,68,68,0.2) !important; }
+
+        /* ======== MAIN ======== */
+        main {
+            flex-grow: 1;
+            padding: 48px 48px 48px 48px;
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 48px;
+        }
+
+        .page-header-left h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 48px;
+            font-weight: 300;
+            letter-spacing: -1px;
+            color: var(--text-main);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .page-header-left h2 em {
+            font-style: italic;
+            color: var(--gold);
+        }
+        .page-header-left p {
+            font-size: 12px;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .dropdown { position: relative; }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            min-width: 200px;
+            background: #141414;
+            border: 1px solid var(--gold-border);
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 50;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+        }
+        .dropdown-menu.open { display: block; }
+        .dropdown-menu button {
+            width: 100%;
+            text-align: left;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .dropdown-menu button:hover { background: rgba(201,169,110,0.12); color: var(--gold-light); }
+
+        .section-btn {
+            padding: 8px 16px;
+            font-size: 9px;
+            letter-spacing: 1.5px;
+        }
+
+        .pagination-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            border-top: 1px solid var(--glass-border);
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+        .pagination-bar button {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-dim);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+        .pagination-bar button:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        .agent-profile-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--gold-border);
+        }
+
+        .readonly-tag {
+            font-size: 9px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-left: 8px;
+        }
+
+        .btn-gold {
+            background: var(--gold);
+            color: var(--obsidian);
+            padding: 12px 28px;
+            border: none;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-gold:hover {
+            background: var(--gold-light);
+            box-shadow: 0 0 30px rgba(201,169,110,0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: rgba(255,255,255,0.5);
+            padding: 12px 24px;
+            border: 1px solid var(--glass-border);
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-outline:hover {
+            border-color: var(--gold-border);
+            color: var(--gold-light);
+        }
+
+        /* ======== STAT CARDS ======== */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 28px 26px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s var(--transition);
+        }
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold-border), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .kpi-card:hover {
+            border-color: var(--gold-border);
+            transform: translateY(-4px);
+            background: rgba(255,255,255,0.06);
+        }
+        .kpi-card:hover::before { opacity: 1; }
+
+        .kpi-label {
+            font-size: 9px;
+            color: rgba(255,255,255,0.35);
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .kpi-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 42px;
+            font-weight: 400;
+            color: var(--text-main);
+            line-height: 1;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+        .kpi-value span { color: var(--gold); }
+
+        .kpi-change {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .kpi-change.up { color: var(--success); }
+        .kpi-change.down { color: var(--danger); }
+        .kpi-change i, .kpi-change svg { width: 13px; height: 13px; }
+
+        .kpi-icon {
+            position: absolute;
+            top: 24px; right: 24px;
+            width: 40px; height: 40px;
+            border: 1px solid var(--gold-border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            opacity: 0.7;
+        }
+        .kpi-icon i, .kpi-icon svg { width: 18px; height: 18px; }
+
+        /* ======== CHARTS ROW ======== */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .chart-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 32px;
+            position: relative;
+            transition: border-color 0.3s;
+        }
+        .chart-card:hover { border-color: var(--gold-border); }
+
+        .chart-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 28px;
+        }
+
+        .chart-card-header h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            font-weight: 400;
+            color: var(--text-main);
+            letter-spacing: -0.3px;
+        }
+        .chart-card-header h3 em { color: var(--gold); font-style: italic; }
+
+        .chart-card-header p {
+            font-size: 10px;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .period-tabs {
+            display: flex;
+            gap: 4px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 8px;
+            padding: 4px;
+        }
+        .period-tab {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            color: rgba(255,255,255,0.3);
+            border: none;
+            background: transparent;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+        .period-tab.active {
+            background: var(--gold);
+            color: var(--obsidian);
+        }
+
+        .chart-area { height: 240px; position: relative; }
+        .chart-fallback {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            border: 1px dashed var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-dim);
+            font-size: 12px;
+            text-align: center;
+            background: rgba(255,255,255,0.03);
+        }
+
+        /* Donut legend */
+        .donut-legend {
+            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+        }
+        .legend-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: rgba(255,255,255,0.5);
+        }
+        .legend-dot {
+            width: 8px; height: 8px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+        .legend-val {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 13px;
+        }
+
+        /* ======== TABLE + BOTTOM ROW ======== */
+        .bottom-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        /* Transactions Table */
+        .table-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+        .table-card:hover { border-color: var(--gold-border); }
+
+        .table-header {
+            padding: 28px 32px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .table-header h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            font-weight: 400;
+        }
+        .table-header h3 em { color: var(--gold); font-style: italic; }
+
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 34px; height: 34px;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.3);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .icon-btn:hover { border-color: var(--gold-border); color: var(--gold); }
+        .icon-btn i, .icon-btn svg { width: 14px; height: 14px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-scroll {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        thead th {
+            padding: 12px 32px;
+            text-align: left;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.25);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        tbody tr:hover { background: rgba(201,169,110,0.04); }
+        tbody tr:last-child { border-bottom: none; }
+
+        tbody td {
+            padding: 16px 32px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .td-primary {
+            color: var(--text-main) !important;
+            font-weight: 500;
+            font-size: 13px !important;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+        .status-badge.sold {
+            background: rgba(16, 185, 129, 0.12);
+            color: #34d399;
+            border: 1px solid rgba(16,185,129,0.2);
+        }
+        .status-badge.pending {
+            background: rgba(201,169,110,0.12);
+            color: var(--gold);
+            border: 1px solid rgba(201,169,110,0.2);
+        }
+        .status-badge.rented {
+            background: rgba(129, 140, 248, 0.12);
+            color: #a5b4fc;
+            border: 1px solid rgba(129,140,248,0.2);
+        }
+
+        .row-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .row-btn {
+            width: 28px; height: 28px;
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .row-btn:hover { border-color: var(--gold-border); color: var(--gold); }
+        .row-btn.danger:hover { border-color: rgba(239,68,68,0.3); color: #ef4444; }
+        .row-btn i, .row-btn svg { width: 12px; height: 12px; }
+
+        /* Agent Performance */
+        .agents-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+        .agents-card:hover { border-color: var(--gold-border); }
+
+        .agents-header {
+            padding: 28px 28px 20px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .agents-header h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            font-weight: 400;
+        }
+        .agents-header h3 em { color: var(--gold); font-style: italic; }
+
+        .agent-item {
+            padding: 18px 28px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        .agent-item:hover { background: rgba(201,169,110,0.04); }
+        .agent-item:last-child { border-bottom: none; }
+
+        .agent-avatar {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 16px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .agent-info { flex: 1; }
+        .agent-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+        .agent-role {
+            font-size: 10px;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .agent-stats { text-align: right; }
+        .agent-sales {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            font-weight: 400;
+            color: var(--gold);
+        }
+        .agent-count {
+            font-size: 10px;
+            color: rgba(255,255,255,0.25);
+            letter-spacing: 1px;
+        }
+
+        .progress-bar {
+            width: 60px; height: 3px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 2px;
+            margin-top: 4px;
+            overflow: hidden;
+            margin-left: auto;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: var(--gold);
+        }
+
+        /* ======== THIRD ROW ======== */
+        .third-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .geo-activity-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .stacked-row {
+            margin-bottom: 22px;
+            width: 100%;
+        }
+
+        /* Activity Feed */
+        .feed-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+        .feed-card:hover { border-color: var(--gold-border); }
+
+        .feed-header {
+            padding: 24px 28px 18px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .feed-header h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            font-weight: 400;
+        }
+        .feed-header h3 em { color: var(--gold); font-style: italic; }
+
+        .live-dot {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--success);
+        }
+        .live-dot::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .feed-item {
+            padding: 16px 28px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+        .feed-item:last-child { border-bottom: none; }
+
+        .feed-icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .feed-icon i, .feed-icon svg { width: 14px; height: 14px; }
+        .feed-icon.gold { border-color: rgba(201,169,110,0.3); color: var(--gold); }
+        .feed-icon.blue { border-color: rgba(129,140,248,0.3); color: #818cf8; }
+        .feed-icon.green { border-color: rgba(16,185,129,0.3); color: #10b981; }
+        .feed-icon.red { border-color: rgba(239,68,68,0.3); color: #ef4444; }
+
+        .feed-text {
+            flex: 1;
+        }
+        .feed-desc {
+            font-size: 12px;
+            color: rgba(255,255,255,0.55);
+            line-height: 1.5;
+        }
+        .feed-desc strong { color: var(--text-main); font-weight: 500; }
+        .feed-time {
+            font-size: 9px;
+            color: rgba(255,255,255,0.2);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        /* Geographic Distribution */
+        .geo-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 28px;
+            transition: border-color 0.3s;
+        }
+        .geo-card:hover { border-color: var(--gold-border); }
+
+        .geo-header {
+            margin-bottom: 24px;
+        }
+        .geo-header h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            font-weight: 400;
+        }
+        .geo-header h3 em { color: var(--gold); font-style: italic; }
+        .geo-header p {
+            font-size: 10px;
+            color: rgba(255,255,255,0.25);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .geo-item {
+            margin-bottom: 18px;
+        }
+        .geo-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .geo-city {
+            font-size: 12px;
+            color: rgba(255,255,255,0.55);
+            letter-spacing: 0.5px;
+        }
+        .geo-pct {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .geo-bar {
+            height: 3px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .geo-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: linear-gradient(to right, var(--gold-dark), var(--gold));
+        }
+
+        /* Messages Summary */
+        .msg-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+        .msg-card:hover { border-color: var(--gold-border); }
+
+        .msg-header {
+            padding: 24px 28px 18px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .msg-header h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            font-weight: 400;
+        }
+        .msg-header h3 em { color: var(--gold); font-style: italic; }
+
+        .unread-badge {
+            background: var(--gold);
+            color: var(--obsidian);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            padding: 3px 9px;
+            border-radius: 20px;
+        }
+
+        .msg-item {
+            padding: 16px 28px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .msg-item:hover { background: rgba(201,169,110,0.04); }
+        .msg-item:last-child { border-bottom: none; }
+
+        .msg-avatar {
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 15px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .msg-body { flex: 1; }
+        .msg-sender {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+        .msg-preview {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .msg-time {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            white-space: nowrap;
+            margin-top: 2px;
+        }
+
+        /* ======== MODAL ======== */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            background: #111111;
+            border: 1px solid var(--gold-border);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 520px;
+            position: relative;
+            animation: modalIn 0.3s var(--transition);
+        }
+        .modal.wide {
+            max-width: 760px;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .modal::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+        }
+
+        .modal h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 30px;
+            font-weight: 300;
+            margin-bottom: 6px;
+        }
+        .modal h2 em { color: var(--gold); font-style: italic; }
+        .modal p { font-size: 12px; color: rgba(255,255,255,0.3); letter-spacing: 1px; margin-bottom: 32px; }
+
+        .modal-close {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .modal-close:hover { border-color: var(--gold-border); color: var(--gold); }
+        .modal-close i, .modal-close svg { width: 14px; height: 14px; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-label {
+            display: block;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 8px;
+        }
+        .form-input {
+            width: 100%;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 14px 18px;
+            color: var(--text-main);
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus { border-color: var(--gold-border); }
+        .form-input.invalid { border-color: rgba(239, 68, 68, 0.65); }
+        select.form-input { cursor: pointer; color-scheme: dark; }
+        .form-input option,
+        .form-input optgroup { background: #1a1a1a; color: #f8fafc; }
+        .form-error {
+            min-height: 14px;
+            margin-top: 6px;
+            color: #fca5a5;
+            font-size: 10px;
+            line-height: 1.4;
+            letter-spacing: 0.4px;
+        }
+        .form-error.show {
+            margin-bottom: 10px;
+            padding: 10px 12px;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: 8px;
+        }
+        .form-error.show ul { margin: 6px 0 0 16px; padding: 0; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 32px; right: 32px;
+            background: #111;
+            border: 1px solid var(--gold-border);
+            border-radius: 12px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 200;
+            font-size: 13px;
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s var(--transition);
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast i, .toast svg { color: var(--gold); width: 16px; height: 16px; }
+
+        /* Confirm Modal */
+        .confirm-modal {
+            max-width: 400px;
+            text-align: center;
+        }
+        .confirm-modal .danger-icon {
+            width: 60px; height: 60px;
+            border-radius: 16px;
+            border: 1px solid rgba(239,68,68,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            color: #ef4444;
+        }
+        .confirm-modal .danger-icon i, .confirm-modal .danger-icon svg { width: 28px; height: 28px; }
+        .confirm-modal h2 { font-size: 24px; }
+        .confirm-modal .modal-footer { justify-content: center; }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.2s;
+        }
+        .btn-danger:hover { background: #dc2626; }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside>
+    <div class="sidebar-brand">
+        <h1>Luxe<span>_Estate</span></h1>
+        <p>Admin Console</p>
+    </div>
+
+    <nav class="nav-menu">
+        <a href="admin-dashboard.html" class="nav-item"><i data-lucide="layout-grid"></i> Dashboard</a>
+        <a href="analytics.html" class="nav-item active"><i data-lucide="bar-chart-big"></i> Analytics</a>
+        <a href="reports.html" class="nav-item"><i data-lucide="file-text"></i> Reports</a>
+        <a href="view-customer.html" class="nav-item"><i data-lucide="users-2"></i> Customers</a>
+        <a href="agents.html" class="nav-item"><i data-lucide="contact-2"></i> Agents</a>
+        <a href="#transactionsSection" class="nav-item"><i data-lucide="landmark"></i> Transactions</a>
+        <a href="#" class="nav-item"><i data-lucide="palmtree"></i> Listings</a>
+        <a href="view-messages.html" class="nav-item"><i data-lucide="mail"></i> Messages</a>
+    </nav>
+
+    <a href="admin-login.html" class="nav-item logout-link" onclick="return confirm('Exit Dashboard?')">
+        <i data-lucide="power"></i> Logout
+    </a>
+</aside>
+
+<!-- MAIN -->
+<main>
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-left">
+            <h2>System <em>Analytics</em></h2>
+            <p>Full platform overview · Live data</p>
+        </div>
+        <div class="header-actions">
+            <div class="dropdown" id="createReportDropdown">
+                <button class="btn-outline" type="button" onclick="toggleReportMenu(event)">
+                    <i data-lucide="file-text" style="width:13px;height:13px;"></i> Create Report
+                </button>
+                <div class="dropdown-menu" id="reportTypeMenu">
+                    <button type="button" onclick="generateAndViewPeriodicReport('DAILY')">Daily Report</button>
+                    <button type="button" onclick="generateAndViewPeriodicReport('WEEKLY')">Weekly Report</button>
+                    <button type="button" onclick="generateAndViewPeriodicReport('MONTHLY')">Monthly Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-icon"><i data-lucide="users-2"></i></div>
+            <div class="kpi-label">Total Customers</div>
+            <div class="kpi-value" id="kpiCustomers">—</div>
+            <div class="kpi-change up"><i data-lucide="trending-up"></i> +12% this month</div>
+        </div>
+        <div class="kpi-card">
+                <div class="kpi-icon"><i data-lucide="banknote"></i></div>
+            <div class="kpi-label">Total Revenue</div>
+            <div class="kpi-value" id="kpiRevenue">—</div>
+            <div class="kpi-change up"><i data-lucide="trending-up"></i> +8.3% vs last</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon"><i data-lucide="palmtree"></i></div>
+            <div class="kpi-label">Active Listings</div>
+            <div class="kpi-value" id="kpiListings">—</div>
+            <div class="kpi-change down"><i data-lucide="trending-down"></i> -3 this week</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon"><i data-lucide="mail"></i></div>
+            <div class="kpi-label">Inbox Messages</div>
+            <div class="kpi-value" id="kpiMessages">—</div>
+            <div class="kpi-change up"><i data-lucide="clock"></i> Last 48 hours</div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="charts-row">
+        <!-- Revenue Chart -->
+        <div class="chart-card">
+            <div class="chart-card-header">
+                <div>
+                    <h3>Revenue <em>Performance</em></h3>
+                    <p>Monthly breakdown · 2025–2026</p>
+                </div>
+                <div class="period-tabs">
+                    <button class="period-tab active" onclick="switchChart('6m', this)">6M</button>
+                    <button class="period-tab" onclick="switchChart('1y', this)">1Y</button>
+                    <button class="period-tab" onclick="switchChart('all', this)">All</button>
+                </div>
+            </div>
+            <div class="chart-area"><canvas id="revenueChart"></canvas></div>
+        </div>
+
+        <!-- Property Type Donut -->
+        <div class="chart-card">
+            <div class="chart-card-header">
+                <div>
+                    <h3>Property <em>Types</em></h3>
+                    <p>Distribution by category</p>
+                </div>
+            </div>
+            <div class="chart-area" style="height:200px;"><canvas id="donutChart"></canvas></div>
+            <div class="donut-legend">
+                <div class="legend-item">
+                    <div class="legend-left"><div class="legend-dot" style="background:#c9a96e;"></div>House</div>
+                    <div class="legend-val">38%</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-left"><div class="legend-dot" style="background:#818cf8;"></div>Apartments</div>
+                    <div class="legend-val">34%</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-left"><div class="legend-dot" style="background:#22d3ee;"></div>Rental Property</div>
+                    <div class="legend-val">28%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Transactions one by one -->
+    <div class="stacked-row" id="transactionsSection">
+        <!-- Transaction Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <div>
+                    <h3>Recent <em>Transactions</em> <span class="readonly-tag">Read-only · Finance module</span></h3>
+                </div>
+                <div class="table-actions" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <select id="txStatusFilter" class="form-input" onchange="txPage=1; renderTable()" style="width:130px; padding:8px 12px; font-size:11px;">
+                        <option value="">Recent transactions</option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="PENDING">Pending</option>
+                        <option value="FAILED">Failed</option>
+                    </select>
+                    <div id="txSearchContainer" style="display:none; align-items:center; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:20px; padding:2px 10px;">
+                        <input type="text" id="txSearchInput" placeholder="Search..." oninput="txPage=1; filterTransactions(this.value)" style="background:transparent; border:none; color:var(--text-main); font-size:12px; outline:none; width:140px;" />
+                    </div>
+                    <button class="icon-btn" title="Search" onclick="toggleTxSearch()"><i data-lucide="search"></i></button>
+                    <button class="btn-outline section-btn" type="button" onclick="openTransactionReportModal()">
+                        <i data-lucide="file-text" style="width:13px;height:13px;"></i> Create Transaction Report
+                    </button>
+                </div>
+            </div>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Payment</th>
+                        <th>Payment History</th>
+                        <th>Invoice</th>
+                        <th>Home</th>
+                        <th>Bank Account</th>
+                    </tr>
+                    </thead>
+                    <tbody id="transactionTableBody"></tbody>
+                </table>
+            </div>
+            <div class="pagination-bar" id="txPagination">
+                <span id="txPageInfo">Showing 0 records</span>
+                <div style="display:flex;gap:8px;">
+                    <button type="button" id="txPrevBtn" onclick="changeTxPage(-1)">Previous</button>
+                    <button type="button" id="txNextBtn" onclick="changeTxPage(1)">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Agents one by one -->
+    <div class="stacked-row">
+        <!-- Agent Leaderboard -->
+        <div class="agents-card">
+            <div class="agents-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <h3>Top <em>Agents</em> <span class="readonly-tag">Read-only · Agents module</span></h3>
+                <div class="agent-actions" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <select id="agentStatusFilter" class="form-input" onchange="agentPage=1; renderAgents()" style="width:120px; padding:8px 12px; font-size:11px;">
+                        <option value="">All statuses</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="On Leave">On Leave</option>
+                    </select>
+                    <div id="agentSearchContainer" style="display:none; align-items:center; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:20px; padding:2px 10px;">
+                        <input type="text" id="agentSearchInput" placeholder="Search..." oninput="agentPage=1; filterAgents(this.value)" style="background:transparent; border:none; color:var(--text-main); font-size:12px; outline:none; width:140px;" />
+                    </div>
+                    <button class="icon-btn" title="Search" onclick="toggleAgentSearch()"><i data-lucide="search"></i></button>
+                    <button class="btn-outline section-btn" type="button" onclick="openAgentReportModal()">
+                        <i data-lucide="file-text" style="width:13px;height:13px;"></i> Create Agent Report
+                    </button>
+                </div>
+            </div>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Agent</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Area</th>
+                        <th>Commission</th>
+                        <th>Status</th>
+                        <th>Specialization</th>
+                        <th>Experience</th>
+                    </tr>
+                    </thead>
+                    <tbody id="agentList"></tbody>
+                </table>
+            </div>
+            <div class="pagination-bar" id="agentPagination">
+                <span id="agentPageInfo">Showing 0 agents</span>
+                <div style="display:flex;gap:8px;">
+                    <button type="button" id="agentPrevBtn" onclick="changeAgentPage(-1)">Previous</button>
+                    <button type="button" id="agentNextBtn" onclick="changeAgentPage(1)">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages one by one -->
+    <div class="stacked-row">
+        <!-- Messages Summary -->
+        <div class="msg-card message-status-mini">
+            <div class="msg-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <h3>Customer <em>Messages</em></h3>
+                <div class="msg-status-badges" style="display:flex; gap:10px; align-items:center;">
+                    <span class="status-mini new">New <b id="msgNew">0</b></span>
+                    <span class="status-mini pending">Pending <b id="msgPending">0</b></span>
+                    <span class="status-mini replied">Replied <b id="msgReplied">0</b></span>
+                    <span class="status-mini reject">Reject <b id="msgReject">0</b></span>
+                </div>
+            </div>
+            <div id="msgList">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Geographic Reach and Live Activity side by side -->
+    <div class="geo-activity-row">
+        <!-- Geographic Distribution -->
+        <div class="geo-card">
+            <div class="geo-header">
+                <h3>Geographic <em>Reach</em></h3>
+                <p>Listings by city</p>
+            </div>
+            <div id="geoList">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+
+        <!-- Live Activity -->
+        <div class="feed-card">
+            <div class="feed-header">
+                <h3>Live <em>Activity</em></h3>
+                <div class="live-dot">Live</div>
+            </div>
+            <div id="activityFeed">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-overlay" id="crudModal">
+    <div class="modal wide">
+        <button class="modal-close" onclick="closeModal()"><i data-lucide="x"></i></button>
+        <h2 id="modalTitle">Add <em>Record</em></h2>
+        <p id="modalSubtitle">Create a new transaction entry in the system.</p>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Property Type</label>
+                <select class="form-input" id="fieldPropertyType" required>
+                    <option value="House">House</option>
+                    <option value="Apartments">Apartments</option>
+                    <option value="Rental Property">Rental Property</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Property Name</label>
+                <input class="form-input" id="fieldProperty" type="text" minlength="2" maxlength="80" required autocomplete="off" placeholder="e.g. Azure Penthouse" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Client Name</label>
+                <input class="form-input" id="fieldClient" type="text" minlength="2" maxlength="70" required autocomplete="off" placeholder="e.g. James Perera" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Status</label>
+                <select class="form-input" id="fieldStatus" required>
+                    <option value="Sold">Sold</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Rented">Rented</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Transaction Value</label>
+                <input class="form-input" id="fieldValue" type="text" inputmode="decimal" maxlength="20" required autocomplete="off" placeholder="e.g. Rs 1.2M" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Address</label>
+                <input class="form-input" id="fieldAddress" type="text" minlength="2" maxlength="160" required autocomplete="off" placeholder="e.g. 24 Park Road, Colombo 07" />
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">District</label>
+                <select class="form-input" id="fieldDistrict" required>
+                    <option value="Ampara">Ampara</option>
+                    <option value="Anuradhapura">Anuradhapura</option>
+                    <option value="Badulla">Badulla</option>
+                    <option value="Batticaloa">Batticaloa</option>
+                    <option value="Colombo">Colombo</option>
+                    <option value="Galle">Galle</option>
+                    <option value="Gampaha">Gampaha</option>
+                    <option value="Hambantota">Hambantota</option>
+                    <option value="Jaffna">Jaffna</option>
+                    <option value="Kalutara">Kalutara</option>
+                    <option value="Kandy">Kandy</option>
+                    <option value="Kegalle">Kegalle</option>
+                    <option value="Kilinochchi">Kilinochchi</option>
+                    <option value="Kurunegala">Kurunegala</option>
+                    <option value="Mannar">Mannar</option>
+                    <option value="Matale">Matale</option>
+                    <option value="Matara">Matara</option>
+                    <option value="Monaragala">Monaragala</option>
+                    <option value="Mullaitivu">Mullaitivu</option>
+                    <option value="Nuwara Eliya">Nuwara Eliya</option>
+                    <option value="Polonnaruwa">Polonnaruwa</option>
+                    <option value="Puttalam">Puttalam</option>
+                    <option value="Ratnapura">Ratnapura</option>
+                    <option value="Trincomalee">Trincomalee</option>
+                    <option value="Vavuniya">Vavuniya</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Agent</label>
+                <select class="form-input" id="fieldAgent">
+                    <option value="">No agent assigned</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn-outline" onclick="closeModal()">Cancel</button>
+            <button class="btn-outline" onclick="openReportFromTransactionForm()">
+                <i data-lucide="file-text" style="width:13px;height:13px;"></i> Create Report
+            </button>
+            <button class="btn-gold" id="modalSaveBtn" onclick="saveRecord()">
+                <i data-lucide="check" style="width:13px;height:13px;"></i> Save Record
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal confirm-modal">
+        <div class="danger-icon"><i data-lucide="trash-2"></i></div>
+        <h2>Delete <em>Record</em></h2>
+        <p>This action is permanent and cannot be undone.</p>
+        <div class="modal-footer">
+            <button class="btn-outline" onclick="closeConfirm()">Cancel</button>
+            <button class="btn-danger" onclick="confirmDelete()">Delete</button>
+        </div>
+    </div>
+</div>
+
+<!-- ADD / EDIT AGENT MODAL -->
+<div class="modal-overlay" id="agentModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeAgentModal()"><i data-lucide="x"></i></button>
+        <h2 id="agentModalTitle">Add <em>Agent</em></h2>
+        <p id="agentModalSubtitle">Create a new agent entry in the system.</p>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Name</label>
+                <input class="form-input" id="agentName" type="text" minlength="2" maxlength="70" required autocomplete="off" placeholder="e.g. Amara Silva" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Role</label>
+                <select class="form-input" id="agentRole" required>
+                    <option value="Senior Agent">Senior Agent</option>
+                    <option value="Luxury Specialist">Luxury Specialist</option>
+                    <option value="Agent">Agent</option>
+                    <option value="Junior Agent">Junior Agent</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Sales Amount</label>
+                <input class="form-input" id="agentSales" type="text" inputmode="decimal" maxlength="20" required autocomplete="off" placeholder="e.g. Rs 12.4M" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Deals Count</label>
+                <input class="form-input" id="agentCount" type="number" min="0" max="9999" step="1" required placeholder="e.g. 8" />
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-outline" onclick="closeAgentModal()">Cancel</button>
+            <button class="btn-outline" onclick="openReportFromAgentForm()">
+                <i data-lucide="file-text" style="width:13px;height:13px;"></i> Create Report
+            </button>
+            <button class="btn-gold" onclick="saveAgent()">
+                <i data-lucide="check" style="width:13px;height:13px;"></i> Save Agent
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- VIEW GENERATED REPORT -->
+<div class="modal-overlay" id="viewReportModal">
+    <div class="modal wide">
+        <button class="modal-close" onclick="closeViewReportModal()"><i data-lucide="x"></i></button>
+        <h2 id="viewReportTitle">Report</h2>
+        <p id="viewReportMeta" style="color:var(--text-dim);font-size:12px;margin-bottom:12px;"></p>
+        <div id="viewReportBody" style="background:rgba(255,255,255,0.03);border:1px solid var(--glass-border);border-radius:10px;padding:16px;font-size:12px;max-height:280px;overflow:auto;white-space:pre-wrap;"></div>
+        <div class="modal-footer">
+            <button class="btn-outline" onclick="printViewingReport()"><i data-lucide="printer" style="width:13px;height:13px;"></i> Print</button>
+            <button class="btn-outline" onclick="pdfViewingReport()"><i data-lucide="download" style="width:13px;height:13px;"></i> PDF</button>
+            <button class="btn-gold" onclick="closeViewReportModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- TRANSACTION REPORT MODAL -->
+<div class="modal-overlay" id="transactionReportModal">
+    <div class="modal wide">
+        <button class="modal-close" onclick="closeTransactionReportModal()"><i data-lucide="x"></i></button>
+        <h2>Transaction <em>Report</em></h2>
+        <p>Filter records, then generate a report saved to the Reports tab.</p>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Report Title *</label>
+                <input class="form-input" id="txReportTitle" type="text" placeholder="e.g. March Finance Transactions" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Date Range *</label>
+                <div style="display:flex;gap:8px;">
+                    <input class="form-input" id="txReportStart" type="date" />
+                    <input class="form-input" id="txReportEnd" type="date" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Include Transactions *</label>
+            <div id="txReportSelection" style="max-height:180px;overflow:auto;border:1px solid var(--glass-border);border-radius:10px;padding:10px;font-size:12px;"></div>
+        </div>
+        <div id="txReportError" class="form-error"></div>
+        <div class="modal-footer">
+            <button class="btn-outline" onclick="closeTransactionReportModal()">Cancel</button>
+            <button class="btn-gold" onclick="saveTransactionReport()">Generate Report</button>
+        </div>
+    </div>
+</div>
+
+<!-- AGENT REPORT MODAL -->
+<div class="modal-overlay" id="agentReportModal">
+    <div class="modal wide">
+        <button class="modal-close" onclick="closeAgentReportModal()"><i data-lucide="x"></i></button>
+        <h2>Agent <em>Report</em></h2>
+        <p>Filter agents, then generate a report saved to the Reports tab.</p>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Report Title *</label>
+                <input class="form-input" id="agentReportTitle" type="text" placeholder="e.g. Q1 Agent Performance" />
+            </div>
+            <div class="form-group">
+                <label class="form-label">Date Range *</label>
+                <div style="display:flex;gap:8px;">
+                    <input class="form-input" id="agentReportStart" type="date" />
+                    <input class="form-input" id="agentReportEnd" type="date" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Include Agents *</label>
+            <div id="agentReportSelection" style="max-height:180px;overflow:auto;border:1px solid var(--glass-border);border-radius:10px;padding:10px;font-size:12px;"></div>
+        </div>
+        <div id="agentReportError" class="form-error"></div>
+        <div class="modal-footer">
+            <button class="btn-outline" onclick="closeAgentReportModal()">Cancel</button>
+            <button class="btn-gold" onclick="saveAgentReport()">Generate Report</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast">
+    <i data-lucide="check-circle"></i>
+    <span id="toastMsg">Record saved successfully.</span>
+</div>
+
+<script>
+    function safeCreateIcons() {
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+            window.lucide.createIcons();
+        }
+    }
+
+    safeCreateIcons();
+
+    /* ===========================
+       DATA STORE (CRUD)
+    =========================== */
+    let financeTransactions = [];
+    const PAGE_SIZE = 5;
+    let txPage = 1;
+    let agentPage = 1;
+    let viewingReport = null;
+    let nextId = 6;
+    let editingId = null;
+    let deletingId = null;
+    
+    let nextAgentId = 6;
+    let editingAgentId = null;
+    let deletingAgentId = null;
+    let deletingReportId = null;
+    let agentToDelete = null;
+
+    const PROPERTY_PATTERN = /^[A-Za-z0-9][A-Za-z0-9 .,'#&()/\-]{1,79}$/;
+    const ADDRESS_PATTERN = /^[A-Za-z0-9][A-Za-z0-9 .,'#&()/\-]{1,159}$/;
+    const PERSON_NAME_PATTERN = /^[A-Za-z][A-Za-z .'-]{1,69}$/;
+    const MONEY_PATTERN = /^Rs\.?\s?(\d{1,3}(,\d{3})+|\d+)(\.\d{1,2})?\s?([KkMm])?$/i;
+    const PROPERTY_TYPES = ['House', 'Apartments', 'Rental Property'];
+    const DISTRICTS = ['Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 'Galle', 'Gampaha', 'Hambantota', 'Jaffna', 'Kalutara', 'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar', 'Matale', 'Matara', 'Monaragala', 'Mullaitivu', 'Nuwara Eliya', 'Polonnaruwa', 'Puttalam', 'Ratnapura', 'Trincomalee', 'Vavuniya'];
+    const VALID_STATUSES = ['Sold', 'Pending', 'Rented'];
+    const VALID_AGENT_ROLES = ['Senior Agent', 'Luxury Specialist', 'Agent', 'Junior Agent', 'Other'];
+
+    function escapeHtml(value) {
+        return String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function clearFieldError(id) {
+        const input = document.getElementById(id);
+        if (!input) return;
+        input.classList.remove('invalid');
+        const existing = document.getElementById(`${id}Error`);
+        if (existing) existing.remove();
+    }
+
+    function setFieldError(id, message) {
+        const input = document.getElementById(id);
+        if (!input) return;
+        input.classList.add('invalid');
+        input.setAttribute('aria-invalid', 'true');
+        if (!document.getElementById(`${id}Error`)) {
+            const error = document.createElement('div');
+            error.className = 'form-error';
+            error.id = `${id}Error`;
+            input.insertAdjacentElement('afterend', error);
+        }
+        document.getElementById(`${id}Error`).textContent = message;
+    }
+
+    function clearValidation(ids) {
+        ids.forEach(id => {
+            clearFieldError(id);
+            const input = document.getElementById(id);
+            if (input) input.removeAttribute('aria-invalid');
+        });
+    }
+
+    function normalizeMoney(value) {
+        const match = value.trim().match(MONEY_PATTERN);
+        if (!match) return value.trim();
+        const amount = match[1].replace(/,/g, '');
+        const decimal = match[3] || '';
+        const suffix = match[4] ? match[4].toUpperCase() : '';
+        return `Rs ${amount}${decimal}${suffix}`;
+    }
+
+    function moneyToNumber(value) {
+        const match = value.trim().match(MONEY_PATTERN);
+        if (!match) return NaN;
+        const amount = Number(`${match[1].replace(/,/g, '')}${match[3] || ''}`);
+        const suffix = match[4] ? match[4].toUpperCase() : '';
+        if (suffix === 'M') return amount * 1000000;
+        if (suffix === 'K') return amount * 1000;
+        return amount;
+    }
+
+    function parseDealCount(value) {
+        const match = String(value ?? '').match(/\d+/);
+        return match ? Number(match[0]) : NaN;
+    }
+
+    function formatDealCount(value) {
+        const deals = Number(value);
+        return `${deals} ${deals === 1 ? 'deal' : 'deals'}`;
+    }
+
+    function normalizeOptionalText(value) {
+        const clean = String(value ?? '').trim();
+        return clean === '' ? null : clean;
+    }
+
+    function normalizePropertyType(value) {
+        return PROPERTY_TYPES.includes(value) ? value : 'House';
+    }
+
+    function normalizeDistrict(value) {
+        return DISTRICTS.includes(value) ? value : 'Colombo';
+    }
+
+    function populateAgentSelects() {
+        ['fieldAgent', 'reportAgentName'].forEach(id => {
+            const select = document.getElementById(id);
+            if (!select) return;
+            const current = select.value;
+            const options = ['<option value="">No agent assigned</option>']
+                .concat(agents.map(agent => `<option value="${escapeHtml(agent.name)}">${escapeHtml(agent.name)}</option>`));
+            select.innerHTML = options.join('');
+            setSelectValue(id, current);
+        });
+    }
+
+    function setSelectValue(id, value) {
+        const select = document.getElementById(id);
+        if (!select) return;
+        const clean = String(value ?? '').trim();
+        if (clean && !Array.from(select.options).some(option => option.value === clean)) {
+            const option = document.createElement('option');
+            option.value = clean;
+            option.textContent = clean;
+            select.appendChild(option);
+        }
+        select.value = clean;
+    }
+
+    function validateTransactionForm() {
+        const ids = ['fieldPropertyType', 'fieldProperty', 'fieldClient', 'fieldValue', 'fieldStatus', 'fieldAddress', 'fieldDistrict', 'fieldAgent'];
+        clearValidation(ids);
+
+        const propertyType = document.getElementById('fieldPropertyType').value;
+        const property = document.getElementById('fieldProperty').value.trim();
+        const client = document.getElementById('fieldClient').value.trim();
+        const value = document.getElementById('fieldValue').value.trim();
+        const status = document.getElementById('fieldStatus').value;
+        const address = document.getElementById('fieldAddress').value.trim();
+        const district = document.getElementById('fieldDistrict').value;
+        const agentName = document.getElementById('fieldAgent').value.trim();
+        const errors = [];
+
+        if (!PROPERTY_TYPES.includes(propertyType)) {
+            errors.push(['fieldPropertyType', 'Choose House, Apartments, or Rental Property.']);
+        }
+        if (!PROPERTY_PATTERN.test(property)) {
+            errors.push(['fieldProperty', 'Use 2-80 letters/numbers and common property punctuation only.']);
+        }
+        if (!PERSON_NAME_PATTERN.test(client)) {
+            errors.push(['fieldClient', 'Use 2-70 letters, spaces, apostrophes, hyphens, or periods.']);
+        }
+        if (!MONEY_PATTERN.test(value) || moneyToNumber(value) <= 0) {
+            errors.push(['fieldValue', 'Use a positive Rs amount, e.g. Rs 1.2M, Rs 980K, or Rs 1200000.']);
+        }
+        if (!VALID_STATUSES.includes(status)) {
+            errors.push(['fieldStatus', 'Choose a valid transaction status.']);
+        }
+        if (!ADDRESS_PATTERN.test(address)) {
+            errors.push(['fieldAddress', 'Use 2-160 letters/numbers and common address punctuation only.']);
+        }
+        if (!DISTRICTS.includes(district)) {
+            errors.push(['fieldDistrict', 'Choose a valid Sri Lankan district.']);
+        }
+        if (agentName && !PERSON_NAME_PATTERN.test(agentName)) {
+            errors.push(['fieldAgent', 'Choose a valid agent or leave it empty.']);
+        }
+
+        errors.forEach(([id, message]) => setFieldError(id, message));
+        if (errors.length > 0) {
+            document.getElementById(errors[0][0]).focus();
+            showToast(errors[0][1]);
+            return null;
+        }
+
+        return {
+            propertyType,
+            property,
+            client,
+            value: normalizeMoney(value),
+            status,
+            address,
+            district,
+            agentName: normalizeOptionalText(agentName)
+        };
+    }
+
+    function validateReportForm() {
+        const ids = ['reportPropertyType', 'reportPropertyName', 'reportClientName', 'reportStatus', 'reportValue', 'reportAddress', 'reportDistrict', 'reportAgentName'];
+        clearValidation(ids);
+
+        const propertyType = document.getElementById('reportPropertyType').value;
+        const propertyName = document.getElementById('reportPropertyName').value.trim();
+        const clientName = document.getElementById('reportClientName').value.trim();
+        const status = document.getElementById('reportStatus').value;
+        const value = document.getElementById('reportValue').value.trim();
+        const address = document.getElementById('reportAddress').value.trim();
+        const district = document.getElementById('reportDistrict').value;
+        const agentName = document.getElementById('reportAgentName').value.trim();
+        const errors = [];
+
+        if (!PROPERTY_TYPES.includes(propertyType)) {
+            errors.push(['reportPropertyType', 'Choose House, Apartments, or Rental Property.']);
+        }
+        if (!PROPERTY_PATTERN.test(propertyName)) {
+            errors.push(['reportPropertyName', 'Use 2-80 letters/numbers and common property punctuation only.']);
+        }
+        if (!PERSON_NAME_PATTERN.test(clientName)) {
+            errors.push(['reportClientName', 'Use 2-70 letters, spaces, apostrophes, hyphens, or periods.']);
+        }
+        if (!VALID_STATUSES.includes(status)) {
+            errors.push(['reportStatus', 'Choose a valid report status.']);
+        }
+        if (!MONEY_PATTERN.test(value) || moneyToNumber(value) <= 0) {
+            errors.push(['reportValue', 'Use a positive Rs amount, e.g. Rs 1.2M, Rs 980K, or Rs 1200000.']);
+        }
+        if (!ADDRESS_PATTERN.test(address)) {
+            errors.push(['reportAddress', 'Use 2-160 letters/numbers and common address punctuation only.']);
+        }
+        if (!DISTRICTS.includes(district)) {
+            errors.push(['reportDistrict', 'Choose a valid Sri Lankan district.']);
+        }
+        if (agentName && !PERSON_NAME_PATTERN.test(agentName)) {
+            errors.push(['reportAgentName', 'Choose a valid agent or leave it empty.']);
+        }
+
+        errors.forEach(([id, message]) => setFieldError(id, message));
+        if (errors.length > 0) {
+            document.getElementById(errors[0][0]).focus();
+            showToast(errors[0][1]);
+            return null;
+        }
+
+        return {
+            propertyType,
+            propertyName,
+            clientName,
+            status,
+            value: normalizeMoney(value),
+            address,
+            district,
+            agentName: normalizeOptionalText(agentName)
+        };
+    }
+
+    function validateAgentForm() {
+        const ids = ['agentName', 'agentRole', 'agentSales', 'agentCount'];
+        clearValidation(ids);
+
+        const name = document.getElementById('agentName').value.trim();
+        const role = document.getElementById('agentRole').value.trim();
+        const sales = document.getElementById('agentSales').value.trim();
+        const countValue = document.getElementById('agentCount').value.trim();
+        const deals = Number(countValue);
+        const errors = [];
+
+        if (!PERSON_NAME_PATTERN.test(name)) {
+            errors.push(['agentName', 'Use 2-70 letters, spaces, apostrophes, hyphens, or periods.']);
+        }
+        if (!VALID_AGENT_ROLES.includes(role)) {
+            errors.push(['agentRole', 'Choose a valid agent role.']);
+        }
+        if (!MONEY_PATTERN.test(sales) || moneyToNumber(sales) < 0) {
+            errors.push(['agentSales', 'Use an Rs amount, e.g. Rs 12.4M, Rs 980K, or Rs 1200000.']);
+        }
+        if (countValue === '' || !Number.isInteger(deals) || deals < 0 || deals > 9999) {
+            errors.push(['agentCount', 'Deals count must be a whole number from 0 to 9999.']);
+        }
+
+        errors.forEach(([id, message]) => setFieldError(id, message));
+        if (errors.length > 0) {
+            document.getElementById(errors[0][0]).focus();
+            showToast(errors[0][1]);
+            return null;
+        }
+
+        return { name, role, sales: normalizeMoney(sales), count: formatDealCount(deals) };
+    }
+
+    async function readErrorMessage(response, fallback) {
+        try {
+            const data = await response.json();
+            if (data && data.errors) {
+                return Object.values(data.errors)[0] || fallback;
+            }
+            return data.message || data.error || fallback;
+        } catch (e) {
+            return fallback;
+        }
+    }
+
+    /* ===========================
+       RENDER TABLE
+    =========================== */
+    let txSearchQuery = '';
+
+    function toggleTxSearch() {
+        const container = document.getElementById('txSearchContainer');
+        const input = document.getElementById('txSearchInput');
+        if (container.style.display === 'none' || !container.style.display) {
+            container.style.display = 'flex';
+            input.focus();
+        } else {
+            container.style.display = 'none';
+            input.value = '';
+            filterTransactions('');
+        }
+    }
+
+    function filterTransactions(val) {
+        txSearchQuery = val;
+        renderTable();
+    }
+
+    function getFilteredFinanceTransactions() {
+        const query = txSearchQuery.toLowerCase().trim();
+        const statusFilter = (document.getElementById('txStatusFilter')?.value || '').toUpperCase();
+        return financeTransactions.filter(tx => {
+            const payment = (tx.payment || '').toUpperCase();
+            if (statusFilter && !payment.includes(statusFilter)) return false;
+            const blob = [tx.payment, tx.paymentHistory, tx.invoice, tx.home, tx.bankAccount].join(' ').toLowerCase();
+            return !query || blob.includes(query);
+        });
+    }
+
+    function changeTxPage(delta) {
+        const totalPages = Math.max(1, Math.ceil(getFilteredFinanceTransactions().length / PAGE_SIZE));
+        txPage = Math.min(Math.max(1, txPage + delta), totalPages);
+        renderTable();
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('transactionTableBody');
+        const filtered = getFilteredFinanceTransactions();
+        const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+        if (txPage > totalPages) txPage = totalPages;
+        const start = (txPage - 1) * PAGE_SIZE;
+        const pageItems = filtered.slice(start, start + PAGE_SIZE);
+
+        if (pageItems.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:24px;">No finance transactions found</td></tr>';
+        } else {
+            tbody.innerHTML = pageItems.map(tx => `
+                <tr>
+                    <td>${escapeHtml(tx.payment)}</td>
+                    <td>${escapeHtml(tx.paymentHistory)}</td>
+                    <td>${escapeHtml(tx.invoice)}</td>
+                    <td>${escapeHtml(tx.home)}</td>
+                    <td>${escapeHtml(tx.bankAccount)}</td>
+                </tr>
+            `).join('');
+        }
+
+        const info = document.getElementById('txPageInfo');
+        if (info) info.textContent = filtered.length
+            ? `Showing ${start + 1}-${Math.min(start + PAGE_SIZE, filtered.length)} of ${filtered.length}`
+            : 'Showing 0 records';
+        const prev = document.getElementById('txPrevBtn');
+        const next = document.getElementById('txNextBtn');
+        if (prev) prev.disabled = txPage <= 1;
+        if (next) next.disabled = txPage >= totalPages;
+        safeCreateIcons();
+    }
+
+    /* ===========================
+       CRUD OPERATIONS
+    =========================== */
+    function openAddModal() {
+        clearValidation(['fieldPropertyType', 'fieldProperty', 'fieldClient', 'fieldValue', 'fieldStatus', 'fieldAddress', 'fieldDistrict', 'fieldAgent']);
+        editingId = null;
+        document.getElementById('modalTitle').innerHTML = 'Add <em>Record</em>';
+        document.getElementById('modalSubtitle').textContent = 'Create a new transaction entry in the system.';
+        document.getElementById('fieldPropertyType').value = 'House';
+        document.getElementById('fieldProperty').value = '';
+        document.getElementById('fieldClient').value = '';
+        document.getElementById('fieldValue').value = '';
+        document.getElementById('fieldStatus').value = 'Sold';
+        document.getElementById('fieldAddress').value = '';
+        document.getElementById('fieldDistrict').value = 'Colombo';
+        populateAgentSelects();
+        document.getElementById('fieldAgent').value = '';
+        document.getElementById('crudModal').classList.add('open');
+        safeCreateIcons();
+    }
+
+    function editRecord(id) {
+        const tx = transactions.find(t => t.id === id);
+        if (!tx) return;
+        clearValidation(['fieldPropertyType', 'fieldProperty', 'fieldClient', 'fieldValue', 'fieldStatus', 'fieldAddress', 'fieldDistrict', 'fieldAgent']);
+        editingId = id;
+        document.getElementById('modalTitle').innerHTML = 'Edit <em>Record</em>';
+        document.getElementById('modalSubtitle').textContent = 'Update the transaction details below.';
+        document.getElementById('fieldPropertyType').value = normalizePropertyType(tx.propertyType);
+        document.getElementById('fieldProperty').value = tx.property;
+        document.getElementById('fieldClient').value = tx.client;
+        document.getElementById('fieldValue').value = tx.value;
+        document.getElementById('fieldStatus').value = tx.status;
+        document.getElementById('fieldAddress').value = tx.address || '';
+        document.getElementById('fieldDistrict').value = normalizeDistrict(tx.district);
+        populateAgentSelects();
+        setSelectValue('fieldAgent', tx.agentName || '');
+        document.getElementById('crudModal').classList.add('open');
+        safeCreateIcons();
+    }
+
+    async function saveRecord() {
+        const payload = validateTransactionForm();
+        if (!payload) return;
+
+        try {
+            const url = editingId 
+                ? `http://localhost:8080/api/transactions/${editingId}` 
+                : 'http://localhost:8080/api/transactions';
+            const res = await fetch(url, {
+                method: editingId ? 'PUT' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                const savedTx = await res.json();
+                if (editingId !== null) {
+                    const idx = transactions.findIndex(t => t.id === editingId);
+                    if (idx !== -1) transactions[idx] = savedTx;
+                    showToast('Record updated successfully.');
+                } else {
+                    transactions.push(savedTx);
+                    showToast('Record added successfully.');
+                }
+                renderTable();
+                fetchPropertyTypes();
+                fetchRevenuePerformance();
+                closeModal();
+            } else {
+                showToast(await readErrorMessage(res, 'Failed to save record to server.'));
+            }
+        } catch(e) {
+            console.error(e);
+            showToast('Network error saving record.');
+        }
+    }
+
+    function deleteRecord(id) {
+        deletingId = id;
+        deletingAgentId = null;
+        deletingReportId = null;
+        document.getElementById('confirmModal').classList.add('open');
+    }
+
+    async function confirmDelete() {
+        if (deletingReportId !== null) {
+            confirmDeleteReport();
+            return;
+        }
+        if (deletingAgentId !== null) {
+            confirmDeleteAgent();
+            return;
+        }
+        const idToDelete = deletingId;
+        
+        try {
+            const res = await fetch(`http://localhost:8080/api/transactions/${idToDelete}`, {
+                method: 'DELETE'
+            });
+            if (res.ok) {
+                transactions = transactions.filter(t => t.id !== idToDelete);
+                renderTable();
+                showToast('Record deleted.');
+            } else {
+                showToast('Failed to delete on server.');
+            }
+        } catch(e) {
+            console.error(e);
+            showToast('Network error deleting record.');
+        }
+        closeConfirm();
+    }
+
+    function closeModal() {
+        document.getElementById('crudModal').classList.remove('open');
+        clearValidation(['fieldPropertyType', 'fieldProperty', 'fieldClient', 'fieldValue', 'fieldStatus', 'fieldAddress', 'fieldDistrict', 'fieldAgent']);
+    }
+
+    function closeConfirm() {
+        document.getElementById('confirmModal').classList.remove('open');
+        deletingId = null;
+        deletingAgentId = null;
+        deletingReportId = null;
+    }
+
+    /* ===========================
+       TOAST
+    =========================== */
+    /* ===========================
+       TOAST
+    =========================== */
+    function showToast(msg, isHtml = false) {
+        const toast = document.getElementById('toast');
+        const msgEl = document.getElementById('toastMsg');
+        if (isHtml) {
+            msgEl.innerHTML = msg;
+        } else {
+            msgEl.textContent = msg;
+        }
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    /* ===========================
+       EXPORT
+    =========================== */
+    function exportData() {
+        const rows = [['Property Type', 'Property', 'Client', 'Value', 'Status', 'Address', 'District', 'Agent']];
+        transactions.forEach(t => rows.push([
+            normalizePropertyType(t.propertyType),
+            t.property,
+            t.client,
+            t.value,
+            t.status,
+            t.address || '',
+            t.district || '',
+            t.agentName || ''
+        ]));
+        const csv = rows.map(r => r.map(csvCell).join(',')).join('\n');
+        const a = document.createElement('a');
+        a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+        a.download = 'luxeestate_analytics.csv';
+        a.click();
+        showToast('Data exported as CSV.');
+    }
+
+    function csvCell(value) {
+        const text = String(value ?? '');
+        return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    }
+
+    /* ===========================
+       REPORTS (Analytics)
+    =========================== */
+    function toggleReportMenu(event) {
+        event.stopPropagation();
+        document.getElementById('reportTypeMenu').classList.toggle('open');
+    }
+
+    document.addEventListener('click', () => {
+        const menu = document.getElementById('reportTypeMenu');
+        if (menu) menu.classList.remove('open');
+    });
+
+    async function generateAndViewPeriodicReport(type) {
+        document.getElementById('reportTypeMenu')?.classList.remove('open');
+        try {
+            const report = await generatePeriodicReport(type);
+            viewingReport = report;
+            document.getElementById('viewReportTitle').textContent = report.title;
+            document.getElementById('viewReportMeta').textContent = `${formatReportTypeLabel(report.reportType)} · ${report.startDate} to ${report.endDate}`;
+            const data = parseReportData(report);
+            document.getElementById('viewReportBody').textContent = data ? JSON.stringify(data, null, 2) : report.reportData || '';
+            document.getElementById('viewReportModal').classList.add('open');
+            showToast(`${type} report generated and saved to Reports.`);
+            safeCreateIcons();
+        } catch (e) {
+            showToast(e.message || 'Failed to generate report.');
+        }
+    }
+
+    function closeViewReportModal() {
+        document.getElementById('viewReportModal').classList.remove('open');
+        viewingReport = null;
+    }
+
+    function printViewingReport() { if (viewingReport) printReport(viewingReport); }
+    function pdfViewingReport() { if (viewingReport) downloadReportPdf(viewingReport); }
+
+    const TX_REPORT_FIELD_MAP = { title: 'txReportTitle', startDate: 'txReportStart', endDate: 'txReportEnd', selection: 'txReportSelection' };
+    const AGENT_REPORT_FIELD_MAP = { title: 'agentReportTitle', startDate: 'agentReportStart', endDate: 'agentReportEnd', selection: 'agentReportSelection' };
+
+    function clearReportModalErrors(prefix) {
+        const map = prefix === 'tx' ? TX_REPORT_FIELD_MAP : AGENT_REPORT_FIELD_MAP;
+        Object.values(map).forEach(id => clearFieldError(id));
+        const summary = document.getElementById(`${prefix}ReportError`);
+        if (summary) {
+            summary.textContent = '';
+            summary.classList.remove('show');
+        }
+    }
+
+    function showReportModalErrors(prefix, fieldErrors) {
+        const map = prefix === 'tx' ? TX_REPORT_FIELD_MAP : AGENT_REPORT_FIELD_MAP;
+        clearReportModalErrors(prefix);
+        const summary = document.getElementById(`${prefix}ReportError`);
+        if (summary && fieldErrors.length > 1) {
+            summary.innerHTML = '<strong>Please fix the following:</strong><ul>' +
+                fieldErrors.map(e => `<li>${escapeHtml(e.message)}</li>`).join('') + '</ul>';
+            summary.classList.add('show');
+        } else if (summary && fieldErrors.length === 1) {
+            summary.textContent = fieldErrors[0].message;
+            summary.classList.add('show');
+        }
+        fieldErrors.forEach(e => {
+            const id = map[e.field];
+            if (id) setFieldError(id, e.message);
+        });
+        const firstId = map[fieldErrors[0]?.field];
+        if (firstId) document.getElementById(firstId)?.focus();
+        showToast(fieldErrors[0]?.message || 'Please check the form.');
+    }
+
+    function openTransactionReportModal() {
+        const range = getReportDateRange('DAILY') || { startDate: new Date().toISOString().slice(0, 10), endDate: new Date().toISOString().slice(0, 10) };
+        document.getElementById('txReportTitle').value = `Recent Transactions Report · ${range.endDate}`;
+        document.getElementById('txReportStart').value = range.startDate;
+        document.getElementById('txReportEnd').value = range.endDate;
+        clearReportModalErrors('tx');
+        const box = document.getElementById('txReportSelection');
+        box.innerHTML = getFilteredFinanceTransactions().map(tx => `
+            <label style="display:block;margin-bottom:6px;">
+                <input type="checkbox" class="tx-report-pick" value="${tx.id}" checked>
+                ${escapeHtml(tx.payment)}
+            </label>
+        `).join('') || '<p style="color:var(--text-dim)">No transactions available.</p>';
+        document.getElementById('transactionReportModal').classList.add('open');
+        safeCreateIcons();
+    }
+
+    function closeTransactionReportModal() {
+        document.getElementById('transactionReportModal').classList.remove('open');
+    }
+
+    async function saveTransactionReport() {
+        const title = document.getElementById('txReportTitle').value.trim();
+        const startDate = document.getElementById('txReportStart').value;
+        const endDate = document.getElementById('txReportEnd').value;
+        const selected = [...document.querySelectorAll('.tx-report-pick:checked')].map(el => Number(el.value));
+        const records = financeTransactions.filter(tx => selected.includes(tx.id));
+        const payload = {
+            title,
+            reportType: 'TRANSACTION',
+            startDate,
+            endDate,
+            reportData: JSON.stringify(records),
+            propertyName: 'Finance Transactions',
+            clientName: 'Finance Module'
+        };
+        const { fieldErrors } = validateReportPayloadDetailed(payload, { requireDateRange: true, requireSelection: true });
+        if (fieldErrors.length) {
+            showReportModalErrors('tx', fieldErrors);
+            return;
+        }
+        clearReportModalErrors('tx');
+        try {
+            const report = await createReport(payload);
+            viewingReport = report;
+            closeTransactionReportModal();
+            showToast('Recent transactions report saved to Reports.');
+        } catch (e) {
+            showReportModalErrors('tx', [{ field: 'title', message: e.message || 'Could not save the report. Please try again.' }]);
+        }
+    }
+
+    function openAgentReportModal() {
+        const range = getReportDateRange('WEEKLY') || { startDate: new Date().toISOString().slice(0, 10), endDate: new Date().toISOString().slice(0, 10) };
+        document.getElementById('agentReportTitle').value = `Agent Report · ${range.endDate}`;
+        document.getElementById('agentReportStart').value = range.startDate;
+        document.getElementById('agentReportEnd').value = range.endDate;
+        clearReportModalErrors('agent');
+        const box = document.getElementById('agentReportSelection');
+        box.innerHTML = getFilteredAgents().map(a => `
+            <label style="display:block;margin-bottom:6px;">
+                <input type="checkbox" class="agent-report-pick" value="${a.id}" checked>
+                ${escapeHtml(a.name)} · ${escapeHtml(a.status || 'Active')}
+            </label>
+        `).join('') || '<p style="color:var(--text-dim)">No agents available.</p>';
+        document.getElementById('agentReportModal').classList.add('open');
+        safeCreateIcons();
+    }
+
+    function closeAgentReportModal() {
+        document.getElementById('agentReportModal').classList.remove('open');
+    }
+
+    async function saveAgentReport() {
+        const title = document.getElementById('agentReportTitle').value.trim();
+        const startDate = document.getElementById('agentReportStart').value;
+        const endDate = document.getElementById('agentReportEnd').value;
+        const selected = [...document.querySelectorAll('.agent-report-pick:checked')].map(el => Number(el.value));
+        const records = agents.filter(a => selected.includes(a.id));
+        const payload = {
+            title,
+            reportType: 'AGENT',
+            startDate,
+            endDate,
+            reportData: JSON.stringify(records),
+            propertyName: 'Agent Directory',
+            clientName: 'Agents Module'
+        };
+        const { fieldErrors } = validateReportPayloadDetailed(payload, { requireDateRange: true, requireSelection: true });
+        if (fieldErrors.length) {
+            showReportModalErrors('agent', fieldErrors);
+            return;
+        }
+        clearReportModalErrors('agent');
+        try {
+            await createReport(payload);
+            closeAgentReportModal();
+            showToast('Agent report saved to Reports tab.');
+        } catch (e) {
+            showReportModalErrors('agent', [{ field: 'title', message: e.message || 'Could not save the report. Please try again.' }]);
+        }
+    }
+
+    function reportPayloadFromTransaction(tx) {
+        return {
+            propertyType: normalizePropertyType(tx.propertyType),
+            propertyName: tx.property || '',
+            clientName: tx.client || '',
+            status: tx.status || 'Pending',
+            value: tx.value || '',
+            address: tx.address || '',
+            district: tx.district || '',
+            agentName: tx.agentName || ''
+        };
+    }
+
+    function openReportModal(seed = {}) {
+        const ids = ['reportPropertyType', 'reportPropertyName', 'reportClientName', 'reportStatus', 'reportValue', 'reportAddress', 'reportDistrict', 'reportAgentName'];
+        clearValidation(ids);
+        populateAgentSelects();
+        document.getElementById('reportPropertyType').value = normalizePropertyType(seed.propertyType);
+        document.getElementById('reportPropertyName').value = seed.propertyName || '';
+        document.getElementById('reportClientName').value = seed.clientName || '';
+        document.getElementById('reportStatus').value = VALID_STATUSES.includes(seed.status) ? seed.status : 'Pending';
+        document.getElementById('reportValue').value = seed.value || '';
+        document.getElementById('reportAddress').value = seed.address || '';
+        document.getElementById('reportDistrict').value = normalizeDistrict(seed.district);
+        setSelectValue('reportAgentName', seed.agentName || '');
+        document.getElementById('reportModal').classList.add('open');
+        safeCreateIcons();
+    }
+
+    function openReportFromTransactionForm() {
+        openReportModal({
+            propertyType: document.getElementById('fieldPropertyType').value,
+            propertyName: document.getElementById('fieldProperty').value.trim(),
+            clientName: document.getElementById('fieldClient').value.trim(),
+            status: document.getElementById('fieldStatus').value,
+            value: document.getElementById('fieldValue').value.trim(),
+            address: document.getElementById('fieldAddress').value.trim(),
+            district: document.getElementById('fieldDistrict').value,
+            agentName: document.getElementById('fieldAgent').value.trim()
+        });
+    }
+
+    function openReportFromTransaction(id) {
+        const tx = transactions.find(t => t.id === id);
+        if (!tx) return;
+        openReportModal(reportPayloadFromTransaction(tx));
+    }
+
+    function openReportFromAgentForm() {
+        openReportModal({ agentName: document.getElementById('agentName').value.trim() });
+    }
+
+    function openReportFromAgent(id) {
+        const agent = agents.find(a => a.id === id);
+        if (!agent) return;
+        openReportModal({ agentName: agent.name });
+    }
+
+    function closeReportModal() {
+        document.getElementById('reportModal').classList.remove('open');
+        clearValidation(['reportPropertyType', 'reportPropertyName', 'reportClientName', 'reportStatus', 'reportValue', 'reportAddress', 'reportDistrict', 'reportAgentName']);
+    }
+
+    async function saveReport() {
+        const payload = validateReportForm();
+        if (!payload) return;
+
+        try {
+            const res = await fetch('http://localhost:8080/api/reports', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                const savedReport = await res.json();
+                reports.unshift(savedReport);
+                renderReports();
+                closeReportModal();
+                showToast('Report created successfully.');
+            } else {
+                showToast(await readErrorMessage(res, 'Failed to create report on server.'));
+            }
+        } catch (e) {
+            console.error(e);
+            showToast('Network error while creating report.');
+        }
+    }
+
+    async function fetchReports() {
+        try {
+            const res = await fetch('http://localhost:8080/api/reports');
+            if (res.ok) {
+                reports = await res.json();
+                renderReports();
+            }
+        } catch (e) {
+            console.warn('Could not fetch reports:', e);
+        }
+    }
+
+    let reportSearchQuery = '';
+    let reportSortKey = 'newest';
+
+    function toggleReportSearch() {
+        const container = document.getElementById('reportSearchContainer');
+        const input = document.getElementById('reportSearchInput');
+        if (container.style.display === 'none' || !container.style.display) {
+            container.style.display = 'flex';
+            input.focus();
+        } else {
+            container.style.display = 'none';
+            input.value = '';
+            filterReports('');
+        }
+    }
+
+    function filterReports(val) {
+        reportSearchQuery = val;
+        renderReports();
+    }
+
+    function setReportSort(value) {
+        reportSortKey = value;
+        renderReports();
+    }
+
+    function sortedFilteredReports() {
+        const query = reportSearchQuery.toLowerCase().trim();
+        const filtered = (reports || []).filter(report => {
+            return (report.propertyType && report.propertyType.toLowerCase().includes(query)) ||
+                   (report.propertyName && report.propertyName.toLowerCase().includes(query)) ||
+                   (report.clientName && report.clientName.toLowerCase().includes(query)) ||
+                   (report.status && report.status.toLowerCase().includes(query)) ||
+                   (report.value && report.value.toLowerCase().includes(query)) ||
+                   (report.address && report.address.toLowerCase().includes(query)) ||
+                   (report.district && report.district.toLowerCase().includes(query)) ||
+                   (report.agentName && report.agentName.toLowerCase().includes(query));
+        });
+
+        return filtered.sort((left, right) => {
+            if (reportSortKey === 'property') {
+                return String(left.propertyName || '').localeCompare(String(right.propertyName || ''));
+            }
+            if (reportSortKey === 'district') {
+                return String(left.district || '').localeCompare(String(right.district || ''));
+            }
+            if (reportSortKey === 'status') {
+                return String(left.status || '').localeCompare(String(right.status || ''));
+            }
+            if (reportSortKey === 'value') {
+                return moneyToNumber(right.value || 'Rs 0') - moneyToNumber(left.value || 'Rs 0');
+            }
+            return new Date(right.createdAt || 0) - new Date(left.createdAt || 0);
+        });
+    }
+
+    function renderReports() {
+        const tbody = document.getElementById('reportTableBody');
+        if (!tbody) return;
+
+        const visibleReports = sortedFilteredReports();
+        if (visibleReports.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:24px;">No reports found</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = visibleReports.map(report => {
+            const statusClass = report.status === 'Sold' ? 'sold' : report.status === 'Pending' ? 'pending' : 'rented';
+            return `
+                <tr>
+                    <td>${escapeHtml(normalizePropertyType(report.propertyType))}</td>
+                    <td class="td-primary">${escapeHtml(report.propertyName)}</td>
+                    <td>${escapeHtml(report.clientName)}</td>
+                    <td><span class="status-badge ${statusClass}">${escapeHtml(report.status)}</span></td>
+                    <td style="color:var(--gold);font-weight:600;">${escapeHtml(report.value)}</td>
+                    <td>${escapeHtml(report.address || 'Not set')}</td>
+                    <td>${escapeHtml(report.district || 'Not set')}</td>
+                    <td>${escapeHtml(report.agentName || 'None')}</td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="row-btn" title="Download" onclick="downloadReport(${report.id})"><i data-lucide="download"></i></button>
+                            <button class="row-btn danger" title="Delete" onclick="deleteReport(${report.id})"><i data-lucide="trash-2"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+        safeCreateIcons();
+    }
+
+    function reportCsvRows(items) {
+        const rows = [['Property Type', 'Property Name', 'Client Name', 'Status', 'Value', 'Address', 'District', 'Agent']];
+        items.forEach(report => rows.push([
+            normalizePropertyType(report.propertyType),
+            report.propertyName,
+            report.clientName,
+            report.status,
+            report.value,
+            report.address || '',
+            report.district || '',
+            report.agentName || ''
+        ]));
+        return rows;
+    }
+
+    function downloadReport(id) {
+        const report = reports.find(r => r.id === id);
+        if (!report) return;
+        const csv = reportCsvRows([report]).map(row => row.map(csvCell).join(',')).join('\n');
+        const a = document.createElement('a');
+        a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+        a.download = `luxeestate_report_${id}.csv`;
+        a.click();
+        showToast('Report downloaded.');
+    }
+
+    function exportReports() {
+        const csv = reportCsvRows(sortedFilteredReports()).map(row => row.map(csvCell).join(',')).join('\n');
+        const a = document.createElement('a');
+        a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+        a.download = 'luxeestate_reports.csv';
+        a.click();
+        showToast('Reports exported as CSV.');
+    }
+
+    function deleteReport(id) {
+        deletingReportId = id;
+        deletingId = null;
+        deletingAgentId = null;
+        document.getElementById('confirmModal').classList.add('open');
+    }
+
+    async function confirmDeleteReport() {
+        const idToDelete = deletingReportId;
+        try {
+            const res = await fetch(`http://localhost:8080/api/reports/${idToDelete}`, {
+                method: 'DELETE'
+            });
+            if (res.ok) {
+                reports = reports.filter(r => r.id !== idToDelete);
+                renderReports();
+                showToast('Report deleted.');
+            } else {
+                showToast('Failed to delete report on server.');
+            }
+        } catch (e) {
+            console.error(e);
+            showToast('Network error deleting report.');
+        }
+        closeConfirm();
+    }
+
+    /* ===========================
+       CHARTS
+    =========================== */
+    const chartData = {
+        '6m': {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+            data: [28, 45, 38, 72, 58, 91]
+        },
+        '1y': {
+            labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+            data: [18,28,35,42,38,55,62,48,72,58,80,91]
+        },
+        'all': {
+            labels: ['2022','2023','2024','2025','2026'],
+            data: [30, 48, 62, 75, 92]
+        }
+    };
+
+    function showChartFallback(canvasId, message) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas || !canvas.parentElement) return;
+        canvas.style.display = 'none';
+        let fallback = canvas.parentElement.querySelector('.chart-fallback');
+        if (!fallback) {
+            fallback = document.createElement('div');
+            fallback.className = 'chart-fallback';
+            canvas.parentElement.appendChild(fallback);
+        }
+        fallback.textContent = message;
+    }
+
+    function showChartCanvas(canvasId) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas || !canvas.parentElement) return null;
+        canvas.style.display = '';
+        const fallback = canvas.parentElement.querySelector('.chart-fallback');
+        if (fallback) fallback.remove();
+        return canvas;
+    }
+
+    let revenueChart;
+
+    function initRevenueChart(period = '6m') {
+        const canvas = showChartCanvas('revenueChart');
+        if (!canvas) return;
+        if (typeof Chart === 'undefined') {
+            showChartFallback('revenueChart', 'Revenue chart is unavailable because Chart.js did not load. Tables and reports remain available.');
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
+        const grad = ctx.createLinearGradient(0, 0, 0, 280);
+        grad.addColorStop(0, 'rgba(201, 169, 110, 0.35)');
+        grad.addColorStop(1, 'rgba(201, 169, 110, 0)');
+
+        if (revenueChart) revenueChart.destroy();
+
+        revenueChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartData[period].labels,
+                datasets: [{
+                    label: 'Revenue (Rs k)',
+                    data: chartData[period].data,
+                    borderColor: '#c9a96e',
+                    borderWidth: 2.5,
+                    pointBackgroundColor: '#c9a96e',
+                    pointBorderColor: '#111',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    tension: 0.45,
+                    fill: true,
+                    backgroundColor: grad
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        grid: { color: 'rgba(255,255,255,0.04)' },
+                        ticks: { color: 'rgba(255,255,255,0.25)', font: { size: 10 } },
+                        border: { display: false }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: 'rgba(255,255,255,0.25)', font: { size: 10 } },
+                        border: { display: false }
+                    }
+                }
+            }
+        });
+    }
+
+    function switchChart(period, btn) {
+        document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        initRevenueChart(period);
+    }
+
+    let donutChart;
+    function initDonutChart(data = [38, 34, 28]) {
+        const canvas = showChartCanvas('donutChart');
+        if (!canvas) return;
+        if (typeof Chart === 'undefined') {
+            showChartFallback('donutChart', 'Property type chart is unavailable because Chart.js did not load.');
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
+        if (donutChart) donutChart.destroy();
+        donutChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: PROPERTY_TYPES,
+                datasets: [{
+                    data: data,
+                    backgroundColor: ['#c9a96e', '#818cf8', '#22d3ee'],
+                    borderWidth: 0,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '72%',
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ` ${ctx.parsed}%`
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /* ===========================
+       AGENT LEADERBOARD
+    =========================== */
+    let agents = [
+        { id: 1, name: 'Amara Silva', role: 'Senior Agent', sales: 'Rs 12.4M', count: '8 deals' },
+        { id: 2, name: 'Rohan Perera', role: 'Luxury Specialist', sales: 'Rs 9.8M', count: '6 deals' },
+        { id: 3, name: 'Dilini Fernando', role: 'Agent', sales: 'Rs 7.2M', count: '5 deals' },
+        { id: 4, name: 'Kasun Jayawardena', role: 'Agent', sales: 'Rs 5.5M', count: '4 deals' },
+        { id: 5, name: 'Nimasha De Silva', role: 'Junior Agent', sales: 'Rs 3.1M', count: '3 deals' },
+    ];
+
+    let agentSearchQuery = '';
+    const agentPalette = ['#c9a96e', '#818cf8', '#22d3ee', '#10b981', '#f59e0b'];
+
+    function toggleAgentSearch() {
+        const container = document.getElementById('agentSearchContainer');
+        const input = document.getElementById('agentSearchInput');
+        if (container.style.display === 'none' || !container.style.display) {
+            container.style.display = 'flex';
+            input.focus();
+        } else {
+            container.style.display = 'none';
+            input.value = '';
+            filterAgents('');
+        }
+    }
+
+    function filterAgents(val) {
+        agentSearchQuery = val;
+        renderAgents();
+    }
+
+    function getFilteredAgents() {
+        const query = agentSearchQuery.toLowerCase().trim();
+        const statusFilter = document.getElementById('agentStatusFilter')?.value || '';
+        return agents.filter(a => {
+            if (statusFilter && (a.status || 'Active') !== statusFilter) return false;
+            const blob = [a.name, a.email, a.phone, a.address, a.assignedArea, a.commissionRate, a.status, a.specialization, a.experience, a.role, a.sales].join(' ').toLowerCase();
+            return !query || blob.includes(query);
+        });
+    }
+
+    function changeAgentPage(delta) {
+        const totalPages = Math.max(1, Math.ceil(getFilteredAgents().length / PAGE_SIZE));
+        agentPage = Math.min(Math.max(1, agentPage + delta), totalPages);
+        renderAgents();
+    }
+
+    function renderAgents() {
+        const tbody = document.getElementById('agentList');
+        const filtered = getFilteredAgents();
+        const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+        if (agentPage > totalPages) agentPage = totalPages;
+        const start = (agentPage - 1) * PAGE_SIZE;
+        const pageItems = filtered.slice(start, start + PAGE_SIZE);
+
+        if (pageItems.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:24px;">No agents found</td></tr>';
+        } else {
+            tbody.innerHTML = pageItems.map(a => `
+                <tr>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <img class="agent-profile-img" src="${escapeHtml(a.profileImage || '')}" alt="" onerror="this.style.display='none'">
+                            <div>
+                                <div class="td-primary">${escapeHtml(a.name)}</div>
+                                <div style="font-size:11px;color:var(--text-dim)">${escapeHtml(a.role)} · ${escapeHtml(a.sales)}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${escapeHtml(a.email)}</td>
+                    <td>${escapeHtml(a.phone)}</td>
+                    <td>${escapeHtml(a.address)}</td>
+                    <td>${escapeHtml(a.assignedArea)}</td>
+                    <td>${escapeHtml(a.commissionRate)}</td>
+                    <td>${escapeHtml(a.status || 'Active')}</td>
+                    <td>${escapeHtml(a.specialization)}</td>
+                    <td>${escapeHtml(a.experience)}</td>
+                </tr>
+            `).join('');
+        }
+
+        const info = document.getElementById('agentPageInfo');
+        if (info) info.textContent = filtered.length
+            ? `Showing ${start + 1}-${Math.min(start + PAGE_SIZE, filtered.length)} of ${filtered.length} agents`
+            : 'Showing 0 agents';
+        const prev = document.getElementById('agentPrevBtn');
+        const next = document.getElementById('agentNextBtn');
+        if (prev) prev.disabled = agentPage <= 1;
+        if (next) next.disabled = agentPage >= totalPages;
+        safeCreateIcons();
+    }
+
+    function openAddAgentModal() {
+        clearValidation(['agentName', 'agentRole', 'agentSales', 'agentCount']);
+        editingAgentId = null;
+        document.getElementById('agentModalTitle').innerHTML = 'Add <em>Agent</em>';
+        document.getElementById('agentModalSubtitle').textContent = 'Create a new agent entry in the system.';
+        document.getElementById('agentName').value = '';
+        document.getElementById('agentRole').value = 'Agent';
+        document.getElementById('agentSales').value = '';
+        document.getElementById('agentCount').value = '';
+        document.getElementById('agentModal').classList.add('open');
+        safeCreateIcons();
+    }
+
+    function editAgent(id) {
+        const ag = agents.find(a => a.id === id);
+        if (!ag) return;
+        clearValidation(['agentName', 'agentRole', 'agentSales', 'agentCount']);
+        editingAgentId = id;
+        document.getElementById('agentModalTitle').innerHTML = 'Edit <em>Agent</em>';
+        document.getElementById('agentModalSubtitle').textContent = 'Update the agent details below.';
+        document.getElementById('agentName').value = ag.name;
+        
+        const roleSelect = document.getElementById('agentRole');
+        const roleOptions = Array.from(roleSelect.options).map(o => o.value);
+        if (roleOptions.includes(ag.role)) {
+            roleSelect.value = ag.role;
+        } else {
+            roleSelect.value = 'Other';
+        }
+        
+        document.getElementById('agentSales').value = ag.sales;
+        document.getElementById('agentCount').value = parseDealCount(ag.count);
+        document.getElementById('agentModal').classList.add('open');
+        safeCreateIcons();
+    }
+
+    async function saveAgent() {
+        const payload = validateAgentForm();
+        if (!payload) return;
+
+        try {
+            const url = editingAgentId 
+                ? `http://localhost:8080/api/agents/${editingAgentId}` 
+                : 'http://localhost:8080/api/agents';
+            
+            const res = await fetch(url, {
+                method: editingAgentId ? 'PUT' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            if (res.ok) {
+                const savedAgent = await res.json();
+                if (editingAgentId !== null) {
+                    const idx = agents.findIndex(a => a.id === editingAgentId);
+                    if (idx !== -1) agents[idx] = savedAgent;
+                    showToast('Agent updated successfully.');
+                } else {
+                    agents.push(savedAgent);
+                    showToast('Agent added successfully.');
+                }
+                renderAgents();
+                closeAgentModal();
+            } else {
+                showToast(await readErrorMessage(res, 'Failed to save agent on server.'));
+            }
+        } catch(e) {
+            console.error(e);
+            showToast('Network error while saving agent.');
+        }
+    }
+
+    function deleteAgent(id) {
+        deletingAgentId = id;
+        deletingId = null;
+        deletingReportId = null;
+        document.getElementById('confirmModal').classList.add('open');
+    }
+
+    async function confirmDeleteAgent() {
+        const idToDelete = deletingAgentId;
+        
+        try {
+            const res = await fetch(`http://localhost:8080/api/agents/${idToDelete}`, {
+                method: 'DELETE'
+            });
+            if (res.ok) {
+                agents = agents.filter(a => a.id !== idToDelete);
+                renderAgents();
+                showToast('Agent deleted.');
+            } else {
+                showToast('Failed to delete agent on server.');
+            }
+        } catch(e) {
+            console.error(e);
+            showToast('Network error while deleting agent.');
+        }
+        closeConfirm();
+    }
+
+    function closeAgentModal() {
+        document.getElementById('agentModal').classList.remove('open');
+        clearValidation(['agentName', 'agentRole', 'agentSales', 'agentCount']);
+    }
+
+    function hexToRgb(hex) {
+        const r = parseInt(hex.slice(1,3),16);
+        const g = parseInt(hex.slice(3,5),16);
+        const b = parseInt(hex.slice(5,7),16);
+        return `${r},${g},${b}`;
+    }
+
+    function renderDefaultActivities() {
+        const container = document.getElementById('activityFeed');
+        if (!container || container.children.length > 0) return;
+        const items = [
+            { description: '<strong>Dashboard ready</strong> — Analytics modules loaded', icon: 'bar-chart-big', colorClass: 'gold', time: 'Just now' },
+            { description: '<strong>Reports enabled</strong> — Address and district fields active', icon: 'file-text', colorClass: 'blue', time: 'Just now' },
+            { description: '<strong>Transactions synced</strong> — Waiting for live updates', icon: 'landmark', colorClass: 'green', time: 'Just now' }
+        ];
+        container.innerHTML = items.map(item => `
+            <div class="feed-item">
+                <div class="feed-icon ${item.colorClass}"><i data-lucide="${item.icon}"></i></div>
+                <div class="feed-text">
+                    <div class="feed-desc">${item.description}</div>
+                    <div class="feed-time">${item.time}</div>
+                </div>
+            </div>
+        `).join('');
+        safeCreateIcons();
+    }
+
+    /* ===========================
+       ACTIVITY FEED
+    =========================== */
+    async function fetchActivities() {
+        try {
+            const res = await fetch('http://localhost:8080/api/analytics/activities');
+            if (res.ok) {
+                const data = await res.json();
+                const container = document.getElementById('activityFeed');
+                if (!Array.isArray(data) || data.length === 0) {
+                    container.innerHTML = '';
+                    renderDefaultActivities();
+                    return;
+                }
+                container.innerHTML = data.map(a => {
+                    const timeText = formatTimeAgo(a.timestamp);
+                    return `
+                        <div class="feed-item">
+                            <div class="feed-icon ${a.colorClass}"><i data-lucide="${a.icon}"></i></div>
+                            <div class="feed-text">
+                                <div class="feed-desc">${a.description}</div>
+                                <div class="feed-time">${timeText}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                safeCreateIcons();
+            } else {
+                renderDefaultActivities();
+            }
+        } catch (e) {
+            console.warn('Could not fetch activities:', e);
+            renderDefaultActivities();
+        }
+    }
+
+    function prependActivity(log) {
+        const container = document.getElementById('activityFeed');
+        const item = document.createElement('div');
+        item.className = 'feed-item';
+        item.style.opacity = 0;
+        item.style.transform = 'translateY(-10px)';
+        item.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+
+        item.innerHTML = `
+            <div class="feed-icon ${log.colorClass}"><i data-lucide="${log.icon}"></i></div>
+            <div class="feed-text">
+                <div class="feed-desc">${log.description}</div>
+                <div class="feed-time">Just now</div>
+            </div>
+        `;
+
+        if (container.firstChild) {
+            container.insertBefore(item, container.firstChild);
+        } else {
+            container.appendChild(item);
+        }
+
+        setTimeout(() => {
+            item.style.opacity = 1;
+            item.style.transform = 'translateY(0)';
+        }, 50);
+
+        while (container.children.length > 10) {
+            container.removeChild(container.lastChild);
+        }
+        safeCreateIcons();
+    }
+
+    function formatTimeAgo(timestampStr) {
+        if (!timestampStr) return "Just now";
+        const date = new Date(timestampStr);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+        if (diffMins < 1) return "Just now";
+        if (diffMins < 60) return `${diffMins} min ago`;
+        const diffHours = Math.floor(diffMins / 60);
+        if (diffHours < 24) return `${diffHours} hr ago`;
+        const diffDays = Math.floor(diffHours / 24);
+        if (diffDays === 1) return "Yesterday";
+        return `${diffDays} days ago`;
+    }
+
+    /* ===========================
+       GEOGRAPHIC DATA
+    =========================== */
+    function renderDefaultGeo() {
+        const list = document.getElementById('geoList');
+        if (!list || list.children.length > 0) return;
+        const defaults = [
+            { city: 'Colombo', pct: 48 },
+            { city: 'Kandy', pct: 22 },
+            { city: 'Galle', pct: 15 },
+            { city: 'Gampaha', pct: 9 },
+            { city: 'Jaffna', pct: 6 }
+        ];
+        list.innerHTML = defaults.map(g => `
+            <div class="geo-item">
+                <div class="geo-row">
+                    <span class="geo-city">${g.city}</span>
+                    <span class="geo-pct">${g.pct}%</span>
+                </div>
+                <div class="geo-bar"><div class="geo-fill" style="width:${g.pct}%;"></div></div>
+            </div>
+        `).join('');
+    }
+
+    async function fetchGeo() {
+        try {
+            const res = await fetch('http://localhost:8080/api/analytics/geo-reach');
+            if (res.ok) {
+                const data = await res.json();
+                if (!Array.isArray(data) || data.length === 0) {
+                    document.getElementById('geoList').innerHTML = '';
+                    renderDefaultGeo();
+                    return;
+                }
+                document.getElementById('geoList').innerHTML = data.map(g => `
+                    <div class="geo-item">
+                        <div class="geo-row">
+                            <span class="geo-city">${g.city}</span>
+                            <span class="geo-pct">${g.pct}%</span>
+                        </div>
+                        <div class="geo-bar"><div class="geo-fill" style="width:${g.pct}%;"></div></div>
+                    </div>
+                `).join('');
+            } else {
+                renderDefaultGeo();
+            }
+        } catch (e) {
+            console.warn('Could not fetch geo-reach:', e);
+            renderDefaultGeo();
+        }
+    }
+
+    /* ===========================
+       MESSAGES PREVIEW
+    =========================== */
+    function renderDefaultMessages() {
+        const list = document.getElementById('msgList');
+        if (!list || list.children.length > 0) return;
+        document.getElementById('msgNew').textContent = '0';
+        document.getElementById('msgPending').textContent = '0';
+        document.getElementById('msgReplied').textContent = '0';
+        document.getElementById('msgReject').textContent = '0';
+        list.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-dim); font-size: 12px;">No messages to show</div>';
+    }
+
+    async function fetchMessages() {
+        try {
+            const res = await fetch('http://localhost:8080/api/contact');
+            if (res.ok) {
+                const messages = await res.json();
+
+                let countNew = 0;
+                let countPending = 0;
+                let countReplied = 0;
+                let countReject = 0;
+
+                messages.forEach(m => {
+                    const status = (m.status || 'New').toLowerCase();
+                    if (status === 'new') countNew++;
+                    else if (status === 'pending') countPending++;
+                    else if (status === 'replied' || status === 'reply' || status === 'repli') countReplied++;
+                    else if (status === 'reject' || status === 'rejected') countReject++;
+                });
+
+                document.getElementById('msgNew').textContent = countNew;
+                document.getElementById('msgPending').textContent = countPending;
+                document.getElementById('msgReplied').textContent = countReplied;
+                document.getElementById('msgReject').textContent = countReject;
+
+                const sorted = [...messages].sort((a, b) => b.id - a.id);
+                const list = document.getElementById('msgList');
+                const display = sorted.slice(0, 4);
+
+                if (display.length === 0) {
+                    list.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-dim); font-size: 12px;">No messages</div>';
+                } else {
+                    const colors = ['#c9a96e', '#818cf8', '#22d3ee', '#10b981', '#f59e0b'];
+                    list.innerHTML = display.map((m, idx) => {
+                        const avatarColor = colors[idx % colors.length];
+                        const firstChar = m.userName ? m.userName.charAt(0) : 'U';
+                        return `
+                            <div class="msg-item" onclick="window.location.href='view-messages.html'">
+                                <div class="msg-avatar" style="background:rgba(${hexToRgb(avatarColor)},0.15);color:${avatarColor};border:1px solid rgba(${hexToRgb(avatarColor)},0.3);">
+                                    ${firstChar}
+                                </div>
+                                <div class="msg-body">
+                                    <div class="msg-sender">${m.userName}</div>
+                                    <div class="msg-preview">${m.userMessage}</div>
+                                </div>
+                                <div class="msg-time">Just now</div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } else {
+                renderDefaultMessages();
+            }
+        } catch (e) {
+            console.warn('Could not fetch messages:', e);
+            renderDefaultMessages();
+        }
+    }
+
+    /* ===========================
+       PROPERTY TYPES
+    =========================== */
+    async function fetchPropertyTypes() {
+        try {
+            const res = await fetch('http://localhost:8080/api/analytics/property-types');
+            if (res.ok) {
+                const data = await res.json();
+                const total = (data.House || 0) + (data.Apartments || 0) + (data['Rental Property'] || 0);
+                const House = total > 0 ? Math.round((data.House || 0) * 100 / total) : 38;
+                const Apartments = total > 0 ? Math.round((data.Apartments || 0) * 100 / total) : 34;
+                const RentalProperty = total > 0 ? Math.round((data['Rental Property'] || 0) * 100 / total) : 28;
+
+                initDonutChart([House, Apartments, RentalProperty]);
+
+                const legends = document.querySelectorAll('.donut-legend .legend-val');
+                if (legends.length >= 3) {
+                    legends[0].textContent = `${House}%`;
+                    legends[1].textContent = `${Apartments}%`;
+                    legends[2].textContent = `${RentalProperty}%`;
+                }
+            }
+        } catch (e) {
+            console.warn('Could not fetch property types:', e);
+        }
+    }
+
+    /* ===========================
+       REVENUE HISTORICAL PERFORMANCE
+    =========================== */
+    async function fetchRevenuePerformance() {
+        try {
+            const res = await fetch('http://localhost:8080/api/analytics/revenue-performance');
+            if (res.ok) {
+                const data = await res.json();
+                chartData['6m'] = data['6m'];
+                chartData['1y'] = data['1y'];
+                chartData['all'] = data['all'];
+
+                const activeBtn = document.querySelector('.period-tab.active');
+                const period = activeBtn ? activeBtn.textContent.toLowerCase() : '6m';
+                initRevenueChart(period);
+            }
+        } catch (e) {
+            console.warn('Could not fetch revenue performance:', e);
+        }
+    }
+
+    /* ===========================
+       FORMAT REVENUE HTML
+    =========================== */
+    function formatRevenueHtml(valInK) {
+        if (valInK >= 1000) {
+            const valInM = valInK / 1000;
+            const parts = valInM.toFixed(1).split('.');
+            return `Rs ${parts[0]}<span>.${parts[1]}m</span>`;
+        } else {
+            const parts = valInK.toFixed(1).split('.');
+            return `Rs ${parts[0]}<span>.${parts[1]}k</span>`;
+        }
+    }
+
+    /* ===========================
+       LIVE API FETCH
+    =========================== */
+    async function fetchDashboardData() {
+        try {
+            const tRes = await fetch(`${API_BASE}/api/finance-transactions`);
+            if (tRes.ok) {
+                financeTransactions = await tRes.json() || [];
+                renderTable();
+            }
+        } catch(e) { console.warn('Could not fetch finance transactions:', e); }
+
+        try {
+            const aRes = await fetch('http://localhost:8080/api/agents');
+            if (aRes.ok) {
+                const data = await aRes.json();
+                agents = data || [];
+                renderAgents();
+                populateAgentSelects();
+            }
+        } catch(e) { console.warn('Could not fetch agents:', e); }
+
+        try {
+            const kpiRes = await fetch('http://localhost:8080/api/analytics/kpis');
+            if (kpiRes.ok) {
+                const kpis = await kpiRes.json();
+                document.getElementById('kpiCustomers').textContent = kpis.totalCustomers.toLocaleString();
+                document.getElementById('kpiRevenue').innerHTML = formatRevenueHtml(kpis.totalRevenue);
+                document.getElementById('kpiListings').textContent = kpis.activeListings.toLocaleString();
+                document.getElementById('kpiMessages').textContent = kpis.inboxMessages.toLocaleString();
+            }
+        } catch (e) {
+            console.warn('Could not fetch KPIs:', e);
+        }
+
+        fetchGeo();
+        fetchPropertyTypes();
+        fetchRevenuePerformance();
+        fetchActivities();
+        fetchMessages();
+    }
+
+    /* ===========================
+       REAL-TIME SSE SYNC
+    =========================== */
+    let sseSource;
+    function connectSSE() {
+        if (typeof EventSource === 'undefined') {
+            console.warn('SSE is not supported in this browser.');
+            return;
+        }
+        if (sseSource) {
+            sseSource.close();
+        }
+        sseSource = new EventSource('http://localhost:8080/api/analytics/stream');
+
+        sseSource.addEventListener('init', (e) => {
+            console.log('SSE connection initialized:', e.data);
+        });
+
+        sseSource.addEventListener('activity', (e) => {
+            try {
+                const log = JSON.parse(e.data);
+                showToast(log.description, true);
+                prependActivity(log);
+                fetchDashboardData();
+            } catch (err) {
+                console.error('Error handling activity stream:', err);
+            }
+        });
+
+        sseSource.onerror = (err) => {
+            console.warn('SSE disconnected. Attempting to reconnect in 5 seconds...', err);
+            sseSource.close();
+            setTimeout(connectSSE, 5000);
+        };
+    }
+
+    /* ===========================
+       INIT
+    =========================== */
+    window.onload = () => {
+        renderTable();
+        renderAgents();
+        renderDefaultGeo();
+        renderDefaultActivities();
+        renderDefaultMessages();
+        initRevenueChart('6m');
+        initDonutChart();
+        fetchDashboardData();
+        connectSSE();
+        safeCreateIcons();
+    };
+</script>
+</body>
+</html>

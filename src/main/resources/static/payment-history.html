@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment History</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"></div>
+            <div class="brand">
+                <h2>RealEstate</h2>
+                <span>Finance Suite</span>
+            </div>
+        </div>
+
+        <div class="nav-links">
+            <a href="home.html" class="nav-link">
+                <div class="dot"></div>
+                <span>Dashboard</span>
+            </a>
+            <a href="payment.html" class="nav-link">
+                <div class="dot"></div>
+                <span>New Payment</span>
+            </a>
+            <a href="invoice.html" class="nav-link">
+                <div class="dot"></div>
+                <span>Invoices</span>
+            </a>
+            <a href="payment-history.html" class="nav-link active">
+                <div class="dot"></div>
+                <span>Payment History</span>
+            </a>
+            <a href="bank-account.html" class="nav-link">
+                <div class="dot"></div>
+                <span>Bank Accounts</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-section">
+            <div class="header-text">
+                <h1>Payment History</h1>
+                <p>View the comprehensive log of all payment transactions.</p>
+            </div>
+            <div class="header-actions">
+                <button type="button" class="btn btn-secondary" onclick="loadPaymentHistory()">Refresh History</button>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <div id="historyList">
+                <p class="text-center text-secondary">Loading history...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/payment-history.js"></script>
+</body>
+</html>

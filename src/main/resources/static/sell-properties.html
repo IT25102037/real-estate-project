@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Sale Properties | LuxeEstate Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --gold: #c9a96e;
+            --gold-light: #e8d5b0;
+            --gold-dark: #8b6914;
+            --obsidian: #0a0a0a;
+            --charcoal: #1a1a1a;
+            --pearl: #f5f0e8;
+            --cream: #faf7f2;
+            --sidebar-width: 280px;
+            --glass-dark: rgba(10, 10, 10, 0.88);
+            --card-glass: rgba(16, 16, 16, 0.68);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --gold-border: rgba(201, 169, 110, 0.24);
+            --text-main: #f5f0e8;
+            --text-dim: rgba(245, 240, 232, 0.58);
+            --danger: #ef4444;
+            --success: #10b981;
+            --primary: #c9a96e;
+            --accent: #c9a96e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        body {
+            background:
+                linear-gradient(135deg, rgba(10,10,10,0.82), rgba(33,25,13,0.68)),
+                url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=85');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            height: 100vh;
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        aside {
+            width: var(--sidebar-width);
+            background: var(--glass-dark);
+            backdrop-filter: blur(30px) saturate(1.25);
+            border-right: 1px solid rgba(201,169,110,0.18);
+            display: flex;
+            flex-direction: column;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
+            box-shadow: 18px 0 60px rgba(0,0,0,0.32);
+        }
+
+        aside::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+        }
+
+        .admin-topic {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            font-weight: 300;
+            color: var(--pearl);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 48px;
+            padding-left: 14px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 13px 18px;
+            margin-bottom: 6px;
+            border-radius: 3px;
+            color: rgba(255,255,255,0.48);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13px;
+            letter-spacing: 0.4px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .nav-item i {
+            margin-right: 14px;
+            width: 17px;
+            height: 17px;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(201,169,110,0.12);
+            color: var(--gold-light);
+            border-color: rgba(201,169,110,0.28);
+            transform: translateX(5px);
+        }
+
+        main {
+            flex-grow: 1;
+            padding: 48px;
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+            background:
+                radial-gradient(circle at 20% 0%, rgba(201,169,110,0.08), transparent 34%),
+                radial-gradient(circle at 90% 15%, rgba(255,255,255,0.045), transparent 28%);
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 34px;
+            padding-bottom: 26px;
+            border-bottom: 1px solid rgba(201,169,110,0.16);
+        }
+
+        .header-section h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 48px;
+            font-weight: 300;
+            color: var(--pearl);
+            letter-spacing: -0.5px;
+        }
+
+        .filter-glass-panel,
+        .table-glass-container,
+        .modal-content {
+            background: var(--card-glass);
+            backdrop-filter: blur(26px) saturate(1.2);
+            border: 1px solid rgba(201,169,110,0.16);
+            border-radius: 4px;
+            box-shadow:
+                0 30px 70px rgba(0,0,0,0.30),
+                inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+
+        .filter-glass-panel {
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-glass-panel input,
+        .filter-glass-panel select {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(201,169,110,0.18);
+            padding: 12px 15px;
+            border-radius: 3px;
+            color: var(--pearl);
+            outline: none;
+            font-weight: 500;
+        }
+
+        .filter-glass-panel input::placeholder {
+            color: rgba(245,240,232,0.42);
+        }
+
+        .filter-glass-panel select option {
+            background: var(--charcoal);
+            color: var(--pearl);
+        }
+
+        .btn-primary {
+            background: var(--gold);
+            color: var(--obsidian);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 28px rgba(201,169,110,0.18);
+        }
+
+        .btn-primary:hover {
+            background: var(--gold-light);
+            box-shadow: 0 0 40px rgba(201,169,110,0.34);
+        }
+
+        .table-glass-container {
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            padding: 15px;
+            color: rgba(201,169,110,0.9);
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(201,169,110,0.14);
+            text-align: center;
+        }
+
+        td {
+            padding: 18px 15px;
+            border-bottom: 1px solid rgba(201,169,110,0.08);
+            font-size: 13px;
+            color: rgba(245,240,232,0.68);
+            vertical-align: middle;
+        }
+
+        td b {
+            color: var(--pearl);
+            font-weight: 600;
+        }
+
+        tr:hover td {
+            background: rgba(201,169,110,0.045);
+        }
+
+        .actions-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            min-width: 200px;
+        }
+
+        .btn-edit,
+        .btn-remove {
+            padding: 8px 18px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-edit {
+            background: rgba(201,169,110,0.12);
+            color: var(--gold-light);
+            border: 1px solid rgba(201,169,110,0.34);
+        }
+
+        .btn-edit:hover {
+            background: var(--gold);
+            color: var(--obsidian);
+        }
+
+        .btn-remove {
+            background: rgba(239,68,68,0.10);
+            color: #fca5a5;
+            border: 1px solid rgba(239,68,68,0.45);
+        }
+
+        .btn-remove:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .property-badge {
+            background: rgba(201,169,110,0.12);
+            color: var(--gold-light);
+            border: 1px solid rgba(201,169,110,0.24);
+            padding: 6px 14px;
+            border-radius: 3px;
+            font-size: 10px;
+            letter-spacing: 1px;
+            font-weight: 800;
+            text-transform: uppercase;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        #empty-state {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 4px;
+            border: 1px dashed rgba(201,169,110,0.22);
+            margin-top: 20px;
+            color: var(--text-dim);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.78);
+            backdrop-filter: blur(16px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .modal-content h2 { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; margin-bottom: 25px; color: var(--gold); }
+        .modal-content label { display: block; margin-bottom: 8px; font-size: 10px; color: rgba(245,240,232,0.46); letter-spacing: 2px; text-transform: uppercase; }
+        .modal-content input, .modal-content select { width: 100%; padding: 12px; margin-bottom: 20px; border-radius: 3px; border: 1px solid rgba(201,169,110,0.18); background: rgba(255,255,255,0.07); color: var(--pearl); outline: none; font-weight: 600; }
+        .modal-content select option { background: var(--charcoal); color: var(--pearl); }
+        .modal-actions { display: flex; gap: 15px; }
+        .btn-save { background: var(--success); color: white; border: none; padding: 12px; border-radius: 3px; flex: 1; cursor: pointer; font-weight: 800; transition: 0.3s; }
+        .btn-cancel { background: rgba(255,255,255,0.04); color: var(--pearl); border: 1px solid rgba(201,169,110,0.18); padding: 12px; border-radius: 3px; flex: 1; cursor: pointer; }
+
+        @media print {
+            aside, .filter-glass-panel, .header-section button, .actions-cell, th:last-child, td:last-child, .nav-menu { display: none !important; }
+            body { background: white !important; color: black !important; height: auto !important; overflow: visible !important; }
+            main { padding: 0 !important; margin: 0 !important; width: 100% !important; }
+            .table-glass-container { background: transparent !important; border: none !important; box-shadow: none !important; }
+            table { width: 100% !important; border-collapse: collapse !important; color: black !important; }
+            th, td { border: 1px solid #ddd !important; padding: 10px !important; text-align: center !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="modal-overlay" id="editModal">
+    <div class="modal-content">
+        <h2>Edit Property</h2>
+        <input type="hidden" id="editId">
+        <label>Title</label>
+        <input type="text" id="editTitle">
+        <label>Address</label>
+        <input type="text" id="editAddress">
+        <label>District</label>
+        <select id="editDistrict">
+            <option value="Ampara">Ampara</option>
+            <option value="Anuradhapura">Anuradhapura</option>
+            <option value="Badulla">Badulla</option>
+            <option value="Batticaloa">Batticaloa</option>
+            <option value="Colombo">Colombo</option>
+            <option value="Galle">Galle</option>
+            <option value="Gampaha">Gampaha</option>
+            <option value="Hambantota">Hambantota</option>
+            <option value="Jaffna">Jaffna</option>
+            <option value="Kalutara">Kalutara</option>
+            <option value="Kandy">Kandy</option>
+            <option value="Kegalle">Kegalle</option>
+            <option value="Kilinochchi">Kilinochchi</option>
+            <option value="Kurunegala">Kurunegala</option>
+            <option value="Mannar">Mannar</option>
+            <option value="Matale">Matale</option>
+            <option value="Matara">Matara</option>
+            <option value="Monaragala">Monaragala</option>
+            <option value="Mullaitivu">Mullaitivu</option>
+            <option value="Nuwara Eliya">Nuwara Eliya</option>
+            <option value="Polonnaruwa">Polonnaruwa</option>
+            <option value="Puttalam">Puttalam</option>
+            <option value="Ratnapura">Ratnapura</option>
+            <option value="Trincomalee">Trincomalee</option>
+            <option value="Vavuniya">Vavuniya</option>
+        </select>
+        <label>Price</label>
+        <input type="number" id="editPrice" step="0.01">
+        <label>Description</label>
+        <input type="text" id="editDescription">
+        
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+            <button class="btn-save" id="saveBtn" onclick="saveUpdate()">Update Record</button>
+        </div>
+    </div>
+</div>
+
+<aside>
+    <div class="admin-topic">LuxeEstate</div>
+    <nav class="nav-menu">
+        <a href="admin-dashboard.html" class="nav-item"><i data-lucide="layout-grid"></i> Dash board</a>
+        <a href="view-customer.html" class="nav-item"><i data-lucide="users"></i> Customers</a>
+        <a href="view-messages.html" class="nav-item"><i data-lucide="mail"></i> Messages</a>
+        <a href="#" class="nav-item active"><i data-lucide="tag"></i> Sale Listings</a>
+    </nav>
+    <a href="admin-login.html" class="nav-item" style="color: #fda4af;"><i data-lucide="power"></i> Logout</a>
+</aside>
+
+<main>
+    <div class="header-section">
+        <h1>Manage Sale Properties</h1>
+        <button class="btn-primary" onclick="window.print()">
+            <i data-lucide="printer"></i> Print Report
+        </button>
+    </div>
+    <div class="filter-glass-panel">
+        <input type="text" id="searchId" style="width: 80px;" placeholder="ID">
+        <input type="text" id="searchGeneral" style="flex: 1;" placeholder="Search title, address, or district...">
+        <select id="propertyTypeFilter">
+            <option value="">All Types</option>
+            <option value="house">House</option>
+            <option value="apartment">Apartment</option>
+        </select>
+        <button class="btn-primary" onclick="filterProperties()">🔍 Filter</button>
+    </div>
+
+    <div class="table-glass-container">
+        <table id="propertyTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Address</th>
+                <th>District</th>
+                <th>Price</th>
+                <th>Type</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="propertyTableBody">
+            </tbody>
+        </table>
+        <div id="empty-state">
+            <i data-lucide="search-x" style="margin-bottom: 15px; color: var(--danger);"></i>
+            <h3>No sale properties in our database</h3>
+        </div>
+    </div>
+</main>
+
+<script>
+    lucide.createIcons();
+    let currentProperties = [];
+    const DISTRICTS = ['Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 'Galle', 'Gampaha', 'Hambantota', 'Jaffna', 'Kalutara', 'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala', 'Mannar', 'Matale', 'Matara', 'Monaragala', 'Mullaitivu', 'Nuwara Eliya', 'Polonnaruwa', 'Puttalam', 'Ratnapura', 'Trincomalee', 'Vavuniya'];
+
+    async function loadProperties() {
+        try {
+            const response = await fetch('http://localhost:8080/api/properties');
+            const allProperties = await response.json();
+            // Filter to only include house and apartment (for sale)
+            currentProperties = allProperties.filter(p => p.type === 'house' || p.type === 'apartment');
+            renderTable(currentProperties);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    function renderTable(data) {
+        const tableBody = document.getElementById('propertyTableBody');
+        const emptyState = document.getElementById('empty-state');
+        const table = document.getElementById('propertyTable');
+
+        if (data.length === 0) {
+            table.style.display = "none";
+            emptyState.style.display = "block";
+            return;
+        }
+
+        table.style.display = "table";
+        emptyState.style.display = "none";
+
+        tableBody.innerHTML = data.map(prop => `
+            <tr id="row-${prop.id}">
+                <td>#${prop.id}</td>
+                <td><b>${prop.title}</b></td>
+                <td>${prop.address || 'N/A'}</td>
+                <td>${prop.district || 'N/A'}</td>
+                <td>Rs. ${Number(prop.price).toLocaleString('en-LK')}</td>
+                <td><span class="property-badge">${prop.type}</span></td>
+                <td class="actions-cell">
+                    <button class="btn-edit" onclick="openEditModal(${prop.id})">Edit</button>
+                    <button class="btn-remove" onclick="removeProperty(${prop.id})">Remove</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function openEditModal(id) {
+        const property = currentProperties.find(p => p.id == id);
+
+        if (property) {
+            document.getElementById('editId').value = property.id;
+            document.getElementById('editTitle').value = property.title;
+            document.getElementById('editAddress').value = property.address || '';
+            document.getElementById('editDistrict').value = normalizeDistrict(property.district);
+            document.getElementById('editPrice').value = property.price;
+            document.getElementById('editDescription').value = property.description;
+
+            document.getElementById('editModal').style.display = 'flex';
+        } else {
+            console.error("Property not found with ID:", id);
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    async function saveUpdate() {
+        const id = document.getElementById('editId').value;
+        const saveBtn = document.getElementById('saveBtn');
+
+        const originalProperty = currentProperties.find(p => p.id == id);
+        if (!originalProperty) return;
+
+        saveBtn.innerText = "Saving...";
+        saveBtn.disabled = true;
+
+        const updatedData = {
+            ...originalProperty,
+            title: document.getElementById('editTitle').value,
+            address: document.getElementById('editAddress').value,
+            district: document.getElementById('editDistrict').value,
+            price: parseFloat(document.getElementById('editPrice').value),
+            description: document.getElementById('editDescription').value
+        };
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/properties/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (response.ok) {
+                closeModal();
+                await loadProperties();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            saveBtn.innerText = "Update Record";
+            saveBtn.disabled = false;
+        }
+    }
+
+    async function removeProperty(id) {
+        if(confirm("Permanently delete this property record?")) {
+            try {
+                const response = await fetch(`http://localhost:8080/api/properties/${id}`, {
+                    method: 'DELETE'
+                });
+                if(response.ok) await loadProperties();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    }
+
+    function filterProperties() {
+        const idSearch = document.getElementById('searchId').value.toLowerCase();
+        const generalSearch = document.getElementById('searchGeneral').value.toLowerCase();
+        const typeFilter = document.getElementById('propertyTypeFilter').value.toLowerCase();
+
+        const filtered = currentProperties.filter(prop => {
+            const matchesId = idSearch === "" || prop.id.toString().includes(idSearch);
+            const matchesGeneral = generalSearch === "" ||
+                                 prop.title.toLowerCase().includes(generalSearch) ||
+                                 (prop.address || '').toLowerCase().includes(generalSearch) ||
+                                 (prop.district || '').toLowerCase().includes(generalSearch);
+            const matchesType = typeFilter === "" || prop.type.toLowerCase() === typeFilter;
+
+            return matchesId && matchesGeneral && matchesType;
+        });
+
+        renderTable(filtered);
+    }
+
+    function normalizeDistrict(value) {
+        return DISTRICTS.includes(value) ? value : 'Colombo';
+    }
+
+    window.onload = loadProperties;
+</script>
+</body>
+</html>
