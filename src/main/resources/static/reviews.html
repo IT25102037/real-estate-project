@@ -53,43 +53,11 @@
             color: var(--white); text-decoration: none;
         }
         .logo span { color: var(--gold); }
-        .nav-buttons {
-            display: flex;
-            gap: 20px;
-            align-items: center;
+        .back-btn {
+            color: rgba(255,255,255,0.6); text-decoration: none;
+            font-size: 13px; font-weight: 500; letter-spacing: 2px;
         }
-        .nav-btn {
-            color: rgba(255,255,255,0.7);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 1px;
-            transition: color 0.3s;
-        }
-        .nav-btn:hover {
-            color: var(--gold);
-        }
-        .nav-btn.login {
-            border: 1px solid var(--border-gold);
-            padding: 6px 18px;
-            border-radius: 30px;
-        }
-        .nav-btn.login:hover {
-            background: rgba(201,169,110,0.1);
-        }
-        .nav-btn.signup {
-            background: var(--gold);
-            color: var(--obsidian);
-            padding: 6px 18px;
-            border-radius: 30px;
-        }
-        .nav-btn.signup:hover {
-            background: var(--gold-light);
-        }
-        .user-greeting {
-            color: var(--gold);
-            font-size: 13px;
-        }
+        .back-btn:hover { color: var(--gold); }
         .page-wrapper {
             position: relative; z-index: 10;
             min-height: 100vh;
@@ -194,8 +162,7 @@
         .form-group { margin-bottom: 25px; }
         .form-group label {
             display: block; font-size: 11px; font-weight: 600;
-            letter-spacing: 2px;
-            color: var(--gold);
+            letter-spacing: 2px; color: var(--gold);
             margin-bottom: 8px;
         }
         .form-group input, .form-group textarea {
@@ -376,9 +343,6 @@
             .glass-card { padding: 24px; }
             .rating-filter { gap: 8px; }
             .rating-btn { padding: 5px 14px; font-size: 11px; }
-            .nav-buttons { gap: 10px; }
-            .nav-btn { font-size: 11px; }
-            .nav-btn.login, .nav-btn.signup { padding: 4px 12px; }
         }
     </style>
 </head>
@@ -390,9 +354,7 @@
 <header>
     <div class="header-content">
         <a href="index.html" class="logo">Luxe<span>_Estate</span></a>
-        <div class="nav-buttons" id="navButtons">
-            <!-- Buttons will be inserted here by JavaScript -->
-        </div>
+        <a href="profile.html" class="back-btn">← Back to Profile</a>
     </div>
 </header>
 
@@ -412,11 +374,12 @@
         </div>
     </div>
 
-    <!-- Review Form (No Email Field) -->
+    <!-- Review Form -->
     <div class="glass-card">
         <div class="card-title">✍️ Write a Review</div>
         <form id="reviewForm">
             <div class="form-group"><label>Your Name</label><input type="text" id="customerName" placeholder="Enter your name" required></div>
+            <div class="form-group"><label>Email (Optional)</label><input type="email" id="customerEmail" placeholder="you@example.com"></div>
             <div class="form-group">
                 <label>Rating</label>
                 <div class="star-rating" id="starRating">
@@ -465,39 +428,9 @@
 <script>
     let currentPropertyId = 1;
     let currentReviews = [];
-    let currentFilterRating = "all";
-    let currentUser = null;
+    let currentFilterRating = "all"; // 'all', 5, 4, 3, 2, 1
     const API_BASE = "http://localhost:8080/api/reviews";
     const propNames = {1:"🏘️ Luxury Villa",2:"🏠 Family Home",3:"🏢 Modern Apartment",4:"🌊 Beach House",5:"🌳 Garden Villa"};
-
-    // Navigation Buttons
-    function updateNavButtons() {
-        const navContainer = document.getElementById('navButtons');
-        const storedUser = localStorage.getItem('luxeUser');
-        if (storedUser) {
-            try {
-                currentUser = JSON.parse(storedUser);
-                navContainer.innerHTML = `
-                    <span class="user-greeting">Welcome, ${currentUser.name || currentUser.email || 'User'}</span>
-                    <a href="#" class="nav-btn" id="logoutBtn">Logout</a>
-                `;
-                document.getElementById('logoutBtn').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    localStorage.removeItem('luxeUser');
-                    localStorage.removeItem('luxeUserId');
-                    window.location.reload();
-                });
-                if (currentUser.name) {
-                    document.getElementById('customerName').value = currentUser.name;
-                }
-            } catch(e) { console.error("Error parsing user", e); }
-        } else {
-            navContainer.innerHTML = `
-                <a href="login.html" class="nav-btn login">Login</a>
-                <a href="add-customer.html" class="nav-btn signup">Sign Up</a>
-            `;
-        }
-    }
 
     // Property Selector
     document.querySelectorAll('.prop-card').forEach(card => {
@@ -704,13 +637,9 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
     document.getElementById('reviewModal').addEventListener('click', (e) => { if (e.target === document.getElementById('reviewModal')) closeModal(); });
 
-    // Initialize
-    updateNavButtons();
     document.querySelector('.prop-card').classList.add('active');
     loadReviews(1);
     loadAverageRating(1);
 </script>
 </body>
 </html>
-
-// URL : http://localhost:8080/reviews.html
